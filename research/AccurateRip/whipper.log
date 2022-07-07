@@ -1,0 +1,340 @@
+Log created by: whipper 0.8.0 (internal logger)
+Log creation date: 2022-07-04T22:16:07Z
+
+Ripping phase information:
+  Drive: HL-DT-STDVDRAM GH24NSD1  (revision LG00)
+  Extraction engine: cdparanoia III 10.2 (September 11, 2008)
+  Defeat audio cache: true
+  Read offset correction: 6
+  Overread into lead-out: false
+  Gap detection: cdrdao 1.2.3
+  CD-R detected: false
+
+CD metadata:
+  Release:
+    Artist: Inade
+    Title: Burning Flesh
+  CDDB Disc ID: a710de0d
+  MusicBrainz Disc ID: 2mCkTYcJvf0F5tOsExucezTpGEU-
+  MusicBrainz lookup URL: https://musicbrainz.org/cdtoc/attach?toc=1+13+324003+150+25046+53633+67971+83094+97734+132345+150210+180395+210366+239594+268874+292350&tracks=13&id=2mCkTYcJvf0F5tOsExucezTpGEU-
+  MusicBrainz Release URL: https://musicbrainz.org/release/335e5895-0447-4659-b59b-ff249fcf52a3
+
+TOC:
+  1:
+    Start: 00:00:00
+    Length: 05:31:71
+    Start sector: 0
+    End sector: 24895
+
+  2:
+    Start: 05:31:71
+    Length: 06:21:12
+    Start sector: 24896
+    End sector: 53482
+
+  3:
+    Start: 11:53:08
+    Length: 03:11:13
+    Start sector: 53483
+    End sector: 67820
+
+  4:
+    Start: 15:04:21
+    Length: 03:21:48
+    Start sector: 67821
+    End sector: 82943
+
+  5:
+    Start: 18:25:69
+    Length: 03:15:15
+    Start sector: 82944
+    End sector: 97583
+
+  6:
+    Start: 21:41:09
+    Length: 07:41:36
+    Start sector: 97584
+    End sector: 132194
+
+  7:
+    Start: 29:22:45
+    Length: 03:58:15
+    Start sector: 132195
+    End sector: 150059
+
+  8:
+    Start: 33:20:60
+    Length: 06:42:35
+    Start sector: 150060
+    End sector: 180244
+
+  9:
+    Start: 40:03:20
+    Length: 06:39:46
+    Start sector: 180245
+    End sector: 210215
+
+  10:
+    Start: 46:42:66
+    Length: 06:29:53
+    Start sector: 210216
+    End sector: 239443
+
+  11:
+    Start: 53:12:44
+    Length: 06:30:30
+    Start sector: 239444
+    End sector: 268723
+
+  12:
+    Start: 59:42:74
+    Length: 05:13:01
+    Start sector: 268724
+    End sector: 292199
+
+  13:
+    Start: 64:56:00
+    Length: 07:02:03
+    Start sector: 292200
+    End sector: 323852
+
+Tracks:
+  1:
+    Filename: ./album/Inade - Burning Flesh/01. Inade - Overture Bells.flac
+    Peak level: 0.931854
+    Pre-emphasis:
+    Extraction speed: 8.1 X
+    Extraction quality: 100.00 %
+    Test CRC: F7B12062
+    Copy CRC: F7B12062
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: E4E26EA2
+      Remote CRC: E4E26EA2
+    Status: Copy OK
+
+  2:
+    Filename: ./album/Inade - Burning Flesh/02. Inade - Shattered Bones.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.981567
+    Pre-emphasis:
+    Extraction speed: 9.2 X
+    Extraction quality: 100.00 %
+    Test CRC: 7138D1ED
+    Copy CRC: 7138D1ED
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: CF214B6C
+      Remote CRC: CF214B6C
+    Status: Copy OK
+
+  3:
+    Filename: ./album/Inade - Burning Flesh/03. Inade - The Coming of the Black Legions.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.844452
+    Pre-emphasis:
+    Extraction speed: 9.3 X
+    Extraction quality: 100.00 %
+    Test CRC: '14718064'
+    Copy CRC: '14718064'
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: 2184630E
+      Remote CRC: 2184630E
+    Status: Copy OK
+
+  4:
+    Filename: ./album/Inade - Burning Flesh/04. Inade - Final Prayer.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.853485
+    Pre-emphasis:
+    Extraction speed: 10.0 X
+    Extraction quality: 100.00 %
+    Test CRC: CE993FB6
+    Copy CRC: CE993FB6
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: D02A20A9
+      Remote CRC: D02A20A9
+    Status: Copy OK
+
+  5:
+    Filename: ./album/Inade - Burning Flesh/05. Inade - Outcry.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.916534
+    Pre-emphasis:
+    Extraction speed: 10.3 X
+    Extraction quality: 100.00 %
+    Test CRC: C437C8D0
+    Copy CRC: C437C8D0
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: 55EF8582
+      Remote CRC: 55EF8582
+    Status: Copy OK
+
+  6:
+    Filename: ./album/Inade - Burning Flesh/06. Inade - Storm of Fire.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.956146
+    Pre-emphasis:
+    Extraction speed: 11.7 X
+    Extraction quality: 100.00 %
+    Test CRC: C9323945
+    Copy CRC: C9323945
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: CF7C8ABD
+      Remote CRC: CF7C8ABD
+    Status: Copy OK
+
+  7:
+    Filename: ./album/Inade - Burning Flesh/07. Inade - Burning Flesh.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.940369
+    Pre-emphasis:
+    Extraction speed: 12.1 X
+    Extraction quality: 100.00 %
+    Test CRC: B481898B
+    Copy CRC: B481898B
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: 48D9C1BA
+      Remote CRC: 48D9C1BA
+    Status: Copy OK
+
+  8:
+    Filename: ./album/Inade - Burning Flesh/08. Inade - Through the Gates of Death.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.823395
+    Pre-emphasis:
+    Extraction speed: 12.6 X
+    Extraction quality: 100.00 %
+    Test CRC: C47F9F3B
+    Copy CRC: C47F9F3B
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: 466C75DA
+      Remote CRC: 466C75DA
+    Status: Copy OK
+
+  9:
+    Filename: ./album/Inade - Burning Flesh/09. Inade - Genius Loci, Part I.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.884003
+    Pre-emphasis:
+    Extraction speed: 13.3 X
+    Extraction quality: 100.00 %
+    Test CRC: 5728CD86
+    Copy CRC: 5728CD86
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: F9469E23
+      Remote CRC: F9469E23
+    Status: Copy OK
+
+  10:
+    Filename: ./album/Inade - Burning Flesh/10. Inade - Genius Loci, Part II.flac
+    Pre-gap length: 00:01:74
+    Peak level: 1.0
+    Pre-emphasis:
+    Extraction speed: 14.0 X
+    Extraction quality: 100.00 %
+    Test CRC: 567F1797
+    Copy CRC: 567F1797
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: '56845971'
+      Remote CRC: '56845971'
+    Status: Copy OK
+
+  11:
+    Filename: ./album/Inade - Burning Flesh/11. Inade - Genius Loci, Part III.flac
+    Pre-gap length: 00:01:74
+    Peak level: 1.0
+    Pre-emphasis:
+    Extraction speed: 14.6 X
+    Extraction quality: 100.00 %
+    Test CRC: F5974E2A
+    Copy CRC: F5974E2A
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: 51D1A19A
+      Remote CRC: 51D1A19A
+    Status: Copy OK
+
+  12:
+    Filename: ./album/Inade - Burning Flesh/12. Inade - Genius Loci, Part IV.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.827972
+    Pre-emphasis:
+    Extraction speed: 15.1 X
+    Extraction quality: 100.00 %
+    Test CRC: A6BA45A7
+    Copy CRC: A6BA45A7
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: 8AB3FA73
+      Remote CRC: 8AB3FA73
+    Status: Copy OK
+
+  13:
+    Filename: ./album/Inade - Burning Flesh/13. Inade - Tat Twam Asi.flac
+    Pre-gap length: 00:01:74
+    Peak level: 0.996307
+    Pre-emphasis:
+    Extraction speed: 15.9 X
+    Extraction quality: 100.00 %
+    Test CRC: C62C53FC
+    Copy CRC: C62C53FC
+    AccurateRip v1:
+      Result: Track not present in AccurateRip database
+    AccurateRip v2:
+      Result: Found, exact match
+      Confidence: 2
+      Local CRC: 8649E0DE
+      Remote CRC: 8649E0DE
+    Status: Copy OK
+
+Conclusive status report:
+  AccurateRip summary: All tracks accurately ripped
+  Health Status: No errors occurred
+  EOF: End of status report
+
+SHA-256 hash: 96C99E3F8AF1AF7A0CE1230BCDA3BE2BD20BAFF02E1929155A698B4FFD59CA8E
