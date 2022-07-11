@@ -6,8 +6,14 @@ import json
 import os
 import sys
 
+import discid
 import musicbrainzngs
 import version
+
+
+def _calculate_freedb_id(offsets, sectors):
+    disc = discid.put(1, len(offsets), sectors, offsets)
+    return disc.freedb_id
 
 
 def _get_toc(disc_id):
@@ -18,9 +24,15 @@ def _get_toc(disc_id):
     except musicbrainzngs.ResponseError:
         return None
 
+    offsets = disc_data['disc']['offset-list']
+    sectors = int(disc_data['disc']['sectors'])
+    freedb_id = _calculate_freedb_id(offsets, sectors)
+
     toc = {}
-    toc['offset-list'] = disc_data['disc']['offset-list']
-    toc['sectors'] = int(disc_data['disc']['sectors'])
+    toc['discid'] = disc_data['disc']['id']
+    toc['freedb-id'] = freedb_id
+    toc['offset-list'] = offsets
+    toc['sectors'] = sectors
 
     return toc
 
