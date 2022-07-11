@@ -20,7 +20,7 @@ def _get_toc(disc_id):
 
     toc = {}
     toc['offset-list'] = disc_data['disc']['offset-list']
-    toc['sectors'] = disc_data['disc']['sectors']
+    toc['sectors'] = int(disc_data['disc']['sectors'])
 
     return toc
 
