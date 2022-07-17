@@ -5,6 +5,8 @@
 import json
 import discid
 
+import accuraterip
+
 
 def _get_toc():
     try:
@@ -26,6 +28,7 @@ def main():
 
     if toc:
         print(json.dumps(toc, indent=2))
+        print('AccurateRip IDs:', accuraterip.calculate_ids(toc))
     else:
         print('Failed to get the table of contents. Is there a CD in the drive?')
 

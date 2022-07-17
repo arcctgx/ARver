@@ -8,6 +8,8 @@ import sys
 
 import discid
 import musicbrainzngs
+
+import accuraterip
 import version
 
 
@@ -47,6 +49,7 @@ def main():
 
     if toc:
         print(json.dumps(toc, indent=2))
+        print('AccurateRip IDs:', accuraterip.calculate_ids(toc))
     else:
         print(f'Failed to get CD data matching discID "{disc_id}"!')
 
