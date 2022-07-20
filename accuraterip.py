@@ -8,13 +8,12 @@ def calculate_ids(toc):
     disc IDs as 8-digit hex strings.
 
     The calculation is based on LBA offsets: lead-in is not taken into
-    account, the offset of the first track is zero. The TOC passed as
-    argument in not based on LBA, so it must be adjusted by subtracting
-    the offset of the first track from all offsets.
+    account. The TOC passed as argument in not based on LBA, so it must
+    be adjusted by subtracting 150 sectors from all offsets.
 
     TODO make sure CDs with data tracks are handled correctly.
     """
-    shift = toc['offset-list'][0]
+    shift = 150
     lba_offsets = [offset - shift for offset in toc['offset-list']]
     lba_leadout_offset = toc['sectors'] - shift
 
