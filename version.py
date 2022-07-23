@@ -1,4 +1,4 @@
 """Application name and version string."""
 
-APPNAME = "ARVer"
+APPNAME = "ARver"
 VERSION = "v0.1.0-dev"
