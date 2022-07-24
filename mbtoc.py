@@ -29,10 +29,12 @@ def _get_toc(disc_id):
     offsets = disc_data['disc']['offset-list']
     sectors = int(disc_data['disc']['sectors'])
     freedb_id = _calculate_freedb_id(offsets, sectors)
+    accuraterip_ids = accuraterip.calculate_ids(offsets, sectors)
 
     toc = {}
     toc['discid'] = disc_data['disc']['id']
     toc['freedb-id'] = freedb_id
+    toc['accuraterip-id'] = accuraterip_ids
     toc['offset-list'] = offsets
     toc['sectors'] = sectors
 
@@ -49,7 +51,6 @@ def main():
 
     if toc:
         print(json.dumps(toc, indent=2))
-        print('AccurateRip IDs:', accuraterip.calculate_ids(toc))
     else:
         print(f'Failed to get CD data matching discID "{disc_id}"!')
 

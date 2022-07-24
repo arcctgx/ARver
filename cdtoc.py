@@ -14,10 +14,15 @@ def _get_toc():
     except discid.DiscError:
         return None
 
+    offsets = [track.offset for track in disc.tracks]
+    sectors = disc.sectors
+    accuraterip_ids = accuraterip.calculate_ids(offsets, sectors)
+
     toc = {}
     toc['discid'] = disc.id
     toc['freedb-id'] = disc.freedb_id
-    toc['offset-list'] = [track.offset for track in disc.tracks]
+    toc['accuraterip-id'] = accuraterip_ids
+    toc['offset-list'] = offsets
     toc['sectors'] = disc.sectors
 
     return toc
@@ -28,7 +33,6 @@ def main():
 
     if toc:
         print(json.dumps(toc, indent=2))
-        print('AccurateRip IDs:', accuraterip.calculate_ids(toc))
     else:
         print('Failed to get the table of contents. Is there a CD in the drive?')
 
