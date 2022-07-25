@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Read disc info (including TOC) from a physical CD in drive."""
+"""Read disc IDs and TOC from a physical CD in drive."""
 
 import json
 import discid
@@ -15,15 +15,20 @@ def _read_disc_info():
         return None
 
     offsets = [track.offset for track in disc.tracks]
-    sectors = disc.sectors
-    accuraterip_ids = accuraterip.calculate_ids(offsets, sectors)
+    accuraterip_ids = accuraterip.calculate_ids(offsets, disc.sectors)
 
-    info = {}
-    info['discid'] = disc.id
-    info['freedb-id'] = disc.freedb_id
-    info['accuraterip-id'] = accuraterip_ids
-    info['offset-list'] = offsets
-    info['sectors'] = disc.sectors
+    info = {
+        'id': {
+            'discid': disc.id,
+            'freedb': disc.freedb_id,
+            'accuraterip': accuraterip_ids
+        },
+        'toc': {
+            'tracks': len(offsets),
+            'offsets': offsets,
+            'leadout': disc.sectors
+        }
+    }
 
     return info
 

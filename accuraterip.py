@@ -2,7 +2,7 @@
 Function for calculating AccurateRip disc IDs.
 """
 
-def calculate_ids(offsets, sectors):
+def calculate_ids(offsets, leadout):
     """
     Calculate two AccureteRip disc IDs from CD TOC. Return a pair of
     disc IDs as 8-digit hex strings.
@@ -15,7 +15,7 @@ def calculate_ids(offsets, sectors):
     """
     shift = 150
     lba_offsets = [offset - shift for offset in offsets]
-    lba_leadout = sectors - shift
+    lba_leadout = leadout - shift
 
     id1 = 0
     id2 = 0

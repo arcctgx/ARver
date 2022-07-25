@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Download disc info (including TOC) from MusicBrainz based on disc ID."""
+"""Get disc IDs and TOC from MusicBrainz data."""
 
 import json
 import os
@@ -13,8 +13,8 @@ import accuraterip
 import version
 
 
-def _calculate_freedb_id(offsets, sectors):
-    disc = discid.put(1, len(offsets), sectors, offsets)
+def _calculate_freedb_id(offsets, leadout):
+    disc = discid.put(1, len(offsets), leadout, offsets)
     return disc.freedb_id
 
 
@@ -27,16 +27,22 @@ def _get_disc_info(disc_id):
         return None
 
     offsets = disc_data['disc']['offset-list']
-    sectors = int(disc_data['disc']['sectors'])
-    freedb_id = _calculate_freedb_id(offsets, sectors)
-    accuraterip_ids = accuraterip.calculate_ids(offsets, sectors)
+    leadout = int(disc_data['disc']['sectors'])
+    freedb_id = _calculate_freedb_id(offsets, leadout)
+    accuraterip_ids = accuraterip.calculate_ids(offsets, leadout)
 
-    info = {}
-    info['discid'] = disc_data['disc']['id']
-    info['freedb-id'] = freedb_id
-    info['accuraterip-id'] = accuraterip_ids
-    info['offset-list'] = offsets
-    info['sectors'] = sectors
+    info = {
+        'id': {
+            'discid': disc_data['disc']['id'],
+            'freedb': freedb_id,
+            'accuraterip': accuraterip_ids
+        },
+        'toc': {
+            'tracks': len(offsets),
+            'offsets': offsets,
+            'leadout': leadout
+        }
+    }
 
     return info
 
