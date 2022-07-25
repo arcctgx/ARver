@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Get Table of Contents (TOC) from a physical CD in drive."""
+"""Read disc info (including TOC) from a physical CD in drive."""
 
 import json
 import discid
@@ -8,7 +8,7 @@ import discid
 import accuraterip
 
 
-def _get_toc():
+def _read_disc_info():
     try:
         disc = discid.read()
     except discid.DiscError:
@@ -18,23 +18,23 @@ def _get_toc():
     sectors = disc.sectors
     accuraterip_ids = accuraterip.calculate_ids(offsets, sectors)
 
-    toc = {}
-    toc['discid'] = disc.id
-    toc['freedb-id'] = disc.freedb_id
-    toc['accuraterip-id'] = accuraterip_ids
-    toc['offset-list'] = offsets
-    toc['sectors'] = disc.sectors
+    info = {}
+    info['discid'] = disc.id
+    info['freedb-id'] = disc.freedb_id
+    info['accuraterip-id'] = accuraterip_ids
+    info['offset-list'] = offsets
+    info['sectors'] = disc.sectors
 
-    return toc
+    return info
 
 
 def main():
-    toc = _get_toc()
+    disc_info = _read_disc_info()
 
-    if toc:
-        print(json.dumps(toc, indent=2))
+    if disc_info:
+        print(json.dumps(disc_info, indent=2))
     else:
-        print('Failed to get the table of contents. Is there a CD in the drive?')
+        print('Failed to read disc info. Is there a CD in the drive?')
 
 
 if __name__ == '__main__':
