@@ -6,7 +6,7 @@
 - [x] read TOC from DiscID
 - [x] calculate FreeDB CD indentifier
 - [x] calculate AccurateRip CD identifiers
-- [ ] calculate AccurateRip checksums of ripped files (WAV and FLAC)
+- [x] calculate AccurateRip checksums of ripped files (WAV and FLAC)
 - [ ] fetch AccurateRip results from database
 - [ ] parse AccurateRip binary data format
 - [ ] compare database checksums with file checksums
