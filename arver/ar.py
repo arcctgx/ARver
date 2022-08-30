@@ -9,7 +9,7 @@ import glob
 import os
 import sys
 
-import accuraterip
+from arver.checksums.wrapper import accuraterip_checksums
 
 
 def _get_wav_files(path):
@@ -32,8 +32,8 @@ def _display_checksums(wavs):
     total_tracks = len(wavs)
 
     for track, wav in enumerate(wavs, start=1):
-        sums = accuraterip.calculate_checksums(wav, track, total_tracks)
-        print(f'{wav}\tv1 {sums[0]:08x}\tv2 {sums[1]:08x}')
+        ar1, ar2 = accuraterip_checksums(wav, track, total_tracks)
+        print(f'{wav}\tv1 {ar1:08x}\tv2 {ar2:08x}')
 
 
 def main():

@@ -83,7 +83,7 @@ static void compute_checksums(const uint32_t *audio_data, size_t audio_data_size
 	*v2 = csum_lo + csum_hi;
 }
 
-static PyObject *checksum_compute(PyObject *self, PyObject *args)
+static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
 {
 	const char *filename;
 	unsigned int track_number;
@@ -142,18 +142,18 @@ err:
 	return Py_BuildValue("OO", Py_None, Py_None);
 }
 
-static PyMethodDef checksum_methods[] = {
-	{ "compute", checksum_compute, METH_VARARGS, "Compute AccurateRip v1 and v2 checksums" },
+static PyMethodDef accuraterip_methods[] = {
+	{ "compute", accuraterip_compute, METH_VARARGS, "Compute AccurateRip v1 and v2 checksums" },
 	{ NULL, NULL, 0, NULL },
 };
 
-static struct PyModuleDef checksum_module = {
+static struct PyModuleDef accuraterip_module = {
 	.m_base = PyModuleDef_HEAD_INIT,
-	.m_name = "checksum",
-	.m_methods = checksum_methods,
+	.m_name = "accuraterip",
+	.m_methods = accuraterip_methods,
 };
 
-PyMODINIT_FUNC PyInit_checksum(void)
+PyMODINIT_FUNC PyInit_accuraterip(void)
 {
-	return PyModule_Create(&checksum_module);
+	return PyModule_Create(&accuraterip_module);
 }

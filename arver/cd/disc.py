@@ -7,11 +7,8 @@ import json
 import discid
 import musicbrainzngs
 
-import id
-
-# FIXME duplicate definitions :(
-APPNAME = 'ARver'
-VERSION = '0.1.0-dev'
+from arver.cd.accuraterip_id import calculate_ids
+from arver.version import APPNAME, VERSION
 
 URL_BASE = 'http://www.accuraterip.com/accuraterip/'
 
@@ -23,7 +20,7 @@ def _read_disc_info():
         return None
 
     offsets = [track.offset for track in disc.tracks]
-    accuraterip_ids = id.calculate_ids(offsets, disc.sectors)
+    accuraterip_ids = calculate_ids(offsets, disc.sectors)
 
     info = {
         'id': {
@@ -46,7 +43,7 @@ def _calculate_freedb_id(offsets, leadout):
     return disc.freedb_id
 
 
-def _get_disc_info(disc_id):
+def _get_musicbrainz_disc_info(disc_id):
     musicbrainzngs.set_useragent(APPNAME, VERSION)
 
     try:
@@ -57,7 +54,7 @@ def _get_disc_info(disc_id):
     offsets = disc_data['disc']['offset-list']
     leadout = int(disc_data['disc']['sectors'])
     freedb_id = _calculate_freedb_id(offsets, leadout)
-    accuraterip_ids = id.calculate_ids(offsets, leadout)
+    accuraterip_ids = calculate_ids(offsets, leadout)
 
     info = {
         'id': {
@@ -90,17 +87,19 @@ class Disc:
 
     @classmethod
     def from_cd(cls):
+        """Return Disc instance based on CD in drive, or None on error."""
         disc_data = _read_disc_info()
         if disc_data:
             return cls(disc_data)
-        raise ValueError
+        return None
 
     @classmethod
     def from_disc_id(cls, disc_id):
-        disc_data = _get_disc_info(disc_id)
+        """Return Disc instance corresponding to MusicBrainz disc ID, or None on error."""
+        disc_data = _get_musicbrainz_disc_info(disc_id)
         if disc_data:
             return cls(disc_data)
-        raise ValueError
+        return None
 
     def _dbar_prefix(self):
         return f'{self.ar1[-1]}/{self.ar1[-2]}/{self.ar1[-3]}/'
@@ -112,7 +111,7 @@ class Disc:
         """Download AccurateRip responses for specified CD."""
         url = URL_BASE + self._dbar_prefix() + self._dbar_id()
         print(url)
-        return NotImplementedError
+        raise NotImplementedError
 
 
 class Response:

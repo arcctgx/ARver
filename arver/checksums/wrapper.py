@@ -1,8 +1,8 @@
 """Python wrapper for checksum C extension."""
 
-from .checksum import compute   # TODO remove relative import
+from arver.checksums.accuraterip import compute
 
-def calculate_checksums(path, track_no, total_tracks):
+def accuraterip_checksums(wav_file, track_no, total_tracks):
     """
     Calculate AccurateRip v1 and v2 checksums of specified file.
     WAV and FLAC formats are supported.
@@ -13,4 +13,4 @@ def calculate_checksums(path, track_no, total_tracks):
 
     Return a pair of checksums (v1, v2) as unsigned integers.
     """
-    return compute(path, track_no, total_tracks)
+    return compute(wav_file, track_no, total_tracks)
