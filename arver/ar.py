@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Calculate AccurateRip v1 and v2 checksums from WAV
 files in specified directory.

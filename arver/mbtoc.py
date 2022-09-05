@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Get disc IDs and TOC from MusicBrainz data."""
 
 import os

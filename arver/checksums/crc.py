@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Calculate CRC of a WAV file. The result is compatible with
 file checksums reported by Whipper and EAC ("Copy CRC").
