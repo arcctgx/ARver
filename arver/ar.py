@@ -7,7 +7,7 @@ import glob
 import os
 import sys
 
-from arver.checksums.wrapper import accuraterip_checksums
+from arver.checksum.checksum import accuraterip_checksums
 
 
 def _get_wav_files(path):

@@ -21,8 +21,8 @@ setup(
     },
 
     ext_modules = [
-        Extension('arver.checksums.accuraterip',
-            sources = ['arver/checksums/accuraterip.c'],
+        Extension('arver.checksum.accuraterip',
+            sources = ['arver/checksum/accuraterip.c'],
             libraries = ['sndfile']
         )
     ]

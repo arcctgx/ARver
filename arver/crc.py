@@ -6,7 +6,7 @@ file checksums reported by Whipper and EAC ("Copy CRC").
 import os
 import sys
 
-from arver.checksums.crc import copy_crc
+from arver.checksum import checksum
 
 def main():
     if len(sys.argv) == 1:
@@ -15,11 +15,11 @@ def main():
 
     for path in sys.argv[1:]:
         fname = os.path.basename(path)
-        crc = copy_crc(path)
+        crc = checksum.copy_crc(path)
         if crc is None:
             print(f'{fname}: ERROR: failed to calculate CRC!')
         else:
-            print(f'{fname}: {crc}')
+            print(f'{fname}: {crc:08x}')
 
 
 if __name__ == '__main__':
