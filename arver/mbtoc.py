@@ -3,7 +3,7 @@
 import os
 import sys
 
-from arver.cd.disc import Disc
+from arver.disc.disc import Disc
 
 
 def main():

@@ -1,6 +1,6 @@
 """Read disc IDs and TOC from a physical CD in drive."""
 
-from arver.cd.disc import Disc
+from arver.disc.disc import Disc
 
 
 def main():
