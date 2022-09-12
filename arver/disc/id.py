@@ -1,8 +1,20 @@
 """
-Function for calculating AccurateRip disc IDs.
+Functions for calculating FreeDB and AccurateRip disc identifiers.
+
+All functions return identifiers as hex strings, because they are
+never used in any other form.
 """
 
-def calculate_ids(offsets, leadout):
+import discid
+
+
+def freedb_id(offsets, leadout):
+    """Return FreeDB disc ID as 8-digit hex string."""
+    disc = discid.put(1, len(offsets), leadout, offsets)
+    return disc.freedb_id
+
+
+def accuraterip_ids(offsets, leadout):
     """
     Calculate two AccureteRip disc IDs from CD TOC. Return a pair of
     disc IDs as 8-digit hex strings.

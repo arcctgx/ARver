@@ -7,7 +7,7 @@ import json
 import discid
 import musicbrainzngs
 
-from arver.disc.accuraterip_id import calculate_ids
+from arver.disc.id import freedb_id, accuraterip_ids
 from arver.version import APPNAME, VERSION
 
 URL_BASE = 'http://www.accuraterip.com/accuraterip/'
@@ -20,13 +20,12 @@ def _read_disc_info():
         return None
 
     offsets = [track.offset for track in disc.tracks]
-    accuraterip_ids = calculate_ids(offsets, disc.sectors)
 
     info = {
         'id': {
             'discid': disc.id,
             'freedb': disc.freedb_id,
-            'accuraterip': accuraterip_ids
+            'accuraterip': accuraterip_ids(offsets, disc.sectors)
         },
         'toc': {
             'tracks': len(offsets),
@@ -36,11 +35,6 @@ def _read_disc_info():
     }
 
     return info
-
-
-def _calculate_freedb_id(offsets, leadout):
-    disc = discid.put(1, len(offsets), leadout, offsets)
-    return disc.freedb_id
 
 
 def _get_musicbrainz_disc_info(disc_id):
@@ -53,14 +47,12 @@ def _get_musicbrainz_disc_info(disc_id):
 
     offsets = disc_data['disc']['offset-list']
     leadout = int(disc_data['disc']['sectors'])
-    freedb_id = _calculate_freedb_id(offsets, leadout)
-    accuraterip_ids = calculate_ids(offsets, leadout)
 
     info = {
         'id': {
             'discid': disc_data['disc']['id'],
-            'freedb': freedb_id,
-            'accuraterip': accuraterip_ids
+            'freedb': freedb_id(offsets, leadout),
+            'accuraterip': accuraterip_ids(offsets, leadout)
         },
         'toc': {
             'tracks': len(offsets),
