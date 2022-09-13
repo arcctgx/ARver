@@ -2,7 +2,8 @@
 
 import binascii
 import wave
-from arver.checksum.accuraterip import compute
+
+from arver.checksum import accuraterip
 
 
 def accuraterip_checksums(wav_file, track_no, total_tracks):
@@ -16,7 +17,8 @@ def accuraterip_checksums(wav_file, track_no, total_tracks):
 
     Return a pair of checksums (v1, v2) as unsigned integers.
     """
-    return compute(wav_file, track_no, total_tracks)
+    # pylint: disable=c-extension-no-member
+    return accuraterip.compute(wav_file, track_no, total_tracks)
 
 
 def copy_crc(wav_file):
