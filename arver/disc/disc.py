@@ -7,8 +7,8 @@ import json
 import discid
 import musicbrainzngs
 
+from arver import APPNAME, VERSION, URL
 from arver.disc.id import freedb_id, accuraterip_ids
-from arver import APPNAME, VERSION
 
 URL_BASE = 'http://www.accuraterip.com/accuraterip/'
 
@@ -38,7 +38,7 @@ def _read_disc_info():
 
 
 def _get_musicbrainz_disc_info(disc_id):
-    musicbrainzngs.set_useragent(APPNAME, VERSION)
+    musicbrainzngs.set_useragent(APPNAME, VERSION, URL)
 
     try:
         disc_data = musicbrainzngs.get_releases_by_discid(disc_id)
