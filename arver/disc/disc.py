@@ -8,7 +8,7 @@ import discid
 import musicbrainzngs
 
 from arver.disc.id import freedb_id, accuraterip_ids
-from arver.version import APPNAME, VERSION
+from arver import APPNAME, VERSION
 
 URL_BASE = 'http://www.accuraterip.com/accuraterip/'
 

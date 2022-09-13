@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages, Extension
-from arver.version import APPNAME, VERSION
+from arver import APPNAME, VERSION, URL
 
 setup(
     name = APPNAME,
     version = VERSION,
     description = 'Application for verifiyng ripped WAV files using AccurateRip database.',
     author = 'arcctgx',
-    url = 'https://github.com/arcctgx/ARver',
+    url = URL,
     license = 'GPLv3',
 
     packages = find_packages(),
