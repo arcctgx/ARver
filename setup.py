@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages, Extension
+
 from arver import APPNAME, VERSION, URL
+
 
 setup(
     name = APPNAME,
@@ -13,10 +15,11 @@ setup(
 
     entry_points = {
         'console_scripts': [
+            'arver = arver.arver:main',
             'arver-cdtoc = arver.cdtoc:main',
             'arver-mbtoc = arver.mbtoc:main',
-            'arver-crc = arver.crc:main',
-            'arver-arcrc = arver.ar:main'
+            'arver-copy-crc = arver.crc:main',
+            'arver-accurip-crc = arver.ar:main'
         ],
     },
 
