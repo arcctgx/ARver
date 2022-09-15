@@ -9,8 +9,7 @@ import musicbrainzngs
 
 from arver import APPNAME, VERSION, URL
 from arver.disc.id import freedb_id, accuraterip_ids
-
-URL_BASE = 'http://www.accuraterip.com/accuraterip/'
+from arver.disc.database import Fetcher
 
 
 def _read_disc_info():
@@ -68,11 +67,11 @@ class Disc:
     """Class representing a Compact Disc to verify."""
     def __init__(self, disc_data):
         self._data = disc_data
+        self._ar1 = disc_data['id']['accuraterip'][0]
+        self._ar2 = disc_data['id']['accuraterip'][1]
+        self._freedb = disc_data['id']['freedb']
         self.tracks = disc_data['toc']['tracks']
-        self.ar1 = disc_data['id']['accuraterip'][0]
-        self.ar2 = disc_data['id']['accuraterip'][1]
-        self.freedb = disc_data['id']['freedb']
-        self.responses = []
+        self.responses = None
 
     def __repr__(self):
         return json.dumps(self._data, indent=2)
@@ -93,18 +92,7 @@ class Disc:
             return cls(disc_data)
         return None
 
-    def _dbar_prefix(self):
-        return f'{self.ar1[-1]}/{self.ar1[-2]}/{self.ar1[-3]}/'
-
-    def _dbar_id(self):
-        return f'dBAR-0{self.tracks:02d}-{self.ar1}-{self.ar2}-{self.freedb}'
-
     def get_responses(self):
         """Download AccurateRip responses for specified CD."""
-        url = URL_BASE + self._dbar_prefix() + self._dbar_id()
-        print(url)
-        raise NotImplementedError
-
-
-class Response:
-    """AccurateRip response decoded from binary format."""
+        fetcher = Fetcher(self.tracks, self._ar1, self._ar2, self._freedb)
+        self.responses = fetcher.fetch()
