@@ -37,28 +37,28 @@ class Response:
 
 class Fetcher:
     """Get AccurateRip data for specified disc."""
-    def __init__(self, tracks, ar1, ar2, freedb):
-        self._tracks = tracks
-        self._ar1 = ar1
-        self._ar2 = ar2
-        self._freedb = freedb
+    def __init__(self, num_tracks, ar_id1, ar_id2, freedb_id):
+        self._num_tracks = num_tracks
+        self._ar_id1 = ar_id1
+        self._ar_id2 = ar_id2
+        self._freedb_id = freedb_id
         self._disc_data = bytes()
 
     def _make_url(self):
-        dirs = f'{self._ar1[-1]}/{self._ar1[-2]}/{self._ar1[-3]}/'
-        file_name = f'dBAR-0{self._tracks:02d}-{self._ar1}-{self._ar2}-{self._freedb}.bin'
-        return URL_BASE + dirs + file_name
+        dir_ = f'{self._ar_id1[-1]}/{self._ar_id1[-2]}/{self._ar_id1[-3]}/'
+        file_ = f'dBAR-0{self._num_tracks:02d}-{self._ar_id1}-{self._ar_id2}-{self._freedb_id}.bin'
+        return URL_BASE + dir_ + file_
 
     def _parse_header(self):
         chunk = self._disc_data[:13]
         self._disc_data = self._disc_data[13:]
 
-        num_tracks, ar1, ar2, freedb = struct.unpack('<BLLL', chunk)
-        print(f'{num_tracks}\t{ar1:08x}\t{ar2:08x}\t{freedb:08x}')
+        num_tracks, ar_id1, ar_id2, freedb_id = struct.unpack('<BLLL', chunk)
+        print(f'{num_tracks}\t{ar_id1:08x}\t{ar_id2:08x}\t{freedb_id:08x}')
 
-        if num_tracks != self._tracks or \
-            f'{ar1:08x}' != self._ar1 or f'{ar2:08x}' != self._ar2 or \
-            f'{freedb:08x}' != self._freedb:
+        if num_tracks != self._num_tracks or \
+            f'{ar_id1:08x}' != self._ar_id1 or f'{ar_id2:08x}' != self._ar_id2 or \
+            f'{freedb_id:08x}' != self._freedb_id:
             raise ValueError('Unexpected AccurateRip response header')
 
         return num_tracks
