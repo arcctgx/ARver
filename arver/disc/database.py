@@ -55,11 +55,7 @@ class Fetcher:
         chunk = self.response[:13]
         self.response = self.response[13:]
 
-        num_tracks = chunk[0]
-        ar1 = struct.unpack('<L', chunk[1:5])[0]
-        ar2 = struct.unpack('<L', chunk[5:9])[0]
-        freedb = struct.unpack('<L', chunk[9:13])[0]
-
+        num_tracks, ar1, ar2, freedb = struct.unpack('<BLLL', chunk)
         print(f'{num_tracks}\t{ar1:08x}\t{ar2:08x}\t{freedb:08x}')
 
         if num_tracks != self._tracks or \
@@ -70,12 +66,10 @@ class Fetcher:
         return num_tracks
 
     def _parse_track(self):
-        chunk = self.response[0:9]
+        chunk = self.response[:9]
         self.response = self.response[9:]
 
-        confidence = chunk[0]
-        checksum_v1 = struct.unpack('<L', chunk[1:5])[0]
-        checksum_v2 = struct.unpack('<L', chunk[5:9])[0]
+        confidence, checksum_v1, checksum_v2 = struct.unpack('<BLL', chunk)
         print(f'{confidence}\t{checksum_v1:08x}\t{checksum_v2:08x}')
 
     def _parse_response(self):
