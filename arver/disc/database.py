@@ -42,14 +42,12 @@ class Fetcher:
         self._ar1 = ar1
         self._ar2 = ar2
         self._freedb = freedb
-        self.url = URL_BASE + self._dbar_prefix() + self._dbar_id() + '.bin'
         self.response = bytes()
 
-    def _dbar_prefix(self):
-        return f'{self._ar1[-1]}/{self._ar1[-2]}/{self._ar1[-3]}/'
-
-    def _dbar_id(self):
-        return f'dBAR-0{self._tracks:02d}-{self._ar1}-{self._ar2}-{self._freedb}'
+    def _make_url(self):
+        dirs = f'{self._ar1[-1]}/{self._ar1[-2]}/{self._ar1[-3]}/'
+        file_name = f'dBAR-0{self._tracks:02d}-{self._ar1}-{self._ar2}-{self._freedb}.bin'
+        return URL_BASE + dirs + file_name
 
     def _parse_header(self):
         chunk = self.response[:13]
@@ -91,7 +89,7 @@ class Fetcher:
     def fetch(self):
         """Return a list of Response objects or None on error."""
         try:
-            response = requests.get(self.url, headers={'User-Agent': USER_AGENT_STRING})
+            response = requests.get(self._make_url(), headers={'User-Agent': USER_AGENT_STRING})
             self.response = response.content
             return self._parse_response()
         except requests.HTTPError:
