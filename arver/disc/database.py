@@ -42,7 +42,7 @@ class Fetcher:
         self._ar1 = ar1
         self._ar2 = ar2
         self._freedb = freedb
-        self.response = bytes()
+        self._disc_data = bytes()
 
     def _make_url(self):
         dirs = f'{self._ar1[-1]}/{self._ar1[-2]}/{self._ar1[-3]}/'
@@ -50,8 +50,8 @@ class Fetcher:
         return URL_BASE + dirs + file_name
 
     def _parse_header(self):
-        chunk = self.response[:13]
-        self.response = self.response[13:]
+        chunk = self._disc_data[:13]
+        self._disc_data = self._disc_data[13:]
 
         num_tracks, ar1, ar2, freedb = struct.unpack('<BLLL', chunk)
         print(f'{num_tracks}\t{ar1:08x}\t{ar2:08x}\t{freedb:08x}')
@@ -59,30 +59,30 @@ class Fetcher:
         if num_tracks != self._tracks or \
             f'{ar1:08x}' != self._ar1 or f'{ar2:08x}' != self._ar2 or \
             f'{freedb:08x}' != self._freedb:
-            raise ValueError('Unexpected content of AccurateRip response')
+            raise ValueError('Unexpected AccurateRip response header')
 
         return num_tracks
 
     def _parse_track(self):
-        chunk = self.response[:9]
-        self.response = self.response[9:]
+        chunk = self._disc_data[:9]
+        self._disc_data = self._disc_data[9:]
 
         confidence, checksum_v1, checksum_v2 = struct.unpack('<BLL', chunk)
         print(f'{confidence}\t{checksum_v1:08x}\t{checksum_v2:08x}')
 
-    def _parse_response(self):
-        while len(self.response) > 0:
-            print(len(self.response))
-            print(self.response.hex())
+    def _parse_disc_data(self):
+        while len(self._disc_data) > 0:
+            print(len(self._disc_data))
+            print(self._disc_data.hex())
 
             num_tracks = self._parse_header()
-            print(len(self.response))
-            print(self.response.hex())
+            print(len(self._disc_data))
+            print(self._disc_data.hex())
 
             for _ in range(num_tracks):
                 self._parse_track()
-                print(len(self.response))
-                print(self.response.hex())
+                print(len(self._disc_data))
+                print(self._disc_data.hex())
 
         return []
 
@@ -90,7 +90,7 @@ class Fetcher:
         """Return a list of Response objects or None on error."""
         try:
             response = requests.get(self._make_url(), headers={'User-Agent': USER_AGENT_STRING})
-            self.response = response.content
-            return self._parse_response()
+            self._disc_data = response.content
+            return self._parse_disc_data()
         except requests.HTTPError:
             return None
