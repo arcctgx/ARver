@@ -14,24 +14,42 @@ URL_BASE = 'http://www.accuraterip.com/accuraterip/'
 
 
 @dataclass
+class Header:
+    """AccurateRip response header."""
+    num_tracks: int
+    ar_id1: int
+    ar_id2: int
+    freedb_id: int
+
+    @classmethod
+    def from_bytes(cls, data):
+        """Return Header object created from bytes-like binary data."""
+        unpacked = struct.unpack('<BLLL', data)
+        return cls(*unpacked)
+
+
+@dataclass
 class Track:
     """AccurateRip track data."""
     confidence: int
-    ar1: int
-    ar2: int
+    checksum_v1: int
+    checksum_v2: int
+
+    @classmethod
+    def from_bytes(cls, data):
+        """Return Track object created from bytes-like binary data."""
+        unpacked = struct.unpack('<BLL', data)
+        return cls(*unpacked)
 
 
 @dataclass
 class Response:
     """
-    AccurateRip response decoded from binary format: number of tracks,
-    two AccurateRip disc IDs and FreeDB disc ID followed by list of
-    confidences and two AccurateRip checksums for each track.
+    AccurateRip response decoded from binary format: consists of a Header object
+    (which stores the number of tracks and three types of disc IDs), and a list
+    of Track objects which store two AccurateRip checksums and their confidence.
     """
-    num_tracks: int
-    ar1: int
-    ar2: int
-    freedb: int
+    header: Header
     tracks: List[Track]
 
 
@@ -50,36 +68,36 @@ class Fetcher:
         return URL_BASE + dir_ + file_
 
     def _parse_header(self):
-        chunk = self._disc_data[:13]
+        header = Header.from_bytes(self._disc_data[:13])
         self._disc_data = self._disc_data[13:]
 
-        num_tracks, ar_id1, ar_id2, freedb_id = struct.unpack('<BLLL', chunk)
-        print(f'{num_tracks}\t{ar_id1:08x}\t{ar_id2:08x}\t{freedb_id:08x}')
+        print(header)
 
-        if num_tracks != self._num_tracks or \
-            f'{ar_id1:08x}' != self._ar_id1 or f'{ar_id2:08x}' != self._ar_id2 or \
-            f'{freedb_id:08x}' != self._freedb_id:
+        # TODO this sanity check should be a separate Fetcher method
+        if header.num_tracks != self._num_tracks or \
+            f'{header.ar_id1:08x}' != self._ar_id1 or \
+            f'{header.ar_id2:08x}' != self._ar_id2 or \
+            f'{header.freedb_id:08x}' != self._freedb_id:
             raise ValueError('Unexpected AccurateRip response header')
 
-        return num_tracks
+        return header
 
     def _parse_track(self):
-        chunk = self._disc_data[:9]
+        track = Track.from_bytes(self._disc_data[:9])
         self._disc_data = self._disc_data[9:]
 
-        confidence, checksum_v1, checksum_v2 = struct.unpack('<BLL', chunk)
-        print(f'{confidence}\t{checksum_v1:08x}\t{checksum_v2:08x}')
+        print(track)
 
     def _parse_disc_data(self):
         while len(self._disc_data) > 0:
             print(len(self._disc_data))
             print(self._disc_data.hex())
 
-            num_tracks = self._parse_header()
+            header = self._parse_header()
             print(len(self._disc_data))
             print(self._disc_data.hex())
 
-            for _ in range(num_tracks):
+            for _ in range(header.num_tracks):
                 self._parse_track()
                 print(len(self._disc_data))
                 print(self._disc_data.hex())
