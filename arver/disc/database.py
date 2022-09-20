@@ -98,31 +98,22 @@ class Fetcher:
             f'{header.ar_id2:08x}' == self._ar_id2 and \
             f'{header.freedb_id:08x}' == self._freedb_id
 
-    def _parse_header(self):
-        header = Header.from_bytes(self._disc_data)
-        self._left_shift_data(Header.size)
-        if not self._is_valid_header(header):
-            raise ValueError('Unexpected AccurateRip response header')
-        return header
-
-    def _parse_track(self):
-        track = Track.from_bytes(self._disc_data)
-        self._left_shift_data(Track.size)
-        return track
-
     def _parse_disc_data(self):
         responses = []
 
         while len(self._disc_data) > 0:
-            header = self._parse_header()
+            header = Header.from_bytes(self._disc_data)
+            self._left_shift_data(Header.size)
+
+            if not self._is_valid_header(header):
+                raise ValueError('Unexpected AccurateRip response header')
 
             tracks = []
             for _ in range(header.num_tracks):
-                track = self._parse_track()
-                tracks.append(track)
+                tracks.append(Track.from_bytes(self._disc_data))
+                self._left_shift_data(Track.size)
 
-            response = Response(header, tracks)
-            responses.append(response)
+            responses.append(Response(header, tracks))
 
         return responses
 
