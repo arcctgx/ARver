@@ -29,6 +29,10 @@ class Header:
         unpacked = struct.unpack('<BLLL', header_bytes)
         return cls(*unpacked)
 
+    def __str__(self):
+        full_id = f'0{self.num_tracks:02d}-{self.ar_id1:08x}-{self.ar_id2:08x}-{self.freedb_id:08x}'
+        return f'disc id: {full_id}'
+
 
 @dataclass
 class Track:
@@ -45,6 +49,11 @@ class Track:
         unpacked = struct.unpack('<BLL', track_bytes)
         return cls(*unpacked)
 
+    def __str__(self):
+        ar1 = f'{self.checksum_v1:08x}'
+        ar2 = f'{self.checksum_v2:08x}'
+        return f'v1: {ar1}\tv2: {ar2}\t(confidence: {self.confidence})'
+
 
 @dataclass
 class Response:
@@ -55,6 +64,13 @@ class Response:
     """
     header: Header
     tracks: List[Track]
+
+    def __str__(self):
+        str_ = []
+        str_.append(str(self.header))
+        for num, track in enumerate(self.tracks, start=1):
+            str_.append(f'track {num:2d}:\t{str(track)}')
+        return '\n'.join(str_)
 
 
 class Fetcher:
