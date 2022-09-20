@@ -114,8 +114,11 @@ class Fetcher:
         self._left_shift_data(Track.size)
 
         print(track)
+        return track
 
     def _parse_disc_data(self):
+        responses = []
+
         while len(self._disc_data) > 0:
             print(len(self._disc_data))
             print(self._disc_data.hex())
@@ -124,12 +127,18 @@ class Fetcher:
             print(len(self._disc_data))
             print(self._disc_data.hex())
 
+            tracks = []
             for _ in range(header.num_tracks):
-                self._parse_track()
+                track = self._parse_track()
+                tracks.append(track)
                 print(len(self._disc_data))
                 print(self._disc_data.hex())
 
-        return []
+            response = Response(header, tracks)
+            print(response)
+            responses.append(response)
+
+        return responses
 
     def fetch(self):
         """Return a list of Response objects or None on error."""
