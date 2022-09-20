@@ -2,7 +2,7 @@
 
 import struct
 from dataclasses import dataclass
-from typing import List
+from typing import ClassVar, List
 
 import requests
 
@@ -16,6 +16,7 @@ URL_BASE = 'http://www.accuraterip.com/accuraterip/'
 @dataclass
 class Header:
     """AccurateRip response header."""
+    size: ClassVar[int] = 13
     num_tracks: int
     ar_id1: int
     ar_id2: int
@@ -23,22 +24,25 @@ class Header:
 
     @classmethod
     def from_bytes(cls, data):
-        """Return Header object created from bytes-like binary data."""
-        unpacked = struct.unpack('<BLLL', data)
+        """Create Header object from initial bytes of provided binary data."""
+        header_bytes = data[:Header.size]
+        unpacked = struct.unpack('<BLLL', header_bytes)
         return cls(*unpacked)
 
 
 @dataclass
 class Track:
     """AccurateRip track data."""
+    size: ClassVar[int] = 9
     confidence: int
     checksum_v1: int
     checksum_v2: int
 
     @classmethod
     def from_bytes(cls, data):
-        """Return Track object created from bytes-like binary data."""
-        unpacked = struct.unpack('<BLL', data)
+        """Create Track object from initial bytes of provided binary data."""
+        track_bytes = data[:Track.size]
+        unpacked = struct.unpack('<BLL', track_bytes)
         return cls(*unpacked)
 
 
@@ -68,8 +72,8 @@ class Fetcher:
         return URL_BASE + dir_ + file_
 
     def _parse_header(self):
-        header = Header.from_bytes(self._disc_data[:13])
-        self._disc_data = self._disc_data[13:]
+        header = Header.from_bytes(self._disc_data)
+        self._disc_data = self._disc_data[Header.size:]
 
         print(header)
 
@@ -83,8 +87,8 @@ class Fetcher:
         return header
 
     def _parse_track(self):
-        track = Track.from_bytes(self._disc_data[:9])
-        self._disc_data = self._disc_data[9:]
+        track = Track.from_bytes(self._disc_data)
+        self._disc_data = self._disc_data[Track.size:]
 
         print(track)
 
