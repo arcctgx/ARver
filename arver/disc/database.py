@@ -75,17 +75,20 @@ class Fetcher:
         """Left shift disc data by num_bytes (discard initial bytes)."""
         self._disc_data = self._disc_data[num_bytes:]
 
+    def _is_valid_header(self, header):
+        """Check if AccurateRip response header matches requested disc."""
+        return header.num_tracks == self._num_tracks and \
+            f'{header.ar_id1:08x}' == self._ar_id1 and \
+            f'{header.ar_id2:08x}' == self._ar_id2 and \
+            f'{header.freedb_id:08x}' == self._freedb_id
+
     def _parse_header(self):
         header = Header.from_bytes(self._disc_data)
         self._left_shift_data(Header.size)
 
         print(header)
 
-        # TODO this sanity check should be a separate Fetcher method
-        if header.num_tracks != self._num_tracks or \
-            f'{header.ar_id1:08x}' != self._ar_id1 or \
-            f'{header.ar_id2:08x}' != self._ar_id2 or \
-            f'{header.freedb_id:08x}' != self._freedb_id:
+        if not self._is_valid_header(header):
             raise ValueError('Unexpected AccurateRip response header')
 
         return header
