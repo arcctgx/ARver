@@ -71,9 +71,13 @@ class Fetcher:
         file_ = f'dBAR-0{self._num_tracks:02d}-{self._ar_id1}-{self._ar_id2}-{self._freedb_id}.bin'
         return URL_BASE + dir_ + file_
 
+    def _left_shift_data(self, num_bytes):
+        """Left shift disc data by num_bytes (discard initial bytes)."""
+        self._disc_data = self._disc_data[num_bytes:]
+
     def _parse_header(self):
         header = Header.from_bytes(self._disc_data)
-        self._disc_data = self._disc_data[Header.size:]
+        self._left_shift_data(Header.size)
 
         print(header)
 
@@ -88,7 +92,7 @@ class Fetcher:
 
     def _parse_track(self):
         track = Track.from_bytes(self._disc_data)
-        self._disc_data = self._disc_data[Track.size:]
+        self._left_shift_data(Track.size)
 
         print(track)
 
