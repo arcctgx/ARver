@@ -120,7 +120,9 @@ class Fetcher:
         """Return a list of Response objects or None on error."""
         try:
             response = requests.get(self._make_url(), headers={'User-Agent': USER_AGENT_STRING})
+            response.raise_for_status()
             self._disc_data = response.content
             return self._parse_disc_data()
-        except requests.HTTPError:
+        except (requests.HTTPError, struct.error, ValueError) as error:
+            print(error)
             return None
