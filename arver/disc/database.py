@@ -30,8 +30,7 @@ class Header:
         return cls(*unpacked)
 
     def __str__(self):
-        full_id = f'0{self.num_tracks:02d}-{self.ar_id1:08x}-{self.ar_id2:08x}-{self.freedb_id:08x}'
-        return f'disc id: {full_id}'
+        return f'0{self.num_tracks:02d}-{self.ar_id1:08x}-{self.ar_id2:08x}-{self.freedb_id:08x}'
 
 
 @dataclass
@@ -67,9 +66,9 @@ class Response:
 
     def __str__(self):
         str_ = []
-        str_.append(str(self.header))
+        str_.append(f'disc id: {self.header}')
         for num, track in enumerate(self.tracks, start=1):
-            str_.append(f'track {num:2d}:\t{str(track)}')
+            str_.append(f'track {num:2d}:\t{track}')
         return '\n'.join(str_)
 
 
@@ -106,7 +105,7 @@ class Fetcher:
             self._left_shift_data(Header.size)
 
             if not self._is_valid_header(header):
-                raise ValueError('Unexpected AccurateRip response header')
+                raise ValueError(f'Unexpected AccurateRip response header: {header}')
 
             tracks = []
             for _ in range(header.num_tracks):
