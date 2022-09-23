@@ -15,7 +15,10 @@ URL_BASE = 'http://www.accuraterip.com/accuraterip/'
 
 @dataclass
 class Header:
-    """AccurateRip response header."""
+    """
+    AccurateRip response header. Consists of the number of tracks, two types
+    of AccurateRip disc IDs, and a FreeDB disc ID.
+    """
     size: ClassVar[int] = 13
     num_tracks: int
     ar_id1: int
@@ -24,7 +27,11 @@ class Header:
 
     @classmethod
     def from_bytes(cls, data):
-        """Create Header object from initial bytes of provided binary data."""
+        """
+        Create Header object from the initial bytes of provided binary data. The data
+        is little endian: number of tracks is an unsigned byte, and the three disc IDs
+        are unsigned long integers.
+        """
         header_bytes = data[:Header.size]
         unpacked = struct.unpack('<BLLL', header_bytes)
         return cls(*unpacked)
@@ -35,7 +42,10 @@ class Header:
 
 @dataclass
 class Track:
-    """AccurateRip track data."""
+    """
+    AccurateRip track data. Consists of two AccurateRip checksums and corresponding
+    confidence value.
+    """
     size: ClassVar[int] = 9
     confidence: int
     checksum_v1: int
@@ -43,7 +53,11 @@ class Track:
 
     @classmethod
     def from_bytes(cls, data):
-        """Create Track object from initial bytes of provided binary data."""
+        """
+        Create Track object from the initial bytes of provided binary data. The data is
+        little endian: confidence is an unsigned byte, and the two AccurateRip checksums
+        are unsigned long integers.
+        """
         track_bytes = data[:Track.size]
         unpacked = struct.unpack('<BLL', track_bytes)
         return cls(*unpacked)
@@ -58,8 +72,8 @@ class Track:
 class Response:
     """
     AccurateRip response decoded from binary format: consists of a Header object
-    (which stores the number of tracks and three types of disc IDs), and a list
-    of Track objects which store two AccurateRip checksums and their confidence.
+    which stores the number of tracks and three types of disc IDs, and a list of
+    Track objects which store two AccurateRip checksums and their confidence.
     """
     header: Header
     tracks: List[Track]
@@ -73,7 +87,10 @@ class Response:
 
 
 class Fetcher:
-    """Get AccurateRip data for specified disc."""
+    """
+    Class for fetching AccurateRip data of a Compact Disc, parsing the
+    binary data and representing AccurateRip responses in a usable form.
+    """
     def __init__(self, num_tracks, ar_id1, ar_id2, freedb_id):
         self._num_tracks = num_tracks
         self._ar_id1 = ar_id1
@@ -82,6 +99,7 @@ class Fetcher:
         self._disc_data = bytes()
 
     def _make_url(self):
+        """Build URL to fetch AccurateRip disc data from."""
         dir_ = f'{self._ar_id1[-1]}/{self._ar_id1[-2]}/{self._ar_id1[-3]}/'
         file_ = f'dBAR-0{self._num_tracks:02d}-{self._ar_id1}-{self._ar_id2}-{self._freedb_id}.bin'
         return URL_BASE + dir_ + file_
@@ -98,6 +116,50 @@ class Fetcher:
             f'{header.freedb_id:08x}' == self._freedb_id
 
     def _parse_disc_data(self):
+        """
+        Parse AccurateRip binary disc data. The data consists of one or more
+        Responses. Each Response consists of a Header and one or more Tracks:
+
+        disc_data
+        |
+        |-- Response1
+        |   |-- Header
+        |   |-- Track1
+        |   |-- Track2
+        |   ...
+        |   `-- TrackN
+        ...
+        |
+        `-- ResponseN
+            |-- Header
+            |-- Track1
+            |-- Track2
+            ...
+            `-- TrackN
+
+        All Headers in disc data are expected to be the same, and must match
+        the number of tracks and the three disc IDs stored in Fetcher instance.
+        This means the number of tracks must also be the same in each Response.
+
+        Disc data is stored in Fetcher instance as an array of bytes, and is
+        parsed in the following way:
+
+        1. Read Header.size bytes from disc data and create a Header object.
+        2. Shift disc data left by Header.size bytes (discard parsed header bytes).
+        3. Verify that created Header matches disc data in Fetcher instance (abort if it doesn't).
+        4. Read the number of tracks from Header. For each track:
+            - read Track.size bytes from disc data and create a Track object,
+            - shift disc data left by Track.size bytes (discard parsed track bytes).
+        5. Create a Response object from the Header and the list of Tracks.
+        6. If the size of remaining disc data is greater than zero, repeat steps 1-5.
+        7. Return the list of created Response objects.
+
+        Two exceptions can be raised: ValueError when Header data doesn't match
+        the disc info in Fetcher instance, and a struct.error when the binary
+        disc data cannot be unpacked. Both indicate that disc data acquired from
+        AccurateRip is corrupted, and in such case all Responses are discarded
+        (they cannot be trusted, even if some of them were successfully parsed).
+        """
         responses = []
 
         while len(self._disc_data) > 0:
@@ -117,7 +179,10 @@ class Fetcher:
         return responses
 
     def fetch(self):
-        """Return a list of Response objects or None on error."""
+        """
+        Fetch binary disc data from AccurateRip database. Convert the data to a
+        list of Response objects and return it, or return None in case of error.
+        """
         try:
             response = requests.get(self._make_url(), headers={'User-Agent': USER_AGENT_STRING})
             response.raise_for_status()

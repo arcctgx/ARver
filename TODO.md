@@ -7,8 +7,8 @@
 - [x] calculate FreeDB CD indentifier
 - [x] calculate AccurateRip CD identifiers
 - [x] calculate AccurateRip checksums of ripped files (WAV and FLAC)
-- [ ] fetch AccurateRip results from database
-- [ ] parse AccurateRip binary data format
+- [x] fetch AccurateRip results from database
+- [x] parse AccurateRip binary data format
 - [ ] compare database checksums with file checksums
 - [ ] README.md (with acknowledgements)
 - [ ] proper Python package
