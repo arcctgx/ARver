@@ -108,12 +108,13 @@ class Fetcher:
         """Left shift disc data by num_bytes (discard initial bytes)."""
         self._disc_data = self._disc_data[num_bytes:]
 
-    def _is_valid_header(self, header):
+    def _validate_header(self, header):
         """Check if AccurateRip response header matches requested disc."""
-        return header.num_tracks == self._num_tracks and \
-            f'{header.ar_id1:08x}' == self._ar_id1 and \
-            f'{header.ar_id2:08x}' == self._ar_id2 and \
-            f'{header.freedb_id:08x}' == self._freedb_id
+        if header.num_tracks != self._num_tracks or \
+            f'{header.ar_id1:08x}' != self._ar_id1 or \
+            f'{header.ar_id2:08x}' != self._ar_id2 or \
+            f'{header.freedb_id:08x}' != self._freedb_id:
+            raise ValueError(f'Unexpected AccurateRip response header: {header}')
 
     def _parse_disc_data(self):
         """
@@ -145,8 +146,8 @@ class Fetcher:
         parsed in the following way:
 
         1. Read Header.size bytes from disc data and create a Header object.
-        2. Shift disc data left by Header.size bytes (discard parsed header bytes).
-        3. Verify that created Header matches disc data in Fetcher instance (abort if it doesn't).
+        2. Verify that created Header matches disc data in Fetcher instance (abort if it doesn't).
+        3. Shift disc data left by Header.size bytes (discard parsed header bytes).
         4. Read the number of tracks from Header. For each track:
             - read Track.size bytes from disc data and create a Track object,
             - shift disc data left by Track.size bytes (discard parsed track bytes).
@@ -164,10 +165,8 @@ class Fetcher:
 
         while len(self._disc_data) > 0:
             header = Header.from_bytes(self._disc_data)
+            self._validate_header(header)
             self._shift_data(Header.size)
-
-            if not self._is_valid_header(header):
-                raise ValueError(f'Unexpected AccurateRip response header: {header}')
 
             tracks = []
             for _ in range(header.num_tracks):
