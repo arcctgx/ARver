@@ -15,9 +15,7 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'arver = arver.arver:main',
-            'arver-cdtoc = arver.cdtoc:main',
-            'arver-mbtoc = arver.mbtoc:main',
+            'arver-discinfo = arver.discinfo:main',
             'arver-copy-crc = arver.crc:main',
             'arver-accurip-crc = arver.ar:main'
         ],
