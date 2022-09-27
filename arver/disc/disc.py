@@ -96,3 +96,16 @@ class Disc:
         """Download AccurateRip responses for specified CD."""
         fetcher = Fetcher(self.tracks, self._ar1, self._ar2, self._freedb)
         self.responses = fetcher.fetch()
+
+    def format_responses(self):
+        """Print AccurateRip responses in human-readable format."""
+        if self.responses is None:
+            raise ValueError('No AccurateRip responses available!')
+
+        str_ = ''
+        for num, response in enumerate(self.responses, start=1):
+            str_ += f'AccurateRip response {num}:\n'
+            str_ += str(response)
+            str_ += '\n\n'
+
+        return str_.strip()
