@@ -65,13 +65,13 @@ def _get_musicbrainz_disc_info(disc_id):
 
 class Disc:
     """Class representing a Compact Disc to verify."""
-    def __init__(self, disc_data):
-        self._data = disc_data
-        self._ar1 = disc_data['id']['accuraterip'][0]
-        self._ar2 = disc_data['id']['accuraterip'][1]
-        self._freedb = disc_data['id']['freedb']
-        self.tracks = disc_data['toc']['tracks']
-        self.responses = None
+    def __init__(self, disc_info):
+        self._data = disc_info
+        self._ar1 = disc_info['id']['accuraterip'][0]
+        self._ar2 = disc_info['id']['accuraterip'][1]
+        self._freedb = disc_info['id']['freedb']
+        self.tracks = disc_info['toc']['tracks']
+        self.disc_data = None
 
     def __repr__(self):
         return json.dumps(self._data, indent=2)
@@ -92,20 +92,7 @@ class Disc:
             return cls(disc_data)
         return None
 
-    def get_responses(self):
-        """Download AccurateRip responses for specified CD."""
+    def fetch_disc_data(self):
+        """Download AccurateRip disc data for a specified Compact Disc."""
         fetcher = Fetcher(self.tracks, self._ar1, self._ar2, self._freedb)
-        self.responses = fetcher.fetch()
-
-    def format_responses(self):
-        """Print AccurateRip responses in human-readable format."""
-        if self.responses is None:
-            raise ValueError('No AccurateRip responses available!')
-
-        str_ = ''
-        for num, response in enumerate(self.responses, start=1):
-            str_ += f'AccurateRip response {num}:\n'
-            str_ += str(response)
-            str_ += '\n\n'
-
-        return str_.strip()
+        self.disc_data = fetcher.fetch()

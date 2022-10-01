@@ -41,10 +41,10 @@ def main():
     print(disc)
     print()
 
-    try:
-        disc.get_responses()
-        print(disc.format_responses())
-    except ValueError:
+    disc.fetch_disc_data()
+    if disc.disc_data is not None:
+        print(disc.disc_data)
+    else:
         print('Failed to download AccurateRip data, exiting.')
         sys.exit(2)
 

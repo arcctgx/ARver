@@ -86,6 +86,24 @@ class Response:
         return '\n'.join(str_)
 
 
+@dataclass
+class DiscData:
+    """
+    A collection of all Response objects received from AccurateRip database
+    for requested disc.
+    """
+    responses: List[Response]
+
+    def __str__(self):
+        str_ = ''
+        for num, response in enumerate(self.responses, start=1):
+            str_ += f'AccurateRip response {num}:\n'
+            str_ += str(response)
+            str_ += '\n\n'
+
+        return str_.strip()
+
+
 class Fetcher:
     """
     Class for fetching AccurateRip data of a Compact Disc, parsing the
@@ -153,7 +171,7 @@ class Fetcher:
             - shift disc data left by Track.size bytes (discard parsed track bytes).
         5. Create a Response object from the Header and the list of Tracks.
         6. If the size of remaining disc data is greater than zero, repeat steps 1-5.
-        7. Return the list of created Response objects.
+        7. Return DiscData object created from the list of Responses.
 
         Two exceptions can be raised: ValueError when Header data doesn't match
         the disc info in Fetcher instance, and a struct.error when the binary
@@ -175,12 +193,12 @@ class Fetcher:
 
             responses.append(Response(header, tracks))
 
-        return responses
+        return DiscData(responses)
 
     def fetch(self):
         """
-        Fetch binary disc data from AccurateRip database. Convert the data to a
-        list of Response objects and return it, or return None in case of error.
+        Fetch binary disc data from AccurateRip database. Return a DiscData
+        object, or None on error.
         """
         try:
             response = requests.get(self._make_url(), headers={'User-Agent': USER_AGENT_STRING})
