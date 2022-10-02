@@ -73,6 +73,13 @@ class Disc:
         self.tracks = disc_info['toc']['tracks']
         self.disc_data = None
 
+    def __str__(self):
+        str_ = ''
+        str_ += f'AccurateRip disc ID: 0{self.tracks:02d}-{self._ar1}-{self._ar2}-{self._freedb}\n'
+        str_ += f'MusicBrainz disc ID: {self._data["id"]["discid"]}\n'
+        str_ += f'tracks: {self.tracks}'
+        return str_
+
     def __repr__(self):
         return json.dumps(self._data, indent=2)
 

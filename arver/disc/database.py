@@ -81,7 +81,7 @@ class Response:
 
     def __str__(self):
         str_ = []
-        str_.append(f'disc id: {self.header}')
+        str_.append(f'disc ID: {self.header}')
         for num, track in enumerate(self.tracks, start=1):
             str_.append(f'track {num:2d}:\t{track}')
         return '\n'.join(str_)
