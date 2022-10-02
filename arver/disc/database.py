@@ -1,5 +1,6 @@
 """Utilities for communicating with AccurateRip database."""
 
+import json
 import struct
 from dataclasses import dataclass
 from typing import ClassVar, List
@@ -102,6 +103,70 @@ class DiscData:
             str_ += '\n\n'
 
         return str_.strip()
+
+    def __repr__(self):
+        return json.dumps(self.make_dict(), indent=2)
+
+    def make_dict(self):
+        """
+        Convert DiscData object to a dictionary for easy lookup of checksums during
+        file verification. The conversion is "lossy": AccurateRip checksums equal to
+        zero and with zero confidence are omitted.
+
+        Resulting dictionary has the following structure:
+
+        {
+            "1": {
+                "checksum_1": {
+                    "confidence": X,
+                    "version": Y,
+                    "response": Z
+                },
+                "checksum_2": {
+                    ...
+                },
+                ...
+            },
+            "2": {
+                ...
+            },
+            ...
+        }
+
+        Conversion assumes that checksums other than zero are unique in scope of
+        one track. If this is not the casse, lower confidence value from later
+        response may overwrite higher confidence value from earlier response.
+        """
+        data = {}
+
+        num_responses = len(self.responses)
+        num_tracks = self.responses[0].header.num_tracks
+
+        for trk in range(num_tracks):
+            index = trk + 1
+            data[index] = {}
+
+            for rsp in range(num_responses):
+                track = self.responses[rsp].tracks[trk]
+
+                if track.confidence == 0:
+                    continue
+
+                if track.checksum_v1 != 0:
+                    data[index][track.checksum_v1] = {
+                        'confidence': track.confidence,
+                        'version': 1,
+                        'response': rsp + 1,
+                    }
+
+                if track.checksum_v2 != 0:
+                    data[index][track.checksum_v2] = {
+                        'confidence': track.confidence,
+                        'version': 2,
+                        'response': rsp + 1
+                    }
+
+        return data
 
 
 class Fetcher:
