@@ -42,11 +42,11 @@ def main():
     print()
 
     disc.fetch_disc_data()
-    if disc.disc_data is not None:
-        print(disc.disc_data)
-    else:
+    if disc.disc_data is None:
         print('Failed to download AccurateRip data, exiting.')
         sys.exit(2)
+
+    print(disc.disc_data)
 
 
 if __name__ == '__main__':
