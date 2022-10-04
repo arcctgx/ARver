@@ -46,6 +46,9 @@ def main():
         print('Failed to download AccurateRip data, exiting.')
         sys.exit(2)
 
+    n_resp = len(disc.disc_data)
+    plural = 's' if n_resp > 1 else ''
+    print(f'Received {n_resp} AccurateRip response{plural}:\n')
     print(disc.disc_data)
 
 

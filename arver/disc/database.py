@@ -107,6 +107,9 @@ class DiscData:
     def __repr__(self):
         return json.dumps(self.make_dict(), indent=2)
 
+    def __len__(self):
+        return len(self.responses)
+
     def make_dict(self):
         """
         Convert DiscData object to a dictionary for easy lookup of checksums during
