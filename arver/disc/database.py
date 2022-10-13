@@ -182,7 +182,7 @@ class Fetcher:
         self._ar_id1 = ar_id1
         self._ar_id2 = ar_id2
         self._freedb_id = freedb_id
-        self._disc_data = bytes()
+        self._raw_bytes = bytes()
 
     def _make_url(self):
         """Build URL to fetch AccurateRip disc data from."""
@@ -190,9 +190,9 @@ class Fetcher:
         file_ = f'dBAR-0{self._num_tracks:02d}-{self._ar_id1}-{self._ar_id2}-{self._freedb_id}.bin'
         return URL_BASE + dir_ + file_
 
-    def _shift_data(self, num_bytes):
-        """Left shift disc data by num_bytes (discard initial bytes)."""
-        self._disc_data = self._disc_data[num_bytes:]
+    def _shift_bytes(self, num_bytes):
+        """Left shift raw disc data by num_bytes (discard initial bytes)."""
+        self._raw_bytes = self._raw_bytes[num_bytes:]
 
     def _validate_header(self, header):
         """Check if AccurateRip response header matches requested disc."""
@@ -202,7 +202,7 @@ class Fetcher:
             f'{header.freedb_id:08x}' != self._freedb_id:
             raise ValueError(f'Unexpected AccurateRip response header: {header}')
 
-    def _parse_disc_data(self):
+    def _parse_raw_bytes(self):
         """
         Parse AccurateRip binary disc data. The data consists of one or more
         Responses. Each Response consists of a Header and one or more Tracks:
@@ -249,15 +249,15 @@ class Fetcher:
         """
         responses = []
 
-        while len(self._disc_data) > 0:
-            header = Header.from_bytes(self._disc_data)
+        while len(self._raw_bytes) > 0:
+            header = Header.from_bytes(self._raw_bytes)
             self._validate_header(header)
-            self._shift_data(Header.size)
+            self._shift_bytes(Header.size)
 
             tracks = []
             for _ in range(header.num_tracks):
-                tracks.append(Track.from_bytes(self._disc_data))
-                self._shift_data(Track.size)
+                tracks.append(Track.from_bytes(self._raw_bytes))
+                self._shift_bytes(Track.size)
 
             responses.append(Response(header, tracks))
 
@@ -271,8 +271,8 @@ class Fetcher:
         try:
             response = requests.get(self._make_url(), headers={'User-Agent': USER_AGENT_STRING})
             response.raise_for_status()
-            self._disc_data = response.content
-            return self._parse_disc_data()
+            self._raw_bytes = response.content
+            return self._parse_raw_bytes()
         except (requests.HTTPError, struct.error, ValueError) as error:
             print(error)
             return None

@@ -1,5 +1,5 @@
 """
-AccurateRip Disc.
+Representation of a Compact Disc for verification using AccurateRip database.
 """
 
 import json
@@ -53,7 +53,7 @@ def _read_disc_info():
     leadout = disc.sectors
     htoa = _get_htoa(offsets)
 
-    info = {
+    disc_info = {
         'id': {
             'discid': disc.id,
             'freedb': disc.freedb_id,
@@ -68,24 +68,24 @@ def _read_disc_info():
         }
     }
 
-    return info
+    return disc_info
 
 
 def _get_musicbrainz_disc_info(disc_id):
     musicbrainzngs.set_useragent(APPNAME, VERSION, URL)
 
     try:
-        disc_data = musicbrainzngs.get_releases_by_discid(disc_id)
+        response = musicbrainzngs.get_releases_by_discid(disc_id)
     except musicbrainzngs.ResponseError:
         return None
 
-    offsets = disc_data['disc']['offset-list']
-    leadout = int(disc_data['disc']['sectors'])
+    offsets = response['disc']['offset-list']
+    leadout = int(response['disc']['sectors'])
     htoa = _get_htoa(offsets)
 
-    info = {
+    disc_info = {
         'id': {
-            'discid': disc_data['disc']['id'],
+            'discid': response['disc']['id'],
             'freedb': freedb_id(offsets, leadout),
             'accuraterip': accuraterip_ids(offsets, leadout)
         },
@@ -98,13 +98,13 @@ def _get_musicbrainz_disc_info(disc_id):
         }
     }
 
-    return info
+    return disc_info
 
 
 class Disc:
     """Class representing a Compact Disc to verify."""
     def __init__(self, disc_info):
-        self._data = disc_info
+        self._disc_info = disc_info
         self._ar1 = disc_info['id']['accuraterip'][0]
         self._ar2 = disc_info['id']['accuraterip'][1]
         self._freedb = disc_info['id']['freedb']
@@ -116,11 +116,11 @@ class Disc:
         str_ += 'track     length     frames\n'
         str_ += '-----    --------    ------\n'
 
-        htoa = self._data['toc']['htoa']
+        htoa = self._disc_info['toc']['htoa']
         if htoa is not None:
             str_ += f' HTOA    {htoa["msf"]:>8s}    {htoa["frames"]:>6d}\n'
 
-        for num, trk in enumerate(self._data['toc']['track-lengths'], start=1):
+        for num, trk in enumerate(self._disc_info['toc']['track-lengths'], start=1):
             str_ += f'{num:>5d}    {trk["msf"]:>8s}    {trk["frames"]:>6d}\n'
 
         return str_.strip()
@@ -128,27 +128,27 @@ class Disc:
     def __str__(self):
         str_ = ''
         str_ += f'AccurateRip disc ID: 0{self.tracks:02d}-{self._ar1}-{self._ar2}-{self._freedb}\n'
-        str_ += f'MusicBrainz disc ID: {self._data["id"]["discid"]}\n'
+        str_ += f'MusicBrainz disc ID: {self._disc_info["id"]["discid"]}\n'
         str_ += '\n' + self._format_tracklist()
         return str_
 
     def __repr__(self):
-        return json.dumps(self._data, indent=2)
+        return json.dumps(self._disc_info, indent=2)
 
     @classmethod
     def from_cd(cls):
         """Return Disc instance based on CD in drive, or None on error."""
-        disc_data = _read_disc_info()
-        if disc_data:
-            return cls(disc_data)
+        disc_info = _read_disc_info()
+        if disc_info:
+            return cls(disc_info)
         return None
 
     @classmethod
     def from_disc_id(cls, disc_id):
         """Return Disc instance corresponding to MusicBrainz disc ID, or None on error."""
-        disc_data = _get_musicbrainz_disc_info(disc_id)
-        if disc_data:
-            return cls(disc_data)
+        disc_info = _get_musicbrainz_disc_info(disc_id)
+        if disc_info:
+            return cls(disc_info)
         return None
 
     def fetch_disc_data(self):
