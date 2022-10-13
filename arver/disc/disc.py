@@ -53,7 +53,7 @@ def _read_disc_info():
     leadout = disc.sectors
     htoa = _get_htoa(offsets)
 
-    disc_info = {
+    return {
         'id': {
             'discid': disc.id,
             'freedb': disc.freedb_id,
@@ -68,8 +68,6 @@ def _read_disc_info():
         }
     }
 
-    return disc_info
-
 
 def _get_musicbrainz_disc_info(disc_id):
     musicbrainzngs.set_useragent(APPNAME, VERSION, URL)
@@ -83,7 +81,7 @@ def _get_musicbrainz_disc_info(disc_id):
     leadout = int(response['disc']['sectors'])
     htoa = _get_htoa(offsets)
 
-    disc_info = {
+    return {
         'id': {
             'discid': response['disc']['id'],
             'freedb': freedb_id(offsets, leadout),
@@ -97,8 +95,6 @@ def _get_musicbrainz_disc_info(disc_id):
             'track-lengths': _calculate_track_lengths(offsets, leadout)
         }
     }
-
-    return disc_info
 
 
 class Disc:
@@ -139,7 +135,7 @@ class Disc:
     def from_cd(cls):
         """Return Disc instance based on CD in drive, or None on error."""
         disc_info = _read_disc_info()
-        if disc_info:
+        if disc_info is not None:
             return cls(disc_info)
         return None
 
@@ -147,7 +143,7 @@ class Disc:
     def from_disc_id(cls, disc_id):
         """Return Disc instance corresponding to MusicBrainz disc ID, or None on error."""
         disc_info = _get_musicbrainz_disc_info(disc_id)
-        if disc_info:
+        if disc_info is not None:
             return cls(disc_info)
         return None
 
