@@ -15,9 +15,11 @@
 
 ## Nice to have (in no particular order)
 
-- [x] calculate "copy CRC" of ripped WAV file
-- [ ] calculate "copy CRC" of ripped FLAC file
+- [ ] data track handling with `pycdio`
+- [ ] show copy CRC of ripped files in results
+- [ ] FLAC support
 - [ ] warn if lengths of ripped tracks don't match CD TOC
 - [ ] create log file with results
 - [ ] get DiscID from MusicBrainz by artist + release title search
+- [ ] offset detection
 - [ ] write-up of all I learned about CDs and AccurateRip
