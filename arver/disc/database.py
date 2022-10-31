@@ -45,12 +45,14 @@ class Header:
 class Track:
     """
     AccurateRip track data. Consists of two AccurateRip checksums and corresponding
-    confidence value.
+    confidence value. The first checksum is either v1 or v2 track checksum (database
+    does not indicate which one). The other one is the checksum of frame 450 used for
+    offset detection.
     """
     size: ClassVar[int] = 9
     confidence: int
-    checksum_v1: int
-    checksum_v2: int
+    checksum: int
+    checksum_450: int
 
     @classmethod
     def from_bytes(cls, data):
@@ -64,9 +66,7 @@ class Track:
         return cls(*unpacked)
 
     def __str__(self):
-        ar1 = f'{self.checksum_v1:08x}'
-        ar2 = f'{self.checksum_v2:08x}'
-        return f'v1: {ar1}\tv2: {ar2}\t(confidence: {self.confidence})'
+        return f'{self.checksum:08x}   (confidence: {self.confidence})'
 
 
 @dataclass
@@ -83,7 +83,7 @@ class Response:
         str_ = []
         str_.append(f'disc ID: {self.header}')
         for num, track in enumerate(self.tracks, start=1):
-            str_.append(f'track {num:2d}:\t{track}')
+            str_.append(f'track {num:2d}:   {track}')
         return '\n'.join(str_)
 
 
@@ -122,8 +122,7 @@ class DiscData:
             "1": {
                 "checksum_1": {
                     "confidence": X,
-                    "version": Y,
-                    "response": Z
+                    "response": Y
                 },
                 "checksum_2": {
                     ...
@@ -155,18 +154,10 @@ class DiscData:
                 if track.confidence == 0:
                     continue
 
-                if track.checksum_v1 != 0:
-                    data[index][track.checksum_v1] = {
+                if track.checksum != 0:
+                    data[index][track.checksum] = {
                         'confidence': track.confidence,
-                        'version': 1,
                         'response': rsp + 1,
-                    }
-
-                if track.checksum_v2 != 0:
-                    data[index][track.checksum_v2] = {
-                        'confidence': track.confidence,
-                        'version': 2,
-                        'response': rsp + 1
                     }
 
         return data
