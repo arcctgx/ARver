@@ -7,6 +7,8 @@ never used in any other form.
 
 import discid
 
+from arver.disc.utils import LEAD_IN_FRAMES
+
 
 def freedb_id(offsets, leadout):
     """Return FreeDB disc ID as 8-digit hex string."""
@@ -19,15 +21,14 @@ def accuraterip_ids(offsets, leadout):
     Calculate two AccureteRip disc IDs from CD TOC. Return a pair of
     disc IDs as 8-digit hex strings.
 
-    The calculation is based on LBA offsets: lead-in is not taken into
+    The calculation is based on LBA offsets: lead in is not taken into
     account. The TOC passed as argument is not based on LBA, so it must
-    be adjusted by subtracting 150 sectors from all offsets.
+    be adjusted by subtracting lead in sectors from all offsets.
 
     TODO make sure CDs with data tracks are handled correctly.
     """
-    shift = 150
-    lba_offsets = [offset - shift for offset in offsets]
-    lba_leadout = leadout - shift
+    lba_offsets = [offset - LEAD_IN_FRAMES for offset in offsets]
+    lba_leadout = leadout - LEAD_IN_FRAMES
 
     id1 = 0
     id2 = 0

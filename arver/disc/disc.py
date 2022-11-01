@@ -10,23 +10,13 @@ import musicbrainzngs
 from arver import APPNAME, VERSION, URL
 from arver.disc.id import freedb_id, accuraterip_ids
 from arver.disc.database import Fetcher
-
-
-LEAD_IN_FRAMES = 150
-FRAMES_PER_SECOND = 75
-
-
-def _frames_to_msf(frames):
-    min_ = frames // FRAMES_PER_SECOND // 60
-    sec = frames // FRAMES_PER_SECOND % 60
-    frm = frames % FRAMES_PER_SECOND
-    return f'{min_}:{sec:02d}.{frm:02d}'
+from arver.disc.utils import frames_to_msf, LEAD_IN_FRAMES
 
 
 def _calculate_track_lengths(offsets, leadout):
     shifted = offsets[1:] + [leadout]
     frames = [shf - off for shf, off in zip(shifted, offsets)]
-    msf = [_frames_to_msf(frm) for frm in frames]
+    msf = [frames_to_msf(frm) for frm in frames]
     return [{'frames': frm, 'msf': msf} for frm, msf in zip(frames, msf)]
 
 
@@ -37,7 +27,7 @@ def _get_htoa(offsets):
     if htoa_frames > 0:
         htoa = {
             'frames': htoa_frames,
-            'msf': _frames_to_msf(htoa_frames)
+            'msf': frames_to_msf(htoa_frames)
         }
 
     return htoa
