@@ -1,91 +1,136 @@
-"""Rip module for ARver."""
+"""Representation of a set of ripped CDDA files."""
 
 import os
 import wave
 
-from arver.checksum.checksum import copy_crc
+from dataclasses import dataclass
+
+from arver.checksum.checksum import copy_crc, accuraterip_checksums
+from arver.disc.utils import FRAMES_PER_SECOND, frames_to_msf
 
 
 CHANNELS = 2
 BYTES_PER_SAMPLE = 2
 SAMPLES_PER_SECOND = 44100
-SAMPLES_PER_SECTOR = 588
+SAMPLES_PER_FRAME = SAMPLES_PER_SECOND // FRAMES_PER_SECOND
 
 
-def _is_cd_rip(path):
-    """
-    Determine if specified WAV file has been ripped from a CD.
+@dataclass
+class WavProperties:
+    """Basic properties of a WAV file."""
+    channels: int
+    byte_width: int
+    sample_rate: int
+    samples: int
 
-    WAV files ripped from a CD are 16-bit LPCM stereo with 44.1 kHz frequency.
-    Python wave module doesn't provide means to determine if the file is LPCM
-    or anything else, so the function doesn't check that.
-    """
-    try:
-        with wave.open(path) as wav:
-            params = wav.getparams()
-            return params.nchannels == CHANNELS and \
-                   params.sampwidth == BYTES_PER_SAMPLE and \
-                   params.framerate == SAMPLES_PER_SECOND
-    except (OSError, wave.Error):
-        return False
+    @classmethod
+    def from_file(cls, path):
+        """Read audio properties from a WAV file. Returns None on error."""
+        try:
+            with wave.open(path) as wav:
+                params = wav.getparams()
+                frames = wav.getnframes()
+                return cls(params.nchannels, params.sampwidth, params.framerate, frames)
+        except (OSError, wave.Error):
+            return None
 
+    def is_cdda(self):
+        """
+        Determine if specified WAV file has been ripped from a CD.
 
-def _get_track_sectors(path):
-    """Return track length as integer CD sectors or -1 on error."""
-    try:
-        with wave.open(path) as wav:
-            return wav.getnframes() // SAMPLES_PER_SECTOR
-    except (OSError, wave.Error):
-        return -1
+        WAV files ripped from a CD are 16-bit LPCM stereo with 44.1 kHz frequency.
+        Python wave module doesn't provide means to determine if the file is LPCM
+        or anything else, so the method doesn't check that.
 
-
-def _get_track_length(path):
-    """Return track length as string in mm:ss.ss format or None on error."""
-    try:
-        with wave.open(path) as wav:
-            total_seconds = wav.getnframes() / SAMPLES_PER_SECOND
-            minutes = int(total_seconds / 60)
-            seconds = total_seconds % 60
-            return f'{minutes:02d}:{seconds:05.2f}'
-    except (OSError, wave.Error):
-        return None
+        If WAV file is ripped from a CD, its number of samples must be evenly
+        divisible by the number of samples per CD frame.
+        """
+        return self.channels == CHANNELS and \
+            self.byte_width == BYTES_PER_SAMPLE and \
+            self.sample_rate == SAMPLES_PER_SECOND and \
+            self.samples % SAMPLES_PER_FRAME == 0
 
 
-class _WavFile:
-    """Class to represent a WAV file ripped from CD."""
+def _shorten_path(path, max_length=30):
+    """Shorten long path to an abbreviated file name of specified maximum length."""
+    name = os.path.basename(path)
+    if len(name) <= max_length:
+        return name
+
+    midpoint = max_length // 2
+    return name[:midpoint-1] + '~' + name[-midpoint:]
+
+
+# pylint: disable=too-many-instance-attributes
+class WavFile:
+    """WAV file to be verified against AccurateRip checksum."""
     def __init__(self, path):
         self._path = path
-        self._file_name = os.path.basename(path)
-        self._is_rip = _is_cd_rip(path)
-        self._sectors = _get_track_sectors(path)
-        self._length = _get_track_length(path)
-        self._crc = copy_crc(path)
+        self._short_name = _shorten_path(path)
 
-    def __repr__(self):
-        return f'{self._file_name}\t{self._is_rip}\t' + \
-               f'{self._sectors:6d}\t{self._length}\t{self._crc:08x}'
+        self._properties = WavProperties.from_file(path)
+        self._is_cdda = 'yes' if self._properties.is_cdda() else 'no'
+        self._frames = self._properties.samples // SAMPLES_PER_FRAME
+        self._length = frames_to_msf(self._frames)
 
+        self._ar1 = 0x0
+        self._ar2 = 0x0
+        self._crc = 0x0
 
-def _filter_htoa(paths):
-    """TODO"""
-    return paths
+    def __str__(self):
+        return f'{self._short_name:<30s}    {self._is_cdda:>4s}    ' + \
+               f'{self._length:>8s}    {self._frames:>6d}    ' + \
+               f'{self._crc:08x}    {self._ar1:08x}    {self._ar2:08x}'
+
+    def set_copy_crc(self):
+        """Calculate and set copy CRC."""
+        self._crc = copy_crc(self._path)
+
+    def set_accuraterip_checksums(self, track_no, total_tracks):
+        """Calculate and set both types of AccurateRip checksums."""
+        self._ar1, self._ar2 = accuraterip_checksums(self._path, track_no, total_tracks)
 
 
 class Rip:
     """This class represents a set of ripped WAV files to be verified."""
     def __init__(self, paths):
         if not paths:
-            raise ValueError
+            raise ValueError('No files given!')
+
+        self._paths = paths
+        self._discard_htoa()
 
         self.tracks = []
-        for path in _filter_htoa(paths):
-            self.tracks.append(_WavFile(path))
+        for path in self._paths:
+            self.tracks.append(WavFile(path))
 
-    def __repr__(self):
-        str_ = []
+    def _discard_htoa(self):
+        """Discard paths where file names match commonly used HTOA naming patterns."""
+        htoa_patterns = ['track00.cdda.wav']
+        self._paths = [path for path in self._paths if os.path.basename(path) not in htoa_patterns]
+
+    def __str__(self):
+        header = f'{"file name":^30s}    ' + \
+            f'{"CDDA":^4s}    {"length":^8s}    {"frames":^6s}    ' + \
+            f'{"CRC":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'
+
+        underline = f'{30*"-"}    {4*"-"}    {8*"-"}    {6*"-"}    ' + \
+                    f'{8*"-"}    {8*"-"}    {8*"-"}'
+
+        str_ = [header, underline]
         for track in self.tracks:
-            str_.append(repr(track))
+            str_.append(str(track))
         return '\n'.join(str_)
+
+    def calculate_checksums(self):
+        """
+        Iterate file list and calculate copy CRCs and AccurateRip checksums.
+        This method must be called before verify() can be used.
+        """
+        total_tracks = len(self.tracks)
+        for num, track in enumerate(self.tracks, start=1):
+            track.set_copy_crc()
+            track.set_accuraterip_checksums(num, total_tracks)
 
     def verify(self, disc):
         """Verify a set of ripped files against a CD with specified TOC."""
