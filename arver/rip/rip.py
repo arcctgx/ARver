@@ -57,8 +57,10 @@ def _shorten_path(path, max_length=30):
     if len(name) <= max_length:
         return name
 
+    adj = 0 if max_length % 2 != 0 else -1
     midpoint = max_length // 2
-    return name[:midpoint-1] + '~' + name[-midpoint:]
+    return name[:midpoint + adj] + '~' + name[-midpoint:]
+
 
 
 # pylint: disable=too-many-instance-attributes
