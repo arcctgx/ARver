@@ -15,6 +15,10 @@ SAMPLES_PER_SECOND = 44100
 SAMPLES_PER_FRAME = SAMPLES_PER_SECOND // FRAMES_PER_SECOND
 
 
+class AudioFormatError(Exception):
+    """Raised when unsupported audio file (or non-audio file) is read."""
+
+
 @dataclass
 class WavProperties:
     """Basic properties of a WAV file."""
@@ -31,8 +35,8 @@ class WavProperties:
                 params = wav.getparams()
                 frames = wav.getnframes()
                 return cls(params.nchannels, params.sampwidth, params.framerate, frames)
-        except (OSError, wave.Error):
-            return None
+        except (OSError, wave.Error) as exc:
+            raise AudioFormatError from exc
 
     def is_cdda(self):
         """
@@ -60,7 +64,6 @@ def _shorten_path(path, max_length=30):
     adj = 0 if max_length % 2 != 0 else -1
     midpoint = max_length // 2
     return name[:midpoint + adj] + '~' + name[-midpoint:]
-
 
 
 # pylint: disable=too-many-instance-attributes
@@ -104,7 +107,11 @@ class Rip:
 
         self.tracks = []
         for path in self._paths:
-            self.tracks.append(WavFile(path))
+            try:
+                self.tracks.append(WavFile(path))
+            except AudioFormatError:
+                # ignore non-audio or unsupported audio format
+                continue
 
     def _discard_htoa(self):
         """Discard paths where file names match commonly used HTOA naming patterns."""
