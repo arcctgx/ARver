@@ -99,9 +99,6 @@ class WavFile:
 class Rip:
     """This class represents a set of ripped WAV files to be verified."""
     def __init__(self, paths):
-        if not paths:
-            raise ValueError('No files given!')
-
         self._paths = paths
         self._discard_htoa()
 
@@ -112,6 +109,8 @@ class Rip:
             except AudioFormatError:
                 # ignore non-audio or unsupported audio format
                 continue
+
+        self.num_tracks = len(self.tracks)
 
     def _discard_htoa(self):
         """Discard paths where file names match commonly used HTOA naming patterns."""

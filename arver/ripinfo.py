@@ -15,6 +15,10 @@ def main():
         sys.exit(1)
 
     rip = Rip(sys.argv[1:])
+    if rip.num_tracks == 0:
+        print('No WAV files were loaded. Did you specify correct files?')
+        sys.exit(1)
+
     rip.calculate_checksums()
     print(rip)
 
