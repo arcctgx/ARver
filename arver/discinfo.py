@@ -6,16 +6,19 @@ MusicBrainz disc ID. Download and display AccurateRip data of the CD.
 import argparse
 import sys
 
+from arver import VERSION
 from arver.disc.disc import Disc
 
 
 def _parse_args():
     parser = argparse.ArgumentParser(
-        description="""Display information about compact disc in drive, or derived
-        from MusicBrainz disc ID. Download and display AccurateRip data of the disc.""")
+        description="""Display information about compact disc in drive, or
+        derived from MusicBrainz disc ID. Fetch and display AccurateRip data
+        of the disc.""")
 
-    parser.add_argument('-d', '--disc-id', nargs=1,
-        help='get TOC from MusicBrainz by disc ID')
+    parser.add_argument('-i', '--disc-id', metavar='disc_id', nargs=1,
+        help='get disc TOC from MusicBrainz by disc ID')
+    parser.add_argument('-v', '--version', action='version', version=VERSION)
 
     return parser.parse_args()
 
