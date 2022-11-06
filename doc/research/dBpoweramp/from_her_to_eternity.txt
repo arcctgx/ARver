@@ -1,0 +1,98 @@
+dBpoweramp 2022-09-28 Digital Audio Extraction Log from niedziela, 23 października 2022 23:22
+
+Drive & Settings
+----------------
+
+Ripping with drive 'E:   [HL-DT-ST - DVDRAM GH24NSD1 ]',  Drive offset: 6,  Overread Lead-in/out: No
+AccurateRip: Active,  Using C2: No,  Cache: None,  FUA Cache Invalidate: No
+Pass 1 Drive Speed: Max,  Pass 2 Drive Speed: Max
+Bad Sector Re-rip::  Drive Speed: Max,  Maximum Re-reads: 34
+
+Encoder: Wave -compression="PCM"
+
+Extraction Log
+--------------
+
+Track 1:  Ripped LBA 0 to 23490 (5:13) in 0:20. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\01 Nick Cave & The Bad Seeds - Avalanche.wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: 20888EF8     AccurateRip CRC: 72D5DCEF     [DiscID: 010-00142bfd-00a16cda-810cdd0a-1]
+  AccurateRip Verified Confidence 43 [CRCv2 72d5dcef], Using Pressing Offset -196
+  AccurateRip Verified Confidence 18 [CRCv2 cbc35c4e], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 e6296d94], Using Pressing Offset +75
+  AccurateRip Verified Confidence 4 [CRCv2 ab558dcc], Using Pressing Offset -16
+
+Track 2:  Ripped LBA 23490 to 51390 (6:12) in 0:19. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\02 Nick Cave & The Bad Seeds - Cabin Fever!.wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: AF096A8E     AccurateRip CRC: 7BE7C8D2     [DiscID: 010-00142bfd-00a16cda-810cdd0a-2]
+  AccurateRip Verified Confidence 43 [CRCv2 7be7c8d2], Using Pressing Offset -196
+  AccurateRip Verified Confidence 19 [CRCv2 d425dec6], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 4a8a1e75], Using Pressing Offset +75
+  AccurateRip Verified Confidence 4 [CRCv2 af3f7c02], Using Pressing Offset -16
+
+Track 3:  Ripped LBA 51390 to 75775 (5:25) in 0:15. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\03 Nick Cave & The Bad Seeds - Well Of Misery.wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: ED99EC5D     AccurateRip CRC: 97E2F85F     [DiscID: 010-00142bfd-00a16cda-810cdd0a-3]
+  AccurateRip Verified Confidence 43 [CRCv2 97e2f85f], Using Pressing Offset -196
+  AccurateRip Verified Confidence 18 [CRCv2 56ade6cd], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 78fa881f], Using Pressing Offset +75
+  AccurateRip Verified Confidence 4 [CRCv2 7eb5abeb], Using Pressing Offset -16
+
+Track 4:  Ripped LBA 75775 to 100792 (5:33) in 0:14. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\04 Nick Cave & The Bad Seeds - From Her To Eternity.wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: 8B2CB17D     AccurateRip CRC: C53A6729     [DiscID: 010-00142bfd-00a16cda-810cdd0a-4]
+  AccurateRip Verified Confidence 43 [CRCv2 c53a6729], Using Pressing Offset -196
+  AccurateRip Verified Confidence 19 [CRCv2 79f5bba], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 a644f74f], Using Pressing Offset +75
+  AccurateRip Verified Confidence 4 [CRCv2 2205e47b], Using Pressing Offset -16
+
+Track 5:  Ripped LBA 100792 to 119287 (4:06) in 0:09. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\05 Nick Cave & The Bad Seeds - In The Ghetto.wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: 881E57C2     AccurateRip CRC: 43E0413E     [DiscID: 010-00142bfd-00a16cda-810cdd0a-5]
+  AccurateRip Verified Confidence 43 [CRCv2 43e0413e], Using Pressing Offset -196
+  AccurateRip Verified Confidence 19 [CRCv2 272271f], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 dbd702d], Using Pressing Offset +75
+  AccurateRip Verified Confidence 4 [CRCv2 4f26a6f8], Using Pressing Offset -16
+
+Track 6:  Ripped LBA 119287 to 131027 (2:36) in 0:06. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\06 Nick Cave & The Bad Seeds - The Moon Is In The Gutter.wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: D5401A64     AccurateRip CRC: 0DBF9288     [DiscID: 010-00142bfd-00a16cda-810cdd0a-6]
+  AccurateRip Verified Confidence 43 [CRCv2 dbf9288], Using Pressing Offset -196
+  AccurateRip Verified Confidence 18 [CRCv2 6aca3dc7], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 4acbc617], Using Pressing Offset +75
+  AccurateRip Verified Confidence 4 [CRCv2 346847ff], Using Pressing Offset -16
+
+Track 7:  Ripped LBA 131027 to 164225 (7:22) in 0:15. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\07 Nick Cave & The Bad Seeds - Saint Huck.wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: DE61AAF5     AccurateRip CRC: 2F867C09     [DiscID: 010-00142bfd-00a16cda-810cdd0a-7]
+  AccurateRip Verified Confidence 43 [CRCv2 2f867c09], Using Pressing Offset -196
+  AccurateRip Verified Confidence 18 [CRCv2 5f6a7a41], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 36df2889], Using Pressing Offset +75
+  AccurateRip Verified Confidence 3 [CRCv2 3ecbd033], Using Pressing Offset -16
+
+Track 8:  Ripped LBA 164225 to 182685 (4:06) in 0:08. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\08 Nick Cave & The Bad Seeds - Wings off Flies.wav
+  AccurateRip: Accurate (confidence 42)     [Pass 1]
+  CRC32: 937B2259     AccurateRip CRC: 55F706A6     [DiscID: 010-00142bfd-00a16cda-810cdd0a-8]
+  AccurateRip Verified Confidence 42 [CRCv2 55f706a6], Using Pressing Offset -196
+  AccurateRip Verified Confidence 19 [CRCv2 dfe54282], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 da75bc98], Using Pressing Offset +75
+  AccurateRip Verified Confidence 3 [CRCv2 9cf71e5e], Using Pressing Offset -16
+
+Track 9:  Ripped LBA 182685 to 226335 (9:42) in 0:18. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\09 Nick Cave & The Bad Seeds - A Box for Black Paul.wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: B0F9CAF7     AccurateRip CRC: E5EC7A16     [DiscID: 010-00142bfd-00a16cda-810cdd0a-9]
+  AccurateRip Verified Confidence 43 [CRCv2 e5ec7a16], Using Pressing Offset -196
+  AccurateRip Verified Confidence 19 [CRCv2 88dd8f12], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 7fff5bce], Using Pressing Offset +75
+  AccurateRip Verified Confidence 4 [CRCv2 21c04862], Using Pressing Offset -16
+
+Track 10:  Ripped LBA 226335 to 246975 (4:35) in 0:08. Filename: C:\temp\Nick Cave & The Bad Seeds\From Her To Eternity\10 Nick Cave & The Bad Seeds - From Her To Eternity (1987).wav
+  AccurateRip: Accurate (confidence 43)     [Pass 1]
+  CRC32: 0DE3518B     AccurateRip CRC: 0B8154BB     [DiscID: 010-00142bfd-00a16cda-810cdd0a-10]
+  AccurateRip Verified Confidence 43 [CRCv2 b8154bb], Using Pressing Offset -196
+  AccurateRip Verified Confidence 18 [CRCv2 7dd38c01], Using Pressing Offset +1257
+  AccurateRip Verified Confidence 5 [CRCv2 7bea85c7], Using Pressing Offset +75
+  AccurateRip Verified Confidence 4 [CRCv2 e4cfb0a6], Using Pressing Offset -16
+
+--------------
+
+10 Tracks Ripped Accurately

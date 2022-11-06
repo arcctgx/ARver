@@ -1,0 +1,69 @@
+Track 1:  Ripped LBA 0 to 12617 (2:48) in 0:08. Filename: C:\temp\Recoil\Liquid\01 Recoil - Black Box, Part 1.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: AD275317     AccurateRip CRC: F6FCFD9C (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-1]
+  AccurateRip Verified Confidence 2 [CRCv2 f6fcfd9c]
+  AccurateRip Verified Confidence 17 [CRCv2 1afe06ea], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 d4ed6e79], Using Pressing Offset -54
+
+Track 2:  Ripped LBA 12617 to 40337 (6:09) in 0:15. Filename: C:\temp\Recoil\Liquid\02 Recoil - Want.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: 49B6041B     AccurateRip CRC: 33A19D1A (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-2]
+  AccurateRip Verified Confidence 2 [CRCv2 33a19d1a]
+  AccurateRip Verified Confidence 17 [CRCv2 27b87230], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 1041ed], Using Pressing Offset -54
+
+Track 3:  Ripped LBA 40337 to 63075 (5:03) in 0:11. Filename: C:\temp\Recoil\Liquid\03 Recoil - Jezebel.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: E2528735     AccurateRip CRC: DDF9F1EA (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-3]
+  AccurateRip Verified Confidence 2 [CRCv2 ddf9f1ea]
+  AccurateRip Verified Confidence 17 [CRCv2 d910dc37], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 60f0c5ba], Using Pressing Offset -54
+
+Track 4:  Ripped LBA 63075 to 93260 (6:42) in 0:13. Filename: C:\temp\Recoil\Liquid\04 Recoil - Breath Control.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: 7B095141     AccurateRip CRC: 8A35AA28 (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-4]
+  AccurateRip Verified Confidence 2 [CRCv2 8a35aa28]
+  AccurateRip Verified Confidence 17 [CRCv2 3de33185], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 4ff6c23e], Using Pressing Offset -54
+
+Track 5:  Ripped LBA 93260 to 117965 (5:29) in 0:10. Filename: C:\temp\Recoil\Liquid\05 Recoil - Last Call for Liquid Courage.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: 865C19B4     AccurateRip CRC: 7A05007F (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-5]
+  AccurateRip Verified Confidence 2 [CRCv2 7a05007f]
+  AccurateRip Verified Confidence 17 [CRCv2 8ad26946], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 2f3abe3a], Using Pressing Offset -54
+
+Track 6:  Ripped LBA 117965 to 151715 (7:30) in 0:13. Filename: C:\temp\Recoil\Liquid\06 Recoil - Strange Hours.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: 6EA04785     AccurateRip CRC: ADF72154 (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-6]
+  AccurateRip Verified Confidence 2 [CRCv2 adf72154]
+  AccurateRip Verified Confidence 17 [CRCv2 60f7907e], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 dfa139b7], Using Pressing Offset -54
+
+Track 7:  Ripped LBA 151715 to 184190 (7:13) in 0:11. Filename: C:\temp\Recoil\Liquid\07 Recoil - Vertigen.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: 19523EE9     AccurateRip CRC: 405718D8 (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-7]
+  AccurateRip Verified Confidence 2 [CRCv2 405718d8]
+  AccurateRip Verified Confidence 17 [CRCv2 3952d749], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 a6b223ea], Using Pressing Offset -54
+
+Track 8:  Ripped LBA 184190 to 215110 (6:52) in 0:10. Filename: C:\temp\Recoil\Liquid\08 Recoil - Supreme.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: 57F1E65A     AccurateRip CRC: AD19903E (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-8]
+  AccurateRip Verified Confidence 2 [CRCv2 ad19903e]
+  AccurateRip Verified Confidence 16 [CRCv2 588ebf95], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 fa46d58d], Using Pressing Offset -54
+
+Track 9:  Ripped LBA 215110 to 247305 (7:09) in 0:10. Filename: C:\temp\Recoil\Liquid\09 Recoil - Chrome.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: 50260423     AccurateRip CRC: 89EAC6A3 (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-9]
+  AccurateRip Verified Confidence 2 [CRCv2 89eac6a3]
+  AccurateRip Verified Confidence 17 [CRCv2 4e239faa], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 460510aa], Using Pressing Offset -54
+
+Track 10:  Ripped LBA 247305 to 270185 (5:05) in 0:07. Filename: C:\temp\Recoil\Liquid\10 Recoil - Black Box, Part 2.wav
+  AccurateRip: Accurate (confidence 2)     [Pass 1]
+  CRC32: 5A22F8C3     AccurateRip CRC: 63FE3212 (CRCv2)     [DiscID: 010-00164419-00b9f6e2-9e11600b-10]
+  AccurateRip Verified Confidence 2 [CRCv2 63fe3212]
+  AccurateRip Verified Confidence 17 [CRCv2 890e448c], Using Pressing Offset +694
+  AccurateRip Verified Confidence 2 [CRCv2 8936cacd], Using Pressing Offset -54

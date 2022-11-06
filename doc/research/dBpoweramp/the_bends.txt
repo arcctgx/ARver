@@ -1,0 +1,106 @@
+dBpoweramp 2022-09-28 Digital Audio Extraction Log from niedziela, 23 października 2022 23:03
+
+Drive & Settings
+----------------
+
+Ripping with drive 'E:   [HL-DT-ST - DVDRAM GH24NSD1 ]',  Drive offset: 6,  Overread Lead-in/out: No
+AccurateRip: Active,  Using C2: No,  Cache: None,  FUA Cache Invalidate: No
+Pass 1 Drive Speed: Max,  Pass 2 Drive Speed: Max
+Bad Sector Re-rip::  Drive Speed: Max,  Maximum Re-reads: 34
+
+Encoder: Wave -compression="PCM"
+
+Extraction Log
+--------------
+
+Track 1:  Ripped LBA 33 to 19473 (4:19) in 1:08. Filename: C:\temp\Radiohead\The Bends\01 Radiohead - Planet Telex.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: C4C219A4     AccurateRip CRC: 6A9E3ACB (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-1]
+  AccurateRip Verified Confidence 200 [CRCv2 6a9e3acb]
+  AccurateRip Verified Confidence 200 [CRCv2 a381751e], Using Pressing Offset +528
+  AccurateRip Verified Confidence 158 [CRCv2 5e7d7778], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 1ca2249c], Using Pressing Offset -6
+
+Track 2:  Ripped LBA 19473 to 37938 (4:06) in 0:58. Filename: C:\temp\Radiohead\The Bends\02 Radiohead - The Bends.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: EC619664     AccurateRip CRC: E0131D4E (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-2]
+  AccurateRip Verified Confidence 200 [CRCv2 e0131d4e]
+  AccurateRip Verified Confidence 200 [CRCv2 f9e80528], Using Pressing Offset +528
+  AccurateRip Verified Confidence 163 [CRCv2 10ab1b40], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 eea70c97], Using Pressing Offset -6
+
+Track 3:  Ripped LBA 37938 to 57253 (4:17) in 0:55. Filename: C:\temp\Radiohead\The Bends\03 Radiohead - High And Dry.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: E613E3BC     AccurateRip CRC: 004742BC (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-3]
+  AccurateRip Verified Confidence 200 [CRCv2 4742bc]
+  AccurateRip Verified Confidence 200 [CRCv2 28b06328], Using Pressing Offset +528
+  AccurateRip Verified Confidence 159 [CRCv2 ba9a503a], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 6e5d5342], Using Pressing Offset -6
+
+Track 4:  Ripped LBA 57253 to 79055 (4:50) in 0:57. Filename: C:\temp\Radiohead\The Bends\04 Radiohead - Fake Plastic Trees.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 3092586E     AccurateRip CRC: 341675FA (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-4]
+  AccurateRip Verified Confidence 200 [CRCv2 341675fa]
+  AccurateRip Verified Confidence 200 [CRCv2 7537164c], Using Pressing Offset +528
+  AccurateRip Verified Confidence 156 [CRCv2 d4cff5ef], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 ff249b7c], Using Pressing Offset -6
+
+Track 5:  Ripped LBA 79055 to 93230 (3:09) in 0:35. Filename: C:\temp\Radiohead\The Bends\05 Radiohead - Bones.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 7CF38F2F     AccurateRip CRC: 64E98062 (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-5]
+  AccurateRip Verified Confidence 200 [CRCv2 64e98062]
+  AccurateRip Verified Confidence 200 [CRCv2 3460f2fe], Using Pressing Offset +528
+  AccurateRip Verified Confidence 161 [CRCv2 be9b9688], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 de71e0d2], Using Pressing Offset -6
+
+Track 6:  Ripped LBA 93230 to 110723 (3:53) in 0:41. Filename: C:\temp\Radiohead\The Bends\06 Radiohead - (Nice Dream).wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: F7D4686D     AccurateRip CRC: FC88A63E (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-6]
+  AccurateRip Verified Confidence 200 [CRCv2 fc88a63e]
+  AccurateRip Verified Confidence 200 [CRCv2 19eed9f5], Using Pressing Offset +528
+  AccurateRip Verified Confidence 163 [CRCv2 c5e7449f], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 5090379a], Using Pressing Offset -6
+
+Track 7:  Ripped LBA 110723 to 128280 (3:54) in 0:39. Filename: C:\temp\Radiohead\The Bends\07 Radiohead - Just.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: FDFA7D58     AccurateRip CRC: A3E3D889 (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-7]
+  AccurateRip Verified Confidence 200 [CRCv2 a3e3d889]
+  AccurateRip Verified Confidence 200 [CRCv2 f23a15b9], Using Pressing Offset +528
+  AccurateRip Verified Confidence 160 [CRCv2 849250cb], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 118b963b], Using Pressing Offset -6
+
+Track 8:  Ripped LBA 128280 to 149013 (4:36) in 0:44. Filename: C:\temp\Radiohead\The Bends\08 Radiohead - My Iron Lung.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 6A5E00DB     AccurateRip CRC: 7427F447 (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-8]
+  AccurateRip Verified Confidence 200 [CRCv2 7427f447]
+  AccurateRip Verified Confidence 200 [CRCv2 d3707790], Using Pressing Offset +528
+  AccurateRip Verified Confidence 156 [CRCv2 376e5f2f], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 102a06c6], Using Pressing Offset -6
+
+Track 9:  Ripped LBA 149013 to 164668 (3:28) in 0:31. Filename: C:\temp\Radiohead\The Bends\09 Radiohead - Bullet Proof..I Wish I Was.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: FDFB35BA     AccurateRip CRC: E1DDB6F3 (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-9]
+  AccurateRip Verified Confidence 200 [CRCv2 e1ddb6f3]
+  AccurateRip Verified Confidence 200 [CRCv2 560b88de], Using Pressing Offset +528
+  AccurateRip Verified Confidence 161 [CRCv2 ebba9ba5], Using Pressing Offset +534
+  AccurateRip Verified Confidence 59 [CRCv2 4c2ea6e2], Using Pressing Offset -6
+
+Track 10:  Ripped LBA 164668 to 183195 (4:07) in 1:14. Filename: C:\temp\Radiohead\The Bends\10 Radiohead - Black Star.wav
+  AccurateRip: Inaccurate (confidence 200)   Secure (Warning)  [Pass 1 & 2, Re-Rip 20 Frames]
+  CRC32: A33756FA     AccurateRip CRC: F141473E (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-10]
+
+Track 11:  Ripped LBA 183195 to 199918 (3:42) in 1:04. Filename: C:\temp\Radiohead\The Bends\11 Radiohead - Sulk.wav
+  AccurateRip: Inaccurate (confidence 200)   Secure  [Pass 1 & 2]
+  CRC32: EE439C04     AccurateRip CRC: 2E498B9C (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-11]
+
+Track 12:  Ripped LBA 199918 to 218848 (4:12) in 0:34. Filename: C:\temp\Radiohead\The Bends\12 Radiohead - Street Spirit (Fade Out).wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 73919E7E     AccurateRip CRC: 3A774BB2 (CRCv2)     [DiscID: 012-0015ff5b-00cc3c27-b00b650c-12]
+  AccurateRip Verified Confidence 200 [CRCv2 3a774bb2]
+  AccurateRip Verified Confidence 200 [CRCv2 c06a4f11], Using Pressing Offset +528
+  AccurateRip Verified Confidence 158 [CRCv2 7c17193], Using Pressing Offset +534
+  AccurateRip Verified Confidence 58 [CRCv2 f32026c6], Using Pressing Offset -6
+
+--------------
+
+12 Tracks Ripped: 10 Accurate, 1 Secure, 1 Secure (Warning)

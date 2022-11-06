@@ -1,0 +1,88 @@
+dBpoweramp 2022-09-28 Digital Audio Extraction Log from poniedziałek, 24 października 2022 00:21
+
+Drive & Settings
+----------------
+
+Ripping with drive 'E:   [HL-DT-ST - DVDRAM GH24NSD1 ]',  Drive offset: 6,  Overread Lead-in/out: No
+AccurateRip: Active,  Using C2: No,  Cache: None,  FUA Cache Invalidate: No
+Pass 1 Drive Speed: Max,  Pass 2 Drive Speed: Max
+Bad Sector Re-rip::  Drive Speed: Max,  Maximum Re-reads: 34
+
+Encoder: Wave -compression="PCM"
+
+Extraction Log
+--------------
+
+Track 1:  Ripped LBA 0 to 30547 (6:47) in 0:24. Filename: C:\temp\Unknown Artist\01 Unknown Artist - Track 1.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: BD269AA4     AccurateRip CRC: F66A0878 (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-1]
+  AccurateRip Verified Confidence 200 [CRCv2 f66a0878]
+  AccurateRip Verified Confidence 41 [CRCv2 8c3d7eb3], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 c105566b], Using Pressing Offset -6
+
+Track 2:  Ripped LBA 30547 to 54185 (5:15) in 0:15. Filename: C:\temp\Unknown Artist\02 Unknown Artist - Track 2.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 87F34F52     AccurateRip CRC: 4474026C (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-2]
+  AccurateRip Verified Confidence 200 [CRCv2 4474026c]
+  AccurateRip Verified Confidence 41 [CRCv2 7d817344], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 9da4b357], Using Pressing Offset -6
+
+Track 3:  Ripped LBA 54185 to 72047 (3:58) in 0:10. Filename: C:\temp\Unknown Artist\03 Unknown Artist - Track 3.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 8009B97D     AccurateRip CRC: D3AFEF01 (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-3]
+  AccurateRip Verified Confidence 200 [CRCv2 d3afef01]
+  AccurateRip Verified Confidence 41 [CRCv2 63425f68], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 174c3da0], Using Pressing Offset -6
+
+Track 4:  Ripped LBA 72047 to 91077 (4:13) in 0:10. Filename: C:\temp\Unknown Artist\04 Unknown Artist - Track 4.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 0D2ED4E6     AccurateRip CRC: 379B2BF2 (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-4]
+  AccurateRip Verified Confidence 200 [CRCv2 379b2bf2]
+  AccurateRip Verified Confidence 41 [CRCv2 e5d66955], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 eb4cfd97], Using Pressing Offset -6
+
+Track 5:  Ripped LBA 91077 to 108860 (3:57) in 0:09. Filename: C:\temp\Unknown Artist\05 Unknown Artist - Track 5.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 0E6F12AD     AccurateRip CRC: F94248D7 (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-5]
+  AccurateRip Verified Confidence 200 [CRCv2 f94248d7]
+  AccurateRip Verified Confidence 41 [CRCv2 a9052806], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 c419a8a4], Using Pressing Offset -6
+
+Track 6:  Ripped LBA 108860 to 140050 (6:55) in 0:15. Filename: C:\temp\Unknown Artist\06 Unknown Artist - Track 6.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: FB6F44AA     AccurateRip CRC: B0B04B2C (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-6]
+  AccurateRip Verified Confidence 200 [CRCv2 b0b04b2c]
+  AccurateRip Verified Confidence 41 [CRCv2 86310a0c], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 adfdcb36], Using Pressing Offset -6
+
+Track 7:  Ripped LBA 140050 to 160995 (4:39) in 0:09. Filename: C:\temp\Unknown Artist\07 Unknown Artist - Track 7.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 8C768F52     AccurateRip CRC: B216AB65 (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-7]
+  AccurateRip Verified Confidence 200 [CRCv2 b216ab65]
+  AccurateRip Verified Confidence 41 [CRCv2 f7b38336], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 a1c0fb95], Using Pressing Offset -6
+
+Track 8:  Ripped LBA 160995 to 180085 (4:14) in 0:08. Filename: C:\temp\Unknown Artist\08 Unknown Artist - Track 8.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 17CD2A66     AccurateRip CRC: F5F7292C (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-8]
+  AccurateRip Verified Confidence 200 [CRCv2 f5f7292c]
+  AccurateRip Verified Confidence 41 [CRCv2 6aa3025b], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 d2c75bf7], Using Pressing Offset -6
+
+Track 9:  Ripped LBA 180085 to 245190 (14:28) in 0:26. Filename: C:\temp\Unknown Artist\09 Unknown Artist - Track 9.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: F1157671     AccurateRip CRC: A7CEA5A1 (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-9]
+  AccurateRip Verified Confidence 200 [CRCv2 a7cea5a1]
+  AccurateRip Verified Confidence 41 [CRCv2 134860fd], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 db3e5f8b], Using Pressing Offset -6
+
+Track 10:  Ripped LBA 245190 to 265267 (4:27) in 0:07. Filename: C:\temp\Unknown Artist\10 Unknown Artist - Track 10.wav
+  AccurateRip: Accurate (confidence 200)     [Pass 1]
+  CRC32: 281DDAFE     AccurateRip CRC: 0C3364A7 (CRCv2)     [DiscID: 010-001492cf-00a6013f-810dd00a-10]
+  AccurateRip Verified Confidence 200 [CRCv2 c3364a7]
+  AccurateRip Verified Confidence 41 [CRCv2 29a7f038], Using Pressing Offset -664
+  AccurateRip Verified Confidence 2 [CRCv2 e5cab1a], Using Pressing Offset -6
+
+--------------
+
+10 Tracks Ripped Accurately
