@@ -120,7 +120,7 @@ class Rip:
     def __str__(self):
         header = f'{"file name":^30s}    ' + \
             f'{"CDDA":^4s}    {"length":^8s}    {"frames":^6s}    ' + \
-            f'{"CRC":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'
+            f'{"CRC":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
 
         underline = f'{30*"-"}    {4*"-"}    {8*"-"}    {6*"-"}    ' + \
                     f'{8*"-"}    {8*"-"}    {8*"-"}'
