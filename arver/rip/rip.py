@@ -114,7 +114,7 @@ class Rip:
 
     def _discard_htoa(self):
         """Discard paths where file names match commonly used HTOA naming patterns."""
-        htoa_patterns = ['track00.cdda.wav']
+        htoa_patterns = ['track00.wav', 'track00.cdda.wav']
         self._paths = [path for path in self._paths if os.path.basename(path) not in htoa_patterns]
 
     def __str__(self):
