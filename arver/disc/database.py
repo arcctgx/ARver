@@ -9,8 +9,9 @@ import requests
 
 from arver import APPNAME, VERSION, URL
 
-USER_AGENT_STRING = f'{APPNAME}/{VERSION} {URL}'
+FETCH_TIMEOUT_SECONDS = 5
 URL_BASE = 'http://www.accuraterip.com/accuraterip/'
+USER_AGENT_STRING = f'{APPNAME}/{VERSION} {URL}'
 
 
 @dataclass
@@ -260,7 +261,9 @@ class Fetcher:
         object, or None on error.
         """
         try:
-            response = requests.get(self._make_url(), headers={'User-Agent': USER_AGENT_STRING})
+            response = requests.get(self._make_url(),
+                                    headers={'User-Agent': USER_AGENT_STRING},
+                                    timeout=FETCH_TIMEOUT_SECONDS)
             response.raise_for_status()
             self._raw_bytes = response.content
             return self._parse_raw_bytes()
