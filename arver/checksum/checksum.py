@@ -3,7 +3,7 @@
 import binascii
 import wave
 
-from arver.checksum import accuraterip
+from arver.checksum import accuraterip  # type: ignore
 
 
 def accuraterip_checksums(wav_file, track_no, total_tracks):
