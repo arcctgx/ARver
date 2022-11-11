@@ -25,10 +25,7 @@ def _get_htoa(offsets):
     htoa_frames = offsets[0] - LEAD_IN_FRAMES
 
     if htoa_frames > 0:
-        htoa = {
-            'frames': htoa_frames,
-            'msf': frames_to_msf(htoa_frames)
-        }
+        htoa = {'frames': htoa_frames, 'msf': frames_to_msf(htoa_frames)}
 
     return htoa
 
@@ -89,6 +86,7 @@ def _get_musicbrainz_disc_info(disc_id):
 
 class Disc:
     """Class representing a Compact Disc to verify."""
+
     def __init__(self, disc_info):
         self._disc_info = disc_info
         self._ar1 = disc_info['id']['accuraterip'][0]

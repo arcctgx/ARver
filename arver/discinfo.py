@@ -16,8 +16,11 @@ def _parse_args():
         derived from MusicBrainz disc ID. Fetch and display AccurateRip data
         of the disc.""")
 
-    parser.add_argument('-i', '--disc-id', metavar='disc_id', nargs=1,
-        help='get disc TOC from MusicBrainz by disc ID')
+    parser.add_argument('-i',
+                        '--disc-id',
+                        metavar='disc_id',
+                        nargs=1,
+                        help='get disc TOC from MusicBrainz by disc ID')
     parser.add_argument('-v', '--version', action='version', version=VERSION)
 
     return parser.parse_args()

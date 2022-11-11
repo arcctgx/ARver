@@ -18,8 +18,10 @@ def _parse_args():
         track (HTOA) must not be included. Non-audio files and unsupported
         audio formats are quietly ignored.""")
 
-    parser.add_argument('rip_files', nargs='+', metavar='file',
-        help='audio file for calculating checksums')
+    parser.add_argument('rip_files',
+                        nargs='+',
+                        metavar='file',
+                        help='audio file for calculating checksums')
     parser.add_argument('-v', '--version', action='version', version=VERSION)
 
     return parser.parse_args()

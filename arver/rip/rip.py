@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from arver.checksum.checksum import copy_crc, accuraterip_checksums
 from arver.disc.utils import FRAMES_PER_SECOND, frames_to_msf
 
-
 CHANNELS = 2
 BYTES_PER_SAMPLE = 2
 SAMPLES_PER_SECOND = 44100
@@ -69,6 +68,7 @@ def _shorten_path(path, max_length=30):
 # pylint: disable=too-many-instance-attributes
 class WavFile:
     """WAV file to be verified against AccurateRip checksum."""
+
     def __init__(self, path):
         self._path = path
         self._short_name = _shorten_path(path)
@@ -98,6 +98,7 @@ class WavFile:
 
 class Rip:
     """This class represents a set of ripped WAV files to be verified."""
+
     def __init__(self, paths):
         self._paths = paths
         self._discard_htoa()

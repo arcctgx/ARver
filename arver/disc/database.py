@@ -9,7 +9,6 @@ import requests
 
 from arver import APPNAME, VERSION, URL
 
-
 USER_AGENT_STRING = f'{APPNAME}/{VERSION} {URL}'
 URL_BASE = 'http://www.accuraterip.com/accuraterip/'
 
@@ -168,6 +167,7 @@ class Fetcher:
     Class for fetching AccurateRip data of a Compact Disc, parsing the
     binary data and representing AccurateRip responses in a usable form.
     """
+
     def __init__(self, num_tracks, ar_id1, ar_id2, freedb_id):
         self._num_tracks = num_tracks
         self._ar_id1 = ar_id1

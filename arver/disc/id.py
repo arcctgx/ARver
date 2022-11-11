@@ -35,10 +35,10 @@ def accuraterip_ids(offsets, leadout):
 
     for track_num, offset in enumerate(lba_offsets, start=1):
         id1 += offset
-        id2 += (offset or 1)*track_num
+        id2 += (offset or 1) * track_num
 
     id1 += lba_leadout
-    id2 += lba_leadout*(len(lba_offsets) + 1)
+    id2 += lba_leadout * (len(lba_offsets) + 1)
 
     id1 &= 0xffffffff
     id2 &= 0xffffffff
