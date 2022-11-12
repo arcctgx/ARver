@@ -21,26 +21,32 @@ def _parse_args():
                         metavar='disc_id',
                         nargs=1,
                         help='get disc TOC from MusicBrainz by disc ID')
+
     parser.add_argument('-v', '--version', action='version', version=VERSION)
 
     return parser.parse_args()
 
 
-def main():
-    args = _parse_args()
-
-    if args.disc_id is None:
+def _get_disc(disc_id):
+    if disc_id is None:
         disc = Disc.from_cd()
     else:
-        disc_id = args.disc_id[0]
-        disc = Disc.from_disc_id(disc_id)
+        disc = Disc.from_disc_id(*disc_id)
 
     if disc is None:
-        if args.disc_id is None:
+        if disc_id is None:
             print('Could not read disc. Is there a CD in the drive?')
         else:
             print(f'Could not look up disc ID "{disc_id}", is it correct?')
 
+    return disc
+
+
+def main():
+    args = _parse_args()
+    disc = _get_disc(args.disc_id)
+
+    if disc is None:
         print('Failed to get disc info, exiting.')
         sys.exit(1)
 
