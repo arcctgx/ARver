@@ -10,8 +10,10 @@ setup(name=APPNAME,
       license='GPLv3',
       packages=find_packages(),
       entry_points={
-          'console_scripts':
-          ['arver-discinfo = arver.discinfo:main', 'arver-ripinfo = arver.ripinfo:main'],
+          'console_scripts': [
+              'arver = arver.verify:main', 'arver-discinfo = arver.discinfo:main',
+              'arver-ripinfo = arver.ripinfo:main'
+          ]
       },
       ext_modules=[
           Extension('arver.checksum.accuraterip',

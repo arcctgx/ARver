@@ -27,7 +27,11 @@ def _parse_args():
     return parser.parse_args()
 
 
-def _get_disc(disc_id):
+def get_disc(disc_id):
+    """
+    Get disc info for specified disc ID.
+    If disc ID is None read information from the CD in drive.
+    """
     if disc_id is None:
         disc = Disc.from_cd()
     else:
@@ -44,7 +48,7 @@ def _get_disc(disc_id):
 
 def main():
     args = _parse_args()
-    disc = _get_disc(args.disc_id)
+    disc = get_disc(args.disc_id)
 
     if disc is None:
         print('Failed to get disc info, exiting.')

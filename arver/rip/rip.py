@@ -143,4 +143,22 @@ class Rip:
 
     def verify(self, disc):
         """Verify a set of ripped files against a CD with specified TOC."""
-        raise NotImplementedError
+        accurip_checksums = disc.accuraterip_data.make_dict()
+
+        print('AccurateRip verification results for tracks:')
+        for num, track in enumerate(self.tracks, start=1):
+            ar1, ar2 = track._ar1, track._ar2
+
+            conf1, conf2 = 0, 0
+            resp1, resp2 = 0, 0
+
+            if ar1 in accurip_checksums[num]:
+                conf1 = accurip_checksums[num][ar1]['confidence']
+                resp1 = accurip_checksums[num][ar1]['response']
+
+            if ar2 in accurip_checksums[num]:
+                conf2 = accurip_checksums[num][ar2]['confidence']
+                resp2 = accurip_checksums[num][ar2]['response']
+
+            print(f'{num:2d}: conf1 = {conf1:3d} (resp: {resp1:2d})\t' +
+                  f'conf2 = {conf2:3d} (resp: {resp2:2d})')
