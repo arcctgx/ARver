@@ -88,7 +88,7 @@ class Response:
 
 
 @dataclass
-class DiscData:
+class AccurateRipData:
     """
     A collection of all Response objects received from AccurateRip database
     for requested disc.
@@ -112,9 +112,9 @@ class DiscData:
 
     def make_dict(self):
         """
-        Convert DiscData object to a dictionary for easy lookup of checksums during
-        file verification. The conversion is "lossy": AccurateRip checksums equal to
-        zero and with zero confidence are omitted.
+        Convert AccurateRipData object to a dictionary for easy lookup of checksums
+        during file verification. The conversion is "lossy": AccurateRip checksums
+        equal to zero and with zero confidence are omitted.
 
         Resulting dictionary has the following structure:
 
@@ -163,7 +163,7 @@ class DiscData:
         return data
 
 
-class Fetcher:
+class AccurateRipFetcher:
     """
     Class for fetching AccurateRip data of a Compact Disc, parsing the
     binary data and representing AccurateRip responses in a usable form.
@@ -231,7 +231,7 @@ class Fetcher:
             - shift disc data left by Track.size bytes (discard parsed track bytes).
         5. Create a Response object from the Header and the list of Tracks.
         6. If the size of remaining disc data is greater than zero, repeat steps 1-5.
-        7. Return DiscData object created from the list of Responses.
+        7. Return AccurateRipData object created from the list of Responses.
 
         Two exceptions can be raised: ValueError when Header data doesn't match
         the disc info in Fetcher instance, and a struct.error when the binary
@@ -253,11 +253,11 @@ class Fetcher:
 
             responses.append(Response(header, tracks))
 
-        return DiscData(responses)
+        return AccurateRipData(responses)
 
     def fetch(self):
         """
-        Fetch binary disc data from AccurateRip database. Return a DiscData
+        Fetch binary disc data from AccurateRip database. Return an AccurateRipData
         object, or None on error.
         """
         try:

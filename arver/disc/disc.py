@@ -9,7 +9,7 @@ import musicbrainzngs
 
 from arver import APPNAME, VERSION, URL
 from arver.disc.id import freedb_id, accuraterip_ids
-from arver.disc.database import Fetcher
+from arver.disc.database import AccurateRipFetcher
 from arver.disc.utils import frames_to_msf, LEAD_IN_FRAMES
 
 
@@ -93,7 +93,7 @@ class Disc:
         self._ar2 = disc_info['id']['accuraterip'][1]
         self._freedb = disc_info['id']['freedb']
         self.tracks = disc_info['toc']['tracks']
-        self.disc_data = None
+        self.accuraterip_data = None
 
     def _format_tracklist(self):
         str_ = ''
@@ -135,7 +135,7 @@ class Disc:
             return cls(disc_info)
         return None
 
-    def fetch_disc_data(self):
+    def fetch_accuraterip_data(self):
         """Download AccurateRip disc data for a specified Compact Disc."""
-        fetcher = Fetcher(self.tracks, self._ar1, self._ar2, self._freedb)
-        self.disc_data = fetcher.fetch()
+        fetcher = AccurateRipFetcher(self.tracks, self._ar1, self._ar2, self._freedb)
+        self.accuraterip_data = fetcher.fetch()
