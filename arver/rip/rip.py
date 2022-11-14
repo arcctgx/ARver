@@ -111,8 +111,6 @@ class Rip:
                 # ignore non-audio or unsupported audio format
                 continue
 
-        self.num_tracks = len(self.tracks)
-
     def _discard_htoa(self):
         """Discard paths where file names match commonly used HTOA naming patterns."""
         htoa_patterns = ['track00.wav', 'track00.cdda.wav']
@@ -130,6 +128,9 @@ class Rip:
         for track in self.tracks:
             str_.append(str(track))
         return '\n'.join(str_)
+
+    def __len__(self):
+        return len(self.tracks)
 
     def calculate_checksums(self):
         """

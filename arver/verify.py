@@ -53,7 +53,7 @@ def main():
         sys.exit(2)
 
     rip = Rip(args.rip_files)
-    if rip.num_tracks == 0:
+    if len(rip) == 0:
         print('No WAV files were loaded. Did you specify correct files?')
         sys.exit(3)
 
