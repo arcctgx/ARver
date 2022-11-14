@@ -88,7 +88,7 @@ class Response:
 
 
 @dataclass
-class AccurateRipData:
+class AccurateRipDisc:
     """
     A collection of all Response objects received from AccurateRip database
     for requested disc.
@@ -200,7 +200,7 @@ class AccurateRipFetcher:
         Parse AccurateRip binary disc data. The data consists of one or more
         Responses. Each Response consists of a Header and one or more Tracks:
 
-        disc_data
+        AccurateRipDisc
         |
         |-- Response1
         |   |-- Header
@@ -218,26 +218,28 @@ class AccurateRipFetcher:
             `-- TrackN
 
         All Headers in disc data are expected to be the same, and must match
-        the number of tracks and the three disc IDs stored in Fetcher instance.
-        This means the number of tracks must also be the same in each Response.
+        the number of tracks and the three disc IDs stored in AccurateRipFetcher
+        instance. This means the number of tracks must also be the same in each
+        Response.
 
-        Disc data is stored in Fetcher instance as an array of bytes, and is
-        parsed in the following way:
+        Raw disc data is stored in AccurateRipFetcher instance as an array of
+        bytes, and is parsed in the following way:
 
         1. Read Header.size bytes from disc data and create a Header object.
-        2. Verify that created Header matches disc data in Fetcher instance (abort if it doesn't).
+        2. Verify that created Header matches disc data in AccurateRipFetcher instance
+           (raise ValueError if it doesn't).
         3. Shift disc data left by Header.size bytes (discard parsed header bytes).
         4. Read the number of tracks from Header. For each track:
             - read Track.size bytes from disc data and create a Track object,
             - shift disc data left by Track.size bytes (discard parsed track bytes).
         5. Create a Response object from the Header and the list of Tracks.
         6. If the size of remaining disc data is greater than zero, repeat steps 1-5.
-        7. Return AccurateRipData object created from the list of Responses.
+        7. Return AccurateRipDisc object created from the list of Responses.
 
         Two exceptions can be raised: ValueError when Header data doesn't match
-        the disc info in Fetcher instance, and a struct.error when the binary
-        disc data cannot be unpacked. Both indicate that disc data acquired from
-        AccurateRip is corrupted, and in such case all Responses are discarded
+        the disc info in AccurateRipFetcher instance, and a struct.error when the
+        binary disc data cannot be unpacked. Both indicate that disc data acquired
+        from AccurateRip is corrupted, and in such case all Responses are discarded
         (they cannot be trusted, even if some of them were successfully parsed).
         """
         responses = []
@@ -254,7 +256,7 @@ class AccurateRipFetcher:
 
             responses.append(Response(header, tracks))
 
-        return AccurateRipData(responses)
+        return AccurateRipDisc(responses)
 
     def fetch(self):
         """
