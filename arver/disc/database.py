@@ -163,6 +163,7 @@ class AccurateRipData:
         return data
 
 
+# pylint: disable=too-few-public-methods
 class AccurateRipFetcher:
     """
     Class for fetching AccurateRip data of a Compact Disc, parsing the
