@@ -61,9 +61,6 @@ def main():
         sys.exit(3)
 
     rip.calculate_checksums()
-    print(rip)
-    print()
-
     rip.verify(disc)
 
 

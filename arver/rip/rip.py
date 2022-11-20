@@ -144,22 +144,27 @@ class Rip:
 
     def verify(self, disc):
         """Verify a set of ripped files against a CD with specified TOC."""
-        accurip_checksums = disc.accuraterip_data.make_dict()
+        checksums = disc.accuraterip_data.make_dict()
 
-        print('AccurateRip verification results for tracks:')
+        print(f'Verifying {len(self)} tracks:\n')
+
         for num, track in enumerate(self.tracks, start=1):
+            print(f'Track {num}:')
+            print(f'\tPath: {track._path}')
+            print(f'\tCopy CRC: {track._crc:08x}')
+
             ar1, ar2 = track._ar1, track._ar2
 
-            conf1, conf2 = 0, 0
-            resp1, resp2 = 0, 0
+            if ar2 in checksums[num]:
+                conf = checksums[num][ar2]['confidence']
+                resp = checksums[num][ar2]['response']
+                print(f'\tAccurateRip: {ar2:08x} (ARv2), confidence {conf}, response {resp}')
+                continue
 
-            if ar1 in accurip_checksums[num]:
-                conf1 = accurip_checksums[num][ar1]['confidence']
-                resp1 = accurip_checksums[num][ar1]['response']
+            if ar1 in checksums[num]:
+                conf = checksums[num][ar1]['confidence']
+                resp = checksums[num][ar1]['response']
+                print(f'\tAccurateRip: {ar1:08x} (ARv1), confidence {conf}, response {resp}')
+                continue
 
-            if ar2 in accurip_checksums[num]:
-                conf2 = accurip_checksums[num][ar2]['confidence']
-                resp2 = accurip_checksums[num][ar2]['response']
-
-            print(f'{num:2d}: conf1 = {conf1:3d} (resp: {resp1:2d})\t' +
-                  f'conf2 = {conf2:3d} (resp: {resp2:2d})')
+            print('\tAccurateRip: no match!')
