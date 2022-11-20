@@ -52,6 +52,9 @@ def main():
         print('Failed to download AccurateRip data, exiting.')
         sys.exit(2)
 
+    print(disc.accuraterip_data.summary())
+    print()
+
     rip = Rip(args.rip_files)
     if len(rip) == 0:
         print('No WAV files were loaded. Did you specify correct files?')

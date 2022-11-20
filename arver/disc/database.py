@@ -110,6 +110,15 @@ class AccurateRipDisc:
     def __len__(self):
         return len(self.responses)
 
+    def _max_confidence(self) -> int:
+        return max(track.confidence for response in self.responses for track in response.tracks)
+
+    def summary(self) -> str:
+        """Summarize the number of responses and maximum confidence."""
+        num = len(self)
+        word = 'response' if num == 1 else 'responses'
+        return f'Got {num} AccurateRip {word} (max confidence: {self._max_confidence()})'
+
     def make_dict(self):
         """
         Convert AccurateRipData object to a dictionary for easy lookup of checksums
@@ -260,7 +269,7 @@ class AccurateRipFetcher:
 
     def fetch(self):
         """
-        Fetch binary disc data from AccurateRip database. Return an AccurateRipData
+        Fetch binary disc data from AccurateRip database. Return an AccurateRipDisc
         object, or None on error.
         """
         try:
