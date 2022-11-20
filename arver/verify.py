@@ -61,7 +61,12 @@ def main():
         sys.exit(3)
 
     rip.calculate_checksums()
-    rip.verify(disc)
+    verdict = rip.verify(disc)
+
+    print()
+    print(verdict.as_table())
+    print()
+    print(verdict.summary())
 
 
 if __name__ == '__main__':

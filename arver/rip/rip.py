@@ -4,8 +4,10 @@ import os
 import wave
 
 from dataclasses import dataclass
+from typing import ClassVar, List
 
 from arver.checksum.checksum import copy_crc, accuraterip_checksums
+from arver.disc.disc import Disc
 from arver.disc.utils import FRAMES_PER_SECOND, frames_to_msf
 
 CHANNELS = 2
@@ -54,7 +56,7 @@ class WavProperties:
             self.samples % SAMPLES_PER_FRAME == 0
 
 
-def _shorten_path(path, max_length=30):
+def _shorten_path(path: str, max_length: int = 30) -> str:
     """Shorten long path to an abbreviated file name of specified maximum length."""
     name = os.path.basename(path)
     if len(name) <= max_length:
@@ -94,6 +96,60 @@ class WavFile:
     def set_accuraterip_checksums(self, track_no, total_tracks):
         """Calculate and set both types of AccurateRip checksums."""
         self._ar1, self._ar2 = accuraterip_checksums(self._path, track_no, total_tracks)
+
+
+@dataclass
+class TrackVerificationResult:
+    """Results of AccurateRip verification of a single track."""
+    path: str
+    checksum: int
+    version: str
+    confidence: int
+    response: int
+    success: bool
+
+    def as_table_row(self) -> str:
+        """Return string formatted as row suitable for verification summary table."""
+        short_name = _shorten_path(self.path)
+        status = 'OK' if self.success else 'FAILED'
+        confidence = str(self.confidence) if self.confidence != -1 else '--'
+        response = str(self.response) if self.response != -1 else '--'
+
+        return f'{short_name:<30s}    {status:>6s}    {self.checksum:08x}    ' \
+               f'{self.version:>4s}    {confidence:>4s}    {response:>4s}'
+
+
+@dataclass
+class DiscVerificationResult:
+    """Results of AccurateRip verification of a complete disc."""
+    all_ok: ClassVar[str] = 'All tracks verified successfully.'
+
+    some_failed: ClassVar[str] = 'Verification of some tracks failed. Your ' \
+    'disc may be damaged.'
+
+    all_failed: ClassVar[str] = 'Verification of all tracks failed. Looks ' \
+    'like your disc pressing does not exist in AccurateRip database.'
+
+    tracks: List[TrackVerificationResult]
+
+    def as_table(self) -> str:
+        """Format verification results as a table."""
+
+        header = f'{"file name":^30s}    {"result":>6s}    ' \
+            f'{"checksum":8s}    {"type":4s}    ' \
+            f'{"conf":4s}    {"resp":4s}'.rstrip()
+        underline = f'{30*"-"}    {6*"-"}    {8*"-"}    {4*"-"}    {4*"-"}    {4*"-"}'
+        text = [header, underline] + [track.as_table_row() for track in self.tracks]
+        return '\n'.join(text)
+
+    def summary(self) -> str:
+        """Return a string with the description of verification result."""
+        num_failed = len([track for track in self.tracks if not track.success])
+        if num_failed == 0:
+            return self.all_ok
+        if num_failed == len(self.tracks):
+            return self.all_failed
+        return self.some_failed
 
 
 class Rip:
@@ -142,11 +198,12 @@ class Rip:
             track.set_copy_crc()
             track.set_accuraterip_checksums(num, total_tracks)
 
-    def verify(self, disc):
+    def verify(self, disc: Disc) -> DiscVerificationResult:
         """Verify a set of ripped files against a CD with specified TOC."""
-        checksums = disc.accuraterip_data.make_dict()
-
         print(f'Verifying {len(self)} tracks:\n')
+
+        checksums = disc.accuraterip_data.make_dict()
+        results = []
 
         for num, track in enumerate(self.tracks, start=1):
             print(f'Track {num}:')
@@ -159,12 +216,17 @@ class Rip:
                 conf = checksums[num][ar2]['confidence']
                 resp = checksums[num][ar2]['response']
                 print(f'\tAccurateRip: {ar2:08x} (ARv2), confidence {conf}, response {resp}')
+                results.append(TrackVerificationResult(track._path, ar2, 'ARv2', conf, resp, True))
                 continue
 
             if ar1 in checksums[num]:
                 conf = checksums[num][ar1]['confidence']
                 resp = checksums[num][ar1]['response']
                 print(f'\tAccurateRip: {ar1:08x} (ARv1), confidence {conf}, response {resp}')
+                results.append(TrackVerificationResult(track._path, ar1, 'ARv1', conf, resp, True))
                 continue
 
-            print('\tAccurateRip: no match!')
+            print(f'\tAccurateRip: {ar2:08x} (ARv2) - no match!')
+            results.append(TrackVerificationResult(track._path, ar2, 'ARv2', -1, -1, False))
+
+        return DiscVerificationResult(results)
