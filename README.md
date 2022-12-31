@@ -42,7 +42,7 @@ TODO
 
 ## Usage examples
 
-TODO
+[![asciicast](https://asciinema.org/a/Y2rl6KN8plN5V1rTMuzS3tuf6.svg)](https://asciinema.org/a/Y2rl6KN8plN5V1rTMuzS3tuf6)
 
 ## Acknowledgements
 
