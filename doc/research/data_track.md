@@ -1,5 +1,7 @@
 # Data track handling in AccurateRip ID calculation
 
+## Enhanced CD (Blue Book)
+
 Let's use "Liquid" by Recoil as an example. It has 10 audio tracks followed by
 one data track.
 
@@ -16,7 +18,7 @@ Only the number of tracks (`010`) is the same, all three disc IDs are different.
 so its results can be considered authoritative. Actually it is interesting that
 `Whipper` and `ARver` get any AccurateRip results at all, instead of a 404 error.
 
-## Disc data
+### Disc data
 
 MusicBrainz provides the following information about the disc:
 
@@ -90,7 +92,7 @@ Media Catalog Number: 0000000000000
 rather than LBA is shown in the output, so add `150` sectors to convert
 from LSN to LBA.)
 
-## Analysis
+### Analysis
 
 Let's examine CDDB disc IDs first, as they are easiest to understand. The
 format of CDDB disc ID is `XXSSSSTT` where `XX` is a checksum, `SSSS` is the
@@ -122,7 +124,7 @@ ID does not encode this information. This means it is not possible to calculate
 AccurateRip disc ID just from MusicBrainz disc ID. Reading a physical CD with
 `pycdio` is necessary. :(
 
-## Examples
+### Examples
 
 The following examples demonstrate that it is possible to calculate correct disc
 IDs by using correct input data. No changes are necessary in functions which
@@ -143,7 +145,7 @@ physical CD using `pycdio`.
 
 The numbers in examples follow the data from "Disc data" section above.
 
-### CDDB disc ID
+#### CDDB disc ID
 
 This is what the calculation looks like if we are not aware of the data track:
 
@@ -166,7 +168,7 @@ true lead out offset:
 '9e11600b'  # same as EAC - OK
 ```
 
-### AccurateRip disc IDs
+#### AccurateRip disc IDs
 
 AccurateRip ID calculation requires knowing the true lead out offset too:
 
@@ -186,3 +188,14 @@ IDs of an enhanced CD. No manipulation of offset list is necessary:
 >>> accuraterip_ids(lba_offsets, true_leadout)
 ('00164419', '00b9f6e2')    # same as EAC - OK
 ```
+
+## Mixed mode CD (Yellow Book)
+
+Let's use "Mortal Kombat Trilogy" game CD as an example. It contains 29 tracks:
+the first one is the game data, the rest are audio tracks.
+
+The AccurateRip disc ID calculated by EAC is `028-00517a54-05a845d2-af0da31d`.
+One can immediately see that the initial number in the disc ID is the number
+of *audio* tracks, not the total number of tracks.
+
+TODO
