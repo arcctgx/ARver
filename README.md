@@ -40,10 +40,24 @@ TODO
 
 TODO
 
-## Usage examples
+## Usage example
+
+The following example demonstrates the typical use case of ARver: verification
+of files just ripped from a CD.
 
 [![asciicast](https://asciinema.org/a/Y2rl6KN8plN5V1rTMuzS3tuf6.svg)](https://asciinema.org/a/Y2rl6KN8plN5V1rTMuzS3tuf6)
+
+The tracks have been ripped using `cdparanoia` prior to running `arver`.
+AccurateRip disc ID is calculated based on the TOC of the CD which still is
+in the drive. `arver` fetches the checksums from the database, and compares
+checksums of local files with database entries.
+
+In this case `arver` found that the last track was not ripped correctly, and
+reports an error. The CD is affected by [disc rot], and `cdparanoia` reported
+multiple issues toward the end of the third track.
 
 ## Acknowledgements
 
 AccurateRip database is (c) Illustrate. Used with permission.
+
+[disc rot]: https://en.wikipedia.org/wiki/Disc_rot
