@@ -1,4 +1,23 @@
-# Data track handling in AccurateRip ID calculation
+# Data track handling in AccurateRip disc ID calculation
+
+It seems that the data tracks present in enhanced and mixed mode CDs require
+special treatment during calculation of AccurateRip disc IDs. While mixed mode
+CDs are not popular anymore, enhanced CDs are still widespread.
+
+To figure out how to deal with this problem I ripped several CDs of different
+types using various AccurateRip-aware programs, and compared the results I got.
+I consider `dBpoweramp` to be the reference implementation: it was created by
+the same entity which operates AccurateRip database.
+
+AccurateRip database lookup is based on a disc fingerprint of the following
+format: `nnn-aaaaaaaa-bbbbbbbb-ffffffff`. The fields are:
+
+* `nnn`: number of tracks on CD (decimal),
+* `aaaaaaaa` and `bbbbbbbb`: two types of AccurateRip disc IDs (hex),
+* `ffffffff`: [FreeDB disc ID] (hex).
+
+All fields are padded with zeros if they would be shorter than 3 or 8 digits.
+The three types of disc IDs are calculated based on the CD table of contents.
 
 ## Enhanced CD (Blue Book)
 
@@ -235,3 +254,5 @@ So it seems that the offset list must not include the data tracks. Therefore,
 correct handling of mixed mode CDs requires information that `discid` cannot
 provide. `pycdio` must be used to determine which tracks are data tracks. Once
 this is known, it becomes possible to filter out offsets of data tracks.
+
+[FreeDB disc ID]: <https://en.wikipedia.org/wiki/CDDB#Example_calculation_of_a_CDDB1_(FreeDB)_disc_ID>
