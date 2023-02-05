@@ -94,10 +94,10 @@ from LSN to LBA.)
 
 ### Analysis
 
-Let's examine CDDB disc IDs first, as they are easiest to understand. The
-format of CDDB disc ID is `XXSSSSTT` where `XX` is a checksum, `SSSS` is the
+Let's examine FreeDB disc IDs first, as they are easiest to understand. The
+format of FreeDB disc ID is `XXSSSSTT` where `XX` is a checksum, `SSSS` is the
 total number of seconds on the disc, and `TT` is the number of tracks on CD,
-all in hexadecimal. Let's break these two CDDB disc IDs down:
+all in hexadecimal. Let's break these two FreeDB disc IDs down:
 
 ```text
      XX SSSS TT
@@ -145,7 +145,7 @@ physical CD using `pycdio`.
 
 The numbers in examples follow the data from "Disc data" section above.
 
-#### CDDB disc ID
+#### FreeDB disc ID
 
 This is what the calculation looks like if we are not aware of the data track:
 
