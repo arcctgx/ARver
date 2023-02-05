@@ -198,4 +198,40 @@ The AccurateRip disc ID calculated by EAC is `028-00517a54-05a845d2-af0da31d`.
 One can immediately see that the initial number in the disc ID is the number
 of *audio* tracks, not the total number of tracks.
 
-TODO
+Calculation of FreeDB disc ID requires offsets of all tracks, regardless of
+their type. `discid` is able to provide them for mixed mode CDs, because the
+data track and audio tracks share the same CD session. Lead out offset is
+correct too, because there is just one session and the last audio track is
+not followed by a data track. This means that the FreeDB disc ID can be
+calculated based on the data provided by `discid` alone.
+
+```python
+>>> offsets = [150, 66728, 76502, 85963, 93760, 104048, 116066, 124743, 134206, 142916, 151852, 160720,
+...     169425, 178731, 188459, 196711, 206354, 214845, 223686, 225746, 226384, 232668, 239447, 239931,
+...     244989, 254264, 260066, 261222, 261674]
+>>> leadout = 261976
+>>> freedb_id(offsets, leadout)
+'af0da31d'     # same as EAC - OK
+```
+
+The tricky part is the calculation of AccurateRip disc IDs. Using the same data
+as above results in one of the two fingerprints being incorrect:
+
+```python
+>>> accuraterip_ids(offsets, leadout)
+('00517a54', '05f9c027')      # 00517a54 is OK, 05f9c027 is not
+```
+
+But, taking into account that the number in the beginning of the full AR disc
+ID is the number of audio tracks, what if we omit the data track's offset in
+the calculation?
+
+```python
+>>> accuraterip_ids(offsets[1:], leadout)
+('00517a54', '05a845d2')      # both are correct now
+```
+
+So it seems that the offset list must not include the data tracks. Therefore,
+correct handling of mixed mode CDs requires information that `discid` cannot
+provide. `pycdio` must be used to determine which tracks are data tracks. Once
+this is known, it becomes possible to filter out offsets of data tracks.
