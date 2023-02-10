@@ -21,11 +21,16 @@ class _Track:
 
 @dataclass
 class DiscInfo:
+    """
+    Representation of Compact Disc properties required for
+    calculation of an AccurateRip disc ID.
+    """
     track_list: List[_Track]
     lead_out: int
 
     @classmethod
     def from_cd(cls):
+        """Read disc properties from a physical CD in the default device."""
         device = cdio.Device(driver_id=pycdio.DRIVER_DEVICE)
 
         first = device.get_first_track().track
@@ -56,6 +61,12 @@ class DiscInfo:
 
     @classmethod
     def from_discid(cls, discid):
+        """
+        Get disc properties from MusicBrainz by disc ID. This is useful only
+        when the CD is pure Red Book audio CD. MusicBrainz disc ID does not
+        encode information about data tracks, but this information is required
+        to calculate AccurateRip disc ID.
+        """
         raise NotImplementedError
 
 
