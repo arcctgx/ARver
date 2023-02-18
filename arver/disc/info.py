@@ -10,13 +10,14 @@ import pycdio
 @dataclass
 class _Track:
     num: int
-    lsn: int
+    # lsn: int
     lba: int
     length: int
     fmt: str
 
     def __str__(self):
-        return f'{self.num:2d}\t{self.lsn:6d}\t{self.lba:6d}\t{self.length:6d}\t{self.fmt:>6s}'
+        # return f'{self.num:2d}\t{self.lsn:6d}\t{self.lba:6d}\t{self.length:6d}\t{self.fmt:>6s}'
+        return f'{self.num:2d}\t{self.lba:6d}\t{self.length:6d}\t{self.fmt:>6s}'
 
 
 @dataclass
@@ -28,6 +29,18 @@ class DiscInfo:
     track_list: List[_Track]
     lead_out: int
 
+    def print_table(self) -> None:
+        """Print disc information as a track listing."""
+        # print(f' #\t{"LSN":>6s}\t{"LBA":>6s}\t{"frames":6s}\tformat')
+        # print(f'--\t{"-"*6}\t{"-"*6}\t{"-"*6}\t{"-"*6}')
+        print(f' #\t{"LBA":>6s}\t{"frames":6s}\tformat')
+        print(f'--\t{"-"*6}\t{"-"*6}\t{"-"*6}')
+
+        for track in self.track_list:
+            print(track)
+
+        print(f'AA\t{self.lead_out:6d}')
+
     @classmethod
     def from_cd(cls):
         """Read disc properties from a physical CD in the default device."""
@@ -36,28 +49,22 @@ class DiscInfo:
         first = device.get_first_track().track
         n_tracks = device.get_num_tracks()
 
-        print(f' #\t{"LSN":>6s}\t{"LBA":>6s}\t{"frames":6s}\tformat')
-        print(f'--\t{"-"*6}\t{"-"*6}\t{"-"*6}\t{"-"*6}')
-
         tracklist = []
 
         for trk in range(first, n_tracks + 1):
             track = device.get_track(trk)
             num = track.track
-            lsn = track.get_lsn()  # from lead-in
+            # lsn = track.get_lsn()  # from lead-in
             lba = track.get_lba()  # from sector zero
             frames = track.get_last_lsn() - track.get_lsn() + 1
             fmt = track.get_format()
 
-            tracklist.append(_Track(num, lsn, lba, frames, fmt))
+            # tracklist.append(_Track(num, lsn, lba, frames, fmt))
+            tracklist.append(_Track(num, lba, frames, fmt))
 
-        for track in tracklist:
-            print(track)
+        lead_out = device.get_track(pycdio.CDROM_LEADOUT_TRACK)
 
-        leadout = device.get_track(pycdio.CDROM_LEADOUT_TRACK)
-        print(f'aa\t{leadout.get_lsn()}\t{leadout.get_lba()}')
-
-        return cls(tracklist, leadout)
+        return cls(tracklist, lead_out.get_lba())
 
     @classmethod
     def from_discid(cls, discid):
@@ -71,4 +78,5 @@ class DiscInfo:
 
 
 if __name__ == '__main__':
-    DiscInfo.from_cd()
+    disc_info = DiscInfo.from_cd()
+    disc_info.print_table()
