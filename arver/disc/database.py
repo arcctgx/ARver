@@ -3,7 +3,7 @@
 import json
 import struct
 from dataclasses import dataclass
-from typing import ClassVar, List
+from typing import ClassVar, List, Optional
 
 import requests
 
@@ -280,5 +280,34 @@ class AccurateRipFetcher:
             self._raw_bytes = response.content
             return self._parse_raw_bytes()
         except (requests.HTTPError, struct.error, ValueError) as error:
+            print(error)
+            return None
+
+
+class AccurateRipParser(AccurateRipFetcher):
+    """Class for parsing AccurateRip data stored in a cached dBAR file."""
+
+    def __init__(self, path: str):
+        # Call parent init with dummy values because we don't know the number of
+        # tracks or disc fingerprints. Header validator method is a no-op anyway.
+        super().__init__(0, '00000000', '00000000', '00000000')
+        self._path = path
+
+    def _validate_header(self, header):
+        """
+        We only have dummy values for the number of tracks and disc fingerprints,
+        so override this method so that it doesn't actually verify these values.
+        """
+
+    def parse(self) -> Optional[AccurateRipDisc]:
+        """
+        Read cached AccurateRip disc data from a file. Return an AccurateRipDisc
+        object, or None on error.
+        """
+        try:
+            with open(self._path, mode='rb') as dbar:
+                self._raw_bytes = dbar.read()
+            return self._parse_raw_bytes()
+        except (OSError, struct.error, ValueError) as error:
             print(error)
             return None

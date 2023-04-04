@@ -12,7 +12,7 @@ setup(name=APPNAME,
       entry_points={
           'console_scripts': [
               'arver = arver.verify:main', 'arver-discinfo = arver.discinfo:main',
-              'arver-ripinfo = arver.ripinfo:main'
+              'arver-ripinfo = arver.ripinfo:main', 'arver-dbar-parser = arver.dbar:main'
           ]
       },
       ext_modules=[
