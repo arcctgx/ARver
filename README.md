@@ -45,7 +45,7 @@ TODO
 The following example demonstrates the typical use case of ARver: verification
 of files just ripped from a CD.
 
-[![asciicast](https://asciinema.org/a/Y2rl6KN8plN5V1rTMuzS3tuf6.svg)](https://asciinema.org/a/Y2rl6KN8plN5V1rTMuzS3tuf6)
+![ARver usage example](doc/arver_usage.gif)
 
 The tracks have been ripped using `cdparanoia` prior to running `arver`.
 AccurateRip disc ID is calculated based on the TOC of the CD which still is
