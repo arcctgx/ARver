@@ -255,4 +255,52 @@ correct handling of mixed mode CDs requires information that `discid` cannot
 provide. `pycdio` must be used to determine which tracks are data tracks. Once
 this is known, it becomes possible to filter out offsets of data tracks.
 
+### Sample AccurateRip response for a Yellow Book CD
+
+As indicated above, MK Trilogy CD contains 28 audio tracks. AccurateRip response
+for that CD is following:
+
+```text
+disc ID: 028-00517a54-05a845d2-af0da31d
+track  1:   00000000   (confidence: 0)
+track  2:   f7372315   (confidence: 1)
+track  3:   953b5f00   (confidence: 1)
+track  4:   7cc9a20d   (confidence: 1)
+track  5:   83f58407   (confidence: 1)
+track  6:   33754ce7   (confidence: 1)
+track  7:   efe4fc28   (confidence: 1)
+track  8:   bd1fe2a7   (confidence: 1)
+track  9:   a1ff10c6   (confidence: 1)
+track 10:   a84d3b16   (confidence: 1)
+track 11:   00a31f62   (confidence: 1)
+track 12:   4c856e88   (confidence: 1)
+track 13:   ec88131e   (confidence: 1)
+track 14:   7e72262f   (confidence: 1)
+track 15:   5c5b588f   (confidence: 1)
+track 16:   62a24ed2   (confidence: 1)
+track 17:   bc6ef90f   (confidence: 1)
+track 18:   026de5e6   (confidence: 1)
+track 19:   982fddd8   (confidence: 1)
+track 20:   2a2734ed   (confidence: 1)
+track 21:   4dabe6e0   (confidence: 1)
+track 22:   0083e0c8   (confidence: 1)
+track 23:   00000000   (confidence: 0)
+track 24:   060d3d73   (confidence: 1)
+track 25:   75c6048b   (confidence: 1)
+track 26:   dd6ee61a   (confidence: 1)
+track 27:   e5ecb215   (confidence: 1)
+track 28:   00000000   (confidence: 0)
+```
+
+Note that the first track has checksum `00000000` with zero confidence. This
+corresponds to CD track 1, i.e. the *data track*! Since AccurateRip response
+only contains 28 tracks, it means that the checksum of one audio track is
+not included. Indeed, there is no checksum of the final audio track. This
+seems to be a limitation of AccurateRip database and there is nothing `ARver`
+can do to work around it.
+
+Also note that some *audio* tracks have zero checksums with zero confidences
+as well. This is because they are too short: apparently AccurateRip provides a
+checksum only if the track length exceeds some threshold.
+
 [FreeDB disc ID]: <https://en.wikipedia.org/wiki/CDDB#Example_calculation_of_a_CDDB1_(FreeDB)_disc_ID>
