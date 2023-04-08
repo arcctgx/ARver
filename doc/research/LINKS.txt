@@ -11,24 +11,11 @@ http://www.dbpoweramp.com/email.htm
 https://web.archive.org/web/20140708222045/https://hydrogenaud.io/forums/index.php?showtopic=97603
 https://web.archive.org/web/20140730020801/http://forum.dbpoweramp.com/showthread.php?20641-AccurateRip-CRC-Calculation
 
-https://github.com/whipper-team/whipper/blob/develop/src/accuraterip-checksum.c
-https://github.com/whipper-team/whipper/blob/develop/scripts/accuraterip-checksum
-https://github.com/whipper-team/whipper/blob/develop/whipper/image/table.py accuraterip_ids(), accuraterip_path()
-
-
-ARFlac.pl / ARCue.pl:
-https://hydrogenaud.io/index.php?topic=62522.0
-https://github.com/paulpdaniels/Nuclex/blob/master/foundation/Nuclex.Audio/Documents/AccurateRip/ARFlac.pl
-https://github.com/paulpdaniels/Nuclex/blob/master/foundation/Nuclex.Audio/Documents/AccurateRip/ARCue.pl
-
 
 Disc IDs:
 https://jonnyjd.github.io/libdiscid/
 https://musicbrainz.org/doc/Disc_ID_Calculation
 https://en.wikipedia.org/wiki/CDDB#Example_calculation_of_a_CDDB1_(FreeDB)_disc_ID
-
-https://github.com/metabrainz/libdiscid/blob/master/src/disc.c create_freedb_disc_id()
-https://github.com/whipper-team/whipper/blob/develop/whipper/extern/freedb.py
 
 
 libcdio / pycdio:
