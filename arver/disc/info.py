@@ -18,14 +18,34 @@ class _Track:
         return f'{self.num:2d}\t{self.lba:6d}\t{self.length:6d}\t{self.fmt:>6s}'
 
 
+def _is_mixed_mode(device: cdio.Device) -> bool:
+    """
+    Determine if the disc is a mixed-mode (Yellow Book) CD.
+    Assume mixed mode CD is single-session with a leading data track.
+    """
+    first_track = device.get_first_track()
+    first_session_lsn = first_track.get_lsn()
+    last_session_lsn = device.get_last_session()
+    multisession = first_session_lsn != last_session_lsn
+
+    if not multisession and first_track.get_format() == 'data':
+        return True
+    return False
+
+
 @dataclass
 class DiscInfo:
     """
-    Representation of Compact Disc properties required for
-    calculation of an AccurateRip disc ID.
+    Representation of Compact Disc properties required for calculation of
+    AccurateRip disc IDs.
+
+    Information about mixed mode is required because the layout of checksums in
+    AccurateRip response is different for these CDs: checksum of the first audio
+    track comes second, and the checksum of the last audio track is missing.
     """
     track_list: List[_Track]
     lead_out: int
+    mixed_mode: bool
 
     def print_table(self) -> None:
         """Print disc information as a track listing."""
@@ -42,23 +62,22 @@ class DiscInfo:
         """Read disc properties from a physical CD in the default device."""
         device = cdio.Device(driver_id=pycdio.DRIVER_DEVICE)
 
-        first = device.get_first_track().track
-        n_tracks = device.get_num_tracks()
+        first_track_num = device.get_first_track().track
+        num_tracks = device.get_num_tracks()
+        lead_out_lba = device.get_track(pycdio.CDROM_LEADOUT_TRACK).get_lba()
+        mixed_mode = _is_mixed_mode(device)
 
-        tracklist = []
+        track_list = []
 
-        for trk in range(first, n_tracks + 1):
-            track = device.get_track(trk)
-            num = track.track
+        for num in range(first_track_num, num_tracks + 1):
+            track = device.get_track(num)
             lba = track.get_lba()  # relative to sector zero: LBA = LSN + 150
             frames = track.get_last_lsn() - track.get_lsn() + 1
             fmt = track.get_format()
 
-            tracklist.append(_Track(num, lba, frames, fmt))
+            track_list.append(_Track(num, lba, frames, fmt))
 
-        lead_out = device.get_track(pycdio.CDROM_LEADOUT_TRACK)
-
-        return cls(tracklist, lead_out.get_lba())
+        return cls(track_list, lead_out_lba, mixed_mode)
 
     @classmethod
     def from_discid(cls, discid):
