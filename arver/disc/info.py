@@ -10,13 +10,11 @@ import pycdio
 @dataclass
 class _Track:
     num: int
-    # lsn: int
     lba: int
     length: int
     fmt: str
 
     def __str__(self):
-        # return f'{self.num:2d}\t{self.lsn:6d}\t{self.lba:6d}\t{self.length:6d}\t{self.fmt:>6s}'
         return f'{self.num:2d}\t{self.lba:6d}\t{self.length:6d}\t{self.fmt:>6s}'
 
 
@@ -31,8 +29,6 @@ class DiscInfo:
 
     def print_table(self) -> None:
         """Print disc information as a track listing."""
-        # print(f' #\t{"LSN":>6s}\t{"LBA":>6s}\t{"frames":6s}\tformat')
-        # print(f'--\t{"-"*6}\t{"-"*6}\t{"-"*6}\t{"-"*6}')
         print(f' #\t{"LBA":>6s}\t{"frames":6s}\tformat')
         print(f'--\t{"-"*6}\t{"-"*6}\t{"-"*6}')
 
@@ -54,12 +50,10 @@ class DiscInfo:
         for trk in range(first, n_tracks + 1):
             track = device.get_track(trk)
             num = track.track
-            # lsn = track.get_lsn()  # from lead-in
-            lba = track.get_lba()  # from sector zero
+            lba = track.get_lba()  # relative to sector zero: LBA = LSN + 150
             frames = track.get_last_lsn() - track.get_lsn() + 1
             fmt = track.get_format()
 
-            # tracklist.append(_Track(num, lsn, lba, frames, fmt))
             tracklist.append(_Track(num, lba, frames, fmt))
 
         lead_out = device.get_track(pycdio.CDROM_LEADOUT_TRACK)
