@@ -6,16 +6,19 @@ from typing import List
 import cdio
 import pycdio
 
+from arver.disc.utils import frames_to_msf
+
 
 @dataclass
 class _Track:
     num: int
     lba: int
     length: int
+    msf: str
     fmt: str
 
     def __str__(self):
-        return f'{self.num:2d}\t{self.lba:6d}\t{self.length:6d}\t{self.fmt:>6s}'
+        return f'{self.num:2d}  {self.lba:6d}  {self.msf:>8s}  {self.length:6d}  {self.fmt:>6s}'
 
 
 def _is_mixed_mode(device: cdio.Device) -> bool:
@@ -49,13 +52,13 @@ class DiscInfo:
 
     def print_table(self) -> None:
         """Print disc information as a track listing."""
-        print(f' #\t{"LBA":>6s}\t{"frames":6s}\tformat')
-        print(f'--\t{"-"*6}\t{"-"*6}\t{"-"*6}')
+        print(f' #  {"LBA":>6s}  {"length":^8s}  {"frames":6s}  format')
+        print(f'--  {"-"*6}  {"-"*8}  {"-"*6}  {"-"*6}')
 
         for track in self.track_list:
             print(track)
 
-        print(f'AA\t{self.lead_out:6d}')
+        print(f'AA  {self.lead_out:6d}')
 
     @classmethod
     def from_cd(cls):
@@ -75,7 +78,7 @@ class DiscInfo:
             frames = track.get_last_lsn() - track.get_lsn() + 1
             fmt = track.get_format()
 
-            track_list.append(_Track(num, lba, frames, fmt))
+            track_list.append(_Track(num, lba, frames, frames_to_msf(frames), fmt))
 
         return cls(track_list, lead_out_lba, mixed_mode)
 
