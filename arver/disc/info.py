@@ -89,6 +89,20 @@ class DiscInfo:
         """
         raise NotImplementedError
 
+    def all_offsets(self) -> List[int]:
+        """
+        Return a list of LBA offsets of all track on the CD regardless of their
+        type. They are used for calculating FreeDB disc ID.
+        """
+        return [track.lba for track in self.track_list]
+
+    def audio_offsets(self) -> List[int]:
+        """
+        Return a list of LBA offsets of audio tracks on the CD. They are used
+        for calculating AccurateRip disc IDs.
+        """
+        return [track.lba for track in self.track_list if track.fmt == 'audio']
+
 
 if __name__ == '__main__':
     disc_info = DiscInfo.from_cd()
