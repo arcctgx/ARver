@@ -1,9 +1,12 @@
 """Disc info module for ARver."""
 
+import sys
+
 from dataclasses import dataclass
 from typing import List, Optional
 
 import cdio
+import discid
 import musicbrainzngs
 import pycdio
 
@@ -34,6 +37,22 @@ class _Track:
             numstr = f'{"DATA":>5s}'
 
         return f'{numstr}  {self.offset:6d}  {self.msf():>8s}  {self.frames:6d}  {self.type:>6s}'
+
+
+def _have_disc() -> bool:
+    """
+    Detect if there is a readable disc in drive.
+
+    Use discid instead of pycdio because it's much simpler. Furthermore,
+    on error pycdio prints its own message which can't be silenced. discid
+    is a dependency anyway, so it's not a problem.
+    """
+    try:
+        discid.read()
+    except discid.DiscError:
+        return False
+
+    return True
 
 
 def _is_mixed_mode(device: cdio.Device) -> bool:
@@ -110,8 +129,10 @@ class DiscInfo:
     @classmethod
     def from_cd(cls) -> 'Optional[DiscInfo]':
         """Read disc properties from a physical CD in the default device."""
-        device = cdio.Device(driver_id=pycdio.DRIVER_DEVICE)
+        if not _have_disc():
+            return None
 
+        device = cdio.Device(driver_id=pycdio.DRIVER_DEVICE)
         first_track_num = device.get_first_track().track
         num_tracks = device.get_num_tracks()
         lead_out_lba = device.get_track(pycdio.CDROM_LEADOUT_TRACK).get_lba()
@@ -185,8 +206,11 @@ if __name__ == '__main__':
     disc_info = DiscInfo.from_cd()
     # disc_info = DiscInfo.from_discid('.wsrLgOecMphb09w1pr.ZwcIrj8-')
 
-    if disc_info:
-        print('AccurateRip disc ID:', disc_info.accuraterip_id())
-        print('MusicBrainz disc ID:', disc_info.musicbrainz_id())
-        print()
-        disc_info.print_table()
+    if disc_info is None:
+        print('Failed to read disc. Is there a CD in drive?')
+        sys.exit(1)
+
+    print('AccurateRip disc ID:', disc_info.accuraterip_id())
+    print('MusicBrainz disc ID:', disc_info.musicbrainz_id())
+    print()
+    disc_info.print_table()
