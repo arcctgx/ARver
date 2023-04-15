@@ -21,13 +21,14 @@ ENHANCED_CD_DATA_TRACK_GAP = 11400
 
 @dataclass
 class _Track:
+    """Representation of a CD track."""
     num: int
     offset: int
     frames: int
     type: str
 
     def msf(self) -> str:
-        """Return track length in MM:SS.FF format."""
+        """Return track length as a string in MM:SS.FF format."""
         return frames_to_msf(self.frames)
 
     def __str__(self):
@@ -42,7 +43,23 @@ class _Track:
 
 
 class _DiscType(Enum):
-    """Disc types relevant to ARver."""
+    """
+    Disc types relevant to ARver:
+
+    Audio CD (Red Book): a "normal" Compact Disc. Single session which only
+    contains audio tracks.
+
+    Mixed Mode CD (Yellow Book): single session, audio tracks and one data
+    track exist together. Data track is first. Commonly used as game CDs in
+    the 1990s and 2000s.
+
+    Enhanced CD (Blue Book): multisession, first session only contains audio
+    tracks, second session contains one data track. The data track usually
+    contains music videos or other bonus materials. "Copy Control" CDs fall
+    into this category as well.
+
+    Unsupported CD: any edge case not covered by the types listed above.
+    """
     UNSUPPORTED = 0
     AUDIO = 1
     MIXED_MODE = 2
@@ -76,7 +93,7 @@ def _is_multisession(device: cdio.Device) -> bool:
 
 
 def _is_audio_only(track_list: List[_Track]) -> bool:
-    """Check if disc only contains audio tracks."""
+    """Check if track list only contains audio tracks."""
     types = {track.type for track in track_list}
     return len(types) == 1 and 'audio' in types
 
@@ -87,7 +104,7 @@ def _get_disc_type(device: cdio.Device, track_list: List[_Track]) -> _DiscType:
 
     No audio tracks -> unsupported disc (this should never happen)
     Single session and only audio tracks -> Audio CD
-    Single session and the first track is a data track -> Mixed-mode CD
+    Single session and the first track is a data track -> Mixed Mode CD
     Multisession and the last track is a data track -> Enhanced CD
     Anything else -> unsupported disc (no idea what that could be)
     """
@@ -140,11 +157,11 @@ def _fix_last_audio_track(track_list: List[_Track]) -> None:
     """
     Fix length of the last audio track by subtracting the length of gap
     between last audio track and the data track in an enhanced CD. This
-    is needed because pycdio includes this gap in the sectors count of
-    the last audio track.
+    is needed because pycdio includes this gap in sectors count of the
+    last audio track.
 
     Obviously this only makes sense when there is a data track following
-    audio tracks, that is in enhanced (Blue Book) CDs.
+    audio tracks, that is in Enhanced CDs.
     """
     for track in reversed(track_list):
         if track.type != 'audio':
@@ -157,12 +174,8 @@ def _fix_last_audio_track(track_list: List[_Track]) -> None:
 @dataclass
 class DiscInfo:
     """
-    Representation of Compact Disc properties required for calculation of
-    AccurateRip disc IDs.
-
-    Information about mixed mode is required because the layout of checksums in
-    AccurateRip response is different for these CDs: checksum of the first audio
-    track comes second, and the checksum of the last audio track is missing.
+    Representation of Compact Disc properties required for calculation
+    of AccurateRip disc IDs and for performing checksum verification.
     """
     pregap: Optional[_Track]
     track_list: List[_Track]
@@ -184,7 +197,11 @@ class DiscInfo:
 
     @classmethod
     def from_cd(cls) -> 'Optional[DiscInfo]':
-        """Read disc properties from a physical CD in the default device."""
+        """
+        Read disc properties from a physical CD in the default device.
+        This is the only way to obtain all necessary information to verify
+        each supported CD type (i.e. Audio, Mixed Mode and Enhanced).
+        """
         if not _have_disc():
             return None
 
@@ -216,10 +233,11 @@ class DiscInfo:
     @classmethod
     def from_discid(cls, disc_id: str) -> 'Optional[DiscInfo]':
         """
-        Get disc properties from MusicBrainz by disc ID. This is useful only
-        when the CD is pure Red Book audio CD. MusicBrainz disc ID does not
-        encode information about data tracks, but this information is required
-        to calculate AccurateRip disc ID.
+        Get disc properties from MusicBrainz by disc ID query. This does not
+        provide all required information about the disc, so the program assumes
+        the disc is an Audio CD. If this assumption is wrong AccurateRip query
+        may fail, verification may not be successful, or resulting confidence
+        values may be lower than what would be obtained using a physical CD.
         """
         musicbrainzngs.set_useragent(APPNAME, VERSION, URL)
 
