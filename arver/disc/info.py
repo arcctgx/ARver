@@ -262,10 +262,21 @@ class DiscInfo:
         return types[self.type]
 
     def musicbrainz_id(self) -> str:
-        """Return MusicBrianz disc ID as string."""
+        """Return MusicBrainz disc ID as string."""
         last_audio_track = self._audio_tracks()[-1]
         sectors = last_audio_track.offset + last_audio_track.frames
-        return musicbrainz_id(self._audio_offsets(), sectors)
+
+        # Calculation of MusicBrainz disc IDs requires track offsets from the
+        # first CD session. Audio and Mixed Mode CDs are single-session, so
+        # calculation requires all track offsets regardless of track type. In
+        # Enhanced CDs the first session only contains audio tracks, so by
+        # using just the audio track offsets the second session is omitted.
+        if self.type == _DiscType.ENHANCED:
+            offsets = self._audio_offsets()
+        else:
+            offsets = self._all_offsets()
+
+        return musicbrainz_id(offsets, sectors)
 
     def accuraterip_id(self) -> str:
         """Return AccurateRip disc ID as string."""
