@@ -3,6 +3,7 @@
 import sys
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import List, Optional
 
 import cdio
@@ -39,6 +40,14 @@ class _Track:
         return f'{numstr}  {self.offset:6d}  {self.msf():>8s}  {self.frames:6d}  {self.type:>6s}'
 
 
+class _DiscType(Enum):
+    """Disc types relevant to ARver."""
+    UNSUPPORTED = 0
+    AUDIO = 1
+    MIXED_MODE = 2
+    ENHANCED = 3
+
+
 def _have_disc() -> bool:
     """
     Detect if there is a readable disc in drive.
@@ -46,6 +55,9 @@ def _have_disc() -> bool:
     Use discid instead of pycdio because it's much simpler. Furthermore,
     on error pycdio prints its own message which can't be silenced. discid
     is a dependency anyway, so it's not a problem.
+
+    discid seems to raise error on CDs with no audio tracks. That's good:
+    one edge case less to care about.
     """
     try:
         discid.read()
@@ -55,19 +67,44 @@ def _have_disc() -> bool:
     return True
 
 
-def _is_mixed_mode(device: cdio.Device) -> bool:
-    """
-    Determine if the disc is a mixed-mode (Yellow Book) CD.
-    Assume mixed mode CD is single-session with a leading data track.
-    """
-    first_track = device.get_first_track()
-    first_session_lsn = first_track.get_lsn()
+def _is_multisession(device: cdio.Device) -> bool:
+    """Check if disc has more than one session."""
+    first_session_lsn = device.get_first_track().get_lsn()
     last_session_lsn = device.get_last_session()
-    multisession = first_session_lsn != last_session_lsn
+    return first_session_lsn != last_session_lsn
 
-    if not multisession and first_track.get_format() == 'data':
-        return True
-    return False
+
+def _is_audio_only(track_list: List[_Track]) -> bool:
+    """Check if disc only contains audio tracks."""
+    types = {track.type for track in track_list}
+    return len(types) == 1 and 'audio' in types
+
+
+def _get_disc_type(device: cdio.Device, track_list: List[_Track]) -> _DiscType:
+    """
+    Determine disc type based on the following rules:
+
+    No audio tracks -> unsupported disc (this should never happen)
+    Single session and only audio tracks -> Audio CD
+    Single session and the first track is a data track -> Mixed-mode CD
+    Multisession and the last track is a data track -> Enhanced CD
+    Anything else -> unsupported disc (no idea what that could be)
+    """
+    if 'audio' not in [track.type for track in track_list]:
+        return _DiscType.UNSUPPORTED
+
+    multisession = _is_multisession(device)
+
+    if not multisession and _is_audio_only(track_list):
+        return _DiscType.AUDIO
+
+    if not multisession and track_list[0].type == 'data':
+        return _DiscType.MIXED_MODE
+
+    if multisession and track_list[-1].type == 'data':
+        return _DiscType.ENHANCED
+
+    return _DiscType.UNSUPPORTED
 
 
 def _calculate_track_lengths(offset_list: List[int], sectors: int) -> List[int]:
@@ -111,7 +148,7 @@ class DiscInfo:
     pregap: Optional[_Track]
     track_list: List[_Track]
     lead_out: int
-    mixed_mode: bool
+    type: _DiscType
 
     def print_table(self) -> None:
         """Print disc information as a track listing."""
@@ -136,7 +173,6 @@ class DiscInfo:
         first_track_num = device.get_first_track().track
         num_tracks = device.get_num_tracks()
         lead_out_lba = device.get_track(pycdio.CDROM_LEADOUT_TRACK).get_lba()
-        mixed_mode = _is_mixed_mode(device)
 
         track_list = []
 
@@ -148,7 +184,12 @@ class DiscInfo:
             track_list.append(_Track(num, lba, frames, fmt))
 
         pregap = _get_pregap_track(track_list)
-        return cls(pregap, track_list, lead_out_lba, mixed_mode)
+
+        disc_type = _get_disc_type(device, track_list)
+        if disc_type == _DiscType.UNSUPPORTED:
+            return None
+
+        return cls(pregap, track_list, lead_out_lba, disc_type)
 
     @classmethod
     def from_discid(cls, disc_id: str) -> 'Optional[DiscInfo]':
@@ -174,7 +215,7 @@ class DiscInfo:
             track_list.append(_Track(num, *track_data, 'audio'))
 
         pregap = _get_pregap_track(track_list)
-        return cls(pregap, track_list, lead_out, False)
+        return cls(pregap, track_list, lead_out, _DiscType.AUDIO)
 
     def _audio_tracks(self) -> List[_Track]:
         """Return a list of audio tracks on the CD."""
@@ -187,6 +228,16 @@ class DiscInfo:
     def _all_offsets(self) -> List[int]:
         """Return a list of offsets of all tracks on the CD."""
         return [track.offset for track in self.track_list]
+
+    def disc_type(self) -> str:
+        """Return a string describing disc type."""
+        types = {
+            _DiscType.UNSUPPORTED: 'Unsupported CD type',
+            _DiscType.AUDIO: 'Audio CD',
+            _DiscType.MIXED_MODE: 'Mixed Mode CD',
+            _DiscType.ENHANCED: 'Enhanced CD'
+        }
+        return types[self.type]
 
     def musicbrainz_id(self) -> str:
         """Return MusicBrianz disc ID as string."""
@@ -207,9 +258,10 @@ if __name__ == '__main__':
     # disc_info = DiscInfo.from_discid('.wsrLgOecMphb09w1pr.ZwcIrj8-')
 
     if disc_info is None:
-        print('Failed to read disc. Is there a CD in drive?')
+        print('Failed to read disc or unsupported disc type.')
         sys.exit(1)
 
+    print('Disc type:', disc_info.disc_type())
     print('AccurateRip disc ID:', disc_info.accuraterip_id())
     print('MusicBrainz disc ID:', disc_info.musicbrainz_id())
     print()
