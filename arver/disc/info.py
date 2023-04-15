@@ -16,6 +16,7 @@ from arver.disc.id import freedb_id, musicbrainz_id, accuraterip_ids
 from arver.disc.utils import frames_to_msf, LEAD_IN_FRAMES
 
 PREGAP_TRACK_NUM = -1
+ENHANCED_CD_DATA_TRACK_GAP = 11400
 
 
 @dataclass
@@ -135,6 +136,24 @@ def _get_pregap_track(track_list: List[_Track]) -> Optional[_Track]:
     return pregap
 
 
+def _fix_last_audio_track(track_list: List[_Track]) -> None:
+    """
+    Fix length of the last audio track by subtracting the length of gap
+    between last audio track and the data track in an enhanced CD. This
+    is needed because pycdio includes this gap in the sectors count of
+    the last audio track.
+
+    Obviously this only makes sense when there is a data track following
+    audio tracks, that is in enhanced (Blue Book) CDs.
+    """
+    for track in reversed(track_list):
+        if track.type != 'audio':
+            continue
+
+        track.frames -= ENHANCED_CD_DATA_TRACK_GAP
+        break
+
+
 @dataclass
 class DiscInfo:
     """
@@ -188,6 +207,9 @@ class DiscInfo:
         disc_type = _get_disc_type(device, track_list)
         if disc_type == _DiscType.UNSUPPORTED:
             return None
+
+        if disc_type == _DiscType.ENHANCED:
+            _fix_last_audio_track(track_list)
 
         return cls(pregap, track_list, lead_out_lba, disc_type)
 
