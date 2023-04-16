@@ -306,7 +306,6 @@ class DiscInfo:
 
 if __name__ == '__main__':
     disc_info = DiscInfo.from_cd()
-    # disc_info = DiscInfo.from_discid('.wsrLgOecMphb09w1pr.ZwcIrj8-')
 
     if disc_info is None:
         print('Failed to read disc or unsupported disc type.')
