@@ -23,7 +23,7 @@ ENHANCED_CD_DATA_TRACK_GAP = 11400
 class _Track:
     """Representation of a CD track."""
     num: int
-    offset: int
+    lba: int
     frames: int
     type: str
 
@@ -39,7 +39,7 @@ class _Track:
         elif self.type != 'audio':
             numstr = f'{"DATA":>5s}'
 
-        return f'{numstr}  {self.offset:6d}  {self.msf():>8s}  {self.frames:6d}  {self.type:>6s}'
+        return f'{numstr}  {self.lba:6d}  {self.msf():>8s}  {self.frames:6d}  {self.type:>6s}'
 
 
 class _DiscType(Enum):
@@ -145,7 +145,7 @@ def _get_pregap_track(track_list: List[_Track]) -> Optional[_Track]:
     common, but audio data hidden in track one pregap (HTOA) is very rare.
     """
     pregap = None
-    frames = track_list[0].offset - LEAD_IN_FRAMES
+    frames = track_list[0].lba - LEAD_IN_FRAMES
 
     if frames > 0:
         pregap = _Track(PREGAP_TRACK_NUM, LEAD_IN_FRAMES, frames, 'audio')
@@ -208,13 +208,13 @@ class DiscInfo:
         device = cdio.Device(driver_id=pycdio.DRIVER_DEVICE)
         first_track_num = device.get_first_track().track
         num_tracks = device.get_num_tracks()
-        lead_out_lba = device.get_track(pycdio.CDROM_LEADOUT_TRACK).get_lba()
+        lead_out = device.get_track(pycdio.CDROM_LEADOUT_TRACK).get_lba()
 
         track_list = []
 
         for num in range(first_track_num, num_tracks + 1):
             track = device.get_track(num)
-            lba = track.get_lba()  # relative to sector zero: LBA = LSN + 150
+            lba = track.get_lba()
             frames = track.get_last_lsn() - track.get_lsn() + 1
             fmt = track.get_format()
             track_list.append(_Track(num, lba, frames, fmt))
@@ -228,7 +228,7 @@ class DiscInfo:
         if disc_type == _DiscType.ENHANCED:
             _fix_last_audio_track(track_list)
 
-        return cls(pregap, track_list, lead_out_lba, disc_type)
+        return cls(pregap, track_list, lead_out, disc_type)
 
     @classmethod
     def from_discid(cls, disc_id: str) -> 'Optional[DiscInfo]':
@@ -263,11 +263,11 @@ class DiscInfo:
 
     def _audio_offsets(self) -> List[int]:
         """Return a list of offsets of audio tracks on the CD."""
-        return [track.offset for track in self._audio_tracks()]
+        return [track.lba for track in self._audio_tracks()]
 
     def _all_offsets(self) -> List[int]:
         """Return a list of offsets of all tracks on the CD."""
-        return [track.offset for track in self.track_list]
+        return [track.lba for track in self.track_list]
 
     def disc_type(self) -> str:
         """Return a string describing disc type."""
@@ -282,7 +282,7 @@ class DiscInfo:
     def musicbrainz_id(self) -> str:
         """Return MusicBrainz disc ID as string."""
         last_audio_track = self._audio_tracks()[-1]
-        sectors = last_audio_track.offset + last_audio_track.frames
+        sectors = last_audio_track.lba + last_audio_track.frames
 
         # Calculation of MusicBrainz disc IDs requires track offsets from the
         # first CD session. Audio and Mixed Mode CDs are single-session, so
