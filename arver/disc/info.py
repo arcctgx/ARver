@@ -2,7 +2,7 @@
 
 import sys
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional
 
@@ -12,6 +12,7 @@ import musicbrainzngs
 import pycdio
 
 from arver import APPNAME, VERSION, URL
+from arver.disc.database import AccurateRipDisc, AccurateRipFetcher
 from arver.disc.id import freedb_id, musicbrainz_id, accuraterip_ids
 from arver.disc.utils import frames_to_msf, LEAD_IN_FRAMES
 
@@ -181,6 +182,7 @@ class DiscInfo:
     track_list: List[_Track]
     lead_out: int
     type: _DiscType
+    accuraterip_data: Optional[AccurateRipDisc] = field(default=None, init=False)
 
     def print_table(self) -> None:
         """Print disc information as a track listing."""
@@ -302,6 +304,14 @@ class DiscInfo:
         freedb = freedb_id(self._all_offsets(), self.lead_out)
         ar1, ar2 = accuraterip_ids(self._audio_offsets(), self.lead_out)
         return f'{num:03d}-{ar1:8s}-{ar2:8s}-{freedb:8s}'
+
+    def fetch_accuraterip_data(self) -> None:
+        """
+        Download AccurateRip disc data and store AccurateRip responses in
+        DiscInfo instance.
+        """
+        fetcher = AccurateRipFetcher.from_id(self.accuraterip_id())
+        self.accuraterip_data = fetcher.fetch()
 
 
 if __name__ == '__main__':

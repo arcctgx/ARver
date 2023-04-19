@@ -176,12 +176,18 @@ class AccurateRipFetcher:
     binary data and representing AccurateRip responses in a usable form.
     """
 
-    def __init__(self, num_tracks, ar_id1, ar_id2, freedb_id):
+    def __init__(self, num_tracks: int, ar_id1: str, ar_id2: str, freedb_id: str):
         self._num_tracks = num_tracks
         self._ar_id1 = ar_id1
         self._ar_id2 = ar_id2
         self._freedb_id = freedb_id
         self._raw_bytes = bytes()
+
+    @classmethod
+    def from_id(cls, accuraterip_id: str) -> 'AccurateRipFetcher':
+        """Create Fetcher object from AccurateRip ID string."""
+        parts = accuraterip_id.split('-')
+        return cls(int(parts[0]), parts[1], parts[2], parts[3])
 
     def _make_url(self):
         """Build URL to fetch AccurateRip disc data from."""
@@ -264,7 +270,7 @@ class AccurateRipFetcher:
 
         return AccurateRipDisc(responses)
 
-    def fetch(self):
+    def fetch(self) -> Optional[AccurateRipDisc]:
         """
         Fetch binary disc data from AccurateRip database. Return an AccurateRipDisc
         object, or None on error.
