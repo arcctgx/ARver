@@ -8,7 +8,7 @@ from enum import Enum
 from typing import ClassVar, List
 
 from arver.checksum.checksum import copy_crc, accuraterip_checksums
-from arver.disc.disc import Disc
+from arver.disc.info import DiscInfo
 from arver.disc.utils import FRAMES_PER_SECOND, frames_to_msf
 
 CHANNELS = 2
@@ -224,11 +224,14 @@ class Rip:
             track.set_copy_crc()
             track.set_accuraterip_checksums(num, total_tracks)
 
-    def verify(self, disc: Disc) -> DiscVerificationResult:
+    def verify(self, disc_info: DiscInfo) -> DiscVerificationResult:
         """Verify a set of ripped files against a CD with specified TOC."""
         print(f'Verifying {len(self)} tracks:\n')
 
-        checksums = disc.accuraterip_data.make_dict()
+        if disc_info.accuraterip_data is None:
+            raise ValueError('Cannot verify: missing AccurateRip data!')
+
+        checksums = disc_info.accuraterip_data.make_dict()
         results = []
 
         for num, track in enumerate(self.tracks, start=1):
