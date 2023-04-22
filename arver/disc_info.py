@@ -7,7 +7,7 @@ import argparse
 import sys
 
 from arver import VERSION
-from arver.disc.disc import Disc
+from arver.disc.info import DiscInfo
 
 
 def _parse_args():
@@ -33,17 +33,17 @@ def get_disc(disc_id):
     If disc ID is None read information from the CD in drive.
     """
     if disc_id is None:
-        disc = Disc.from_cd()
+        disc_info = DiscInfo.from_cd()
     else:
-        disc = Disc.from_disc_id(*disc_id)
+        disc_info = DiscInfo.from_discid(*disc_id)
 
-    if disc is None:
+    if disc_info is None:
         if disc_id is None:
             print('Could not read disc. Is there a CD in the drive?')
         else:
             print(f'Could not look up disc ID "{disc_id}", is it correct?')
 
-    return disc
+    return disc_info
 
 
 def main():

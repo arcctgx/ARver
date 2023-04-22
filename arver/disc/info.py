@@ -1,7 +1,5 @@
 """Disc info module for ARver."""
 
-import sys
-
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional
@@ -40,7 +38,7 @@ class _Track:
         elif self.type != 'audio':
             numstr = f'{"DATA":>5s}'
 
-        return f'{numstr}  {self.lba:6d}  {self.msf():>8s}  {self.frames:6d}  {self.type:>6s}'
+        return f'{numstr}    {self.msf():>8s}    {self.frames:6d}\n'
 
 
 class _DiscType(Enum):
@@ -184,18 +182,26 @@ class DiscInfo:
     type: _DiscType
     accuraterip_data: Optional[AccurateRipDisc] = field(default=None, init=False)
 
-    def print_table(self) -> None:
-        """Print disc information as a track listing."""
-        print(f'{"track":^5s}  {"offset":^6s}  {"length":^8s}  {"frames":6s}  {"type":^6s}')
-        print(f'{"-"*5}  {"-"*6}  {"-"*8}  {"-"*6}  {"-"*6}')
+    def _format_tracklist(self):
+        str_ = ''
+        str_ += 'track     length     frames\n'
+        str_ += '-----    --------    ------\n'
 
-        if self.pregap:
-            print(self.pregap)
+        if self.pregap is not None:
+            str_ += str(self.pregap)
 
         for track in self.track_list:
-            print(track)
+            str_ += str(track)
 
-        print(f'{"OUT":>5s}  {self.lead_out:6d}')
+        return str_.strip()
+
+    def __str__(self):
+        str_ = ''
+        str_ += f'AccurateRip disc ID: {self.accuraterip_id()}\n'
+        str_ += f'MusicBrainz disc ID: {self.musicbrainz_id()}\n'
+        str_ += f'Disc type: {self.disc_type()}\n'
+        str_ += '\n' + self._format_tracklist()
+        return str_
 
     @classmethod
     def from_cd(cls) -> 'Optional[DiscInfo]':
@@ -312,17 +318,3 @@ class DiscInfo:
         """
         fetcher = AccurateRipFetcher.from_id(self.accuraterip_id())
         self.accuraterip_data = fetcher.fetch()
-
-
-if __name__ == '__main__':
-    disc_info = DiscInfo.from_cd()
-
-    if disc_info is None:
-        print('Failed to read disc or unsupported disc type.')
-        sys.exit(1)
-
-    print('Disc type:', disc_info.disc_type())
-    print('AccurateRip disc ID:', disc_info.accuraterip_id())
-    print('MusicBrainz disc ID:', disc_info.musicbrainz_id())
-    print()
-    disc_info.print_table()
