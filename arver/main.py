@@ -6,7 +6,7 @@ import argparse
 import sys
 
 from arver import VERSION
-from arver.discinfo import get_disc
+from arver.disc_info import get_disc
 from arver.rip.rip import Rip
 
 

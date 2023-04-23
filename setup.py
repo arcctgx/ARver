@@ -11,8 +11,8 @@ setup(name=APPNAME,
       packages=find_packages(),
       entry_points={
           'console_scripts': [
-              'arver = arver.verify:main', 'arver-discinfo = arver.discinfo:main',
-              'arver-ripinfo = arver.ripinfo:main', 'arver-dbar-parser = arver.dbar:main'
+              'arver = arver.main:main', 'arver-discinfo = arver.disc_info:main',
+              'arver-ripinfo = arver.rip_info:main', 'arver-bin-parser = arver.bin_parser:main'
           ]
       },
       ext_modules=[
