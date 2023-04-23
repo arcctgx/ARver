@@ -57,12 +57,16 @@ class _DiscType(Enum):
     contains music videos or other bonus materials. "Copy Control" CDs fall
     into this category as well.
 
+    Disc ID: not a physical CD, disc data is obtained by disc ID lookup from
+    MusicBrainz. Only Audio CDs can be correctly verified using this method.
+
     Unsupported CD: any edge case not covered by the types listed above.
     """
     UNSUPPORTED = 0
     AUDIO = 1
     MIXED_MODE = 2
     ENHANCED = 3
+    DISC_ID = 4
 
 
 def _have_disc() -> bool:
@@ -239,13 +243,16 @@ class DiscInfo:
         return cls(pregap, track_list, lead_out, disc_type)
 
     @classmethod
-    def from_discid(cls, disc_id: str) -> 'Optional[DiscInfo]':
+    def from_disc_id(cls, disc_id: str) -> 'Optional[DiscInfo]':
         """
         Get disc properties from MusicBrainz by disc ID query. This does not
-        provide all required information about the disc, so the program assumes
-        the disc is an Audio CD. If this assumption is wrong AccurateRip query
-        may fail, verification may not be successful, or resulting confidence
-        values may be lower than what would be obtained using a physical CD.
+        provide information about data tracks or the true lead out offset, so
+        only Audio CDs can be correctly verified by this method.
+
+        If the disc corresponding to specified disc ID is actually a Mixed
+        Mode or Enhanced CD, AccurateRip query may fail, verification may not
+        be successful, or resulting confidence values may be lower than what
+        would be obtained using a physical CD.
         """
         musicbrainzngs.set_useragent(APPNAME, VERSION, URL)
 
@@ -263,7 +270,7 @@ class DiscInfo:
             track_list.append(_Track(num, *track_data, 'audio'))
 
         pregap = _get_pregap_track(track_list)
-        return cls(pregap, track_list, lead_out, _DiscType.AUDIO)
+        return cls(pregap, track_list, lead_out, _DiscType.DISC_ID)
 
     def _audio_tracks(self) -> List[_Track]:
         """Return a list of audio tracks on the CD."""
@@ -283,7 +290,8 @@ class DiscInfo:
             _DiscType.UNSUPPORTED: 'Unsupported CD type',
             _DiscType.AUDIO: 'Audio CD',
             _DiscType.MIXED_MODE: 'Mixed Mode CD',
-            _DiscType.ENHANCED: 'Enhanced CD'
+            _DiscType.ENHANCED: 'Enhanced CD',
+            _DiscType.DISC_ID: 'None (disc ID lookup)'
         }
         return types[self.type]
 

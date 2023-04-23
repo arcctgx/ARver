@@ -24,7 +24,7 @@ class TestDiscInfo(unittest.TestCase):
         ]
 
         for id_ in discids:
-            disc_info = DiscInfo.from_discid(id_)
+            disc_info = DiscInfo.from_disc_id(id_)
             self.assertIsNotNone(disc_info)
             self.assertEqual(id_, disc_info.musicbrainz_id())
 

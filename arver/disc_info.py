@@ -35,7 +35,7 @@ def get_disc(disc_id):
     if disc_id is None:
         disc_info = DiscInfo.from_cd()
     else:
-        disc_info = DiscInfo.from_discid(*disc_id)
+        disc_info = DiscInfo.from_disc_id(*disc_id)
 
     if disc_info is None:
         if disc_id is None:
