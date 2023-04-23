@@ -9,17 +9,20 @@
 - [x] calculate AccurateRip checksums of ripped files (WAV and FLAC)
 - [x] fetch AccurateRip results from database
 - [x] parse AccurateRip binary data format
-- [ ] compare database checksums with file checksums
+- [x] compare database checksums with file checksums
+- [x] Audio CD support
+- [ ] Enhanced CD support
 - [ ] README.md (with acknowledgements)
 - [ ] proper Python package
 
 ## Nice to have (in no particular order)
 
-- [ ] data track handling with `pycdio`
-- [ ] show copy CRC of ripped files in results
-- [ ] FLAC support
+- [ ] Mixed Mode CD support
+- [x] parser for cached AccurateRip response binary files
+- [x] show copy CRC of ripped files in results
+- [ ] calculate copy CRC with or without zero samples
+- [ ] full FLAC support (audio file properties + CRC calculation)
 - [ ] warn if lengths of ripped tracks don't match CD TOC
 - [ ] create log file with results
-- [ ] get DiscID from MusicBrainz by artist + release title search
 - [ ] offset detection
 - [ ] write-up of all I learned about CDs and AccurateRip
