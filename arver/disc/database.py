@@ -121,7 +121,7 @@ class AccurateRipDisc:
 
     def make_dict(self):
         """
-        Convert AccurateRipData object to a dictionary for easy lookup of checksums
+        Convert AccurateRipDisc object to a dictionary for easy lookup of checksums
         during file verification. The conversion is "lossy": AccurateRip checksums
         equal to zero and with zero confidence are omitted.
 
@@ -145,7 +145,7 @@ class AccurateRipDisc:
         }
 
         Conversion assumes that checksums other than zero are unique in scope of
-        one track. If this is not the casse, lower confidence value from later
+        one track. If this is not the case, lower confidence value from later
         response may overwrite higher confidence value from earlier response.
         """
         data = {}
