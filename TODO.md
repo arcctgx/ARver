@@ -11,7 +11,7 @@
 - [x] parse AccurateRip binary data format
 - [x] compare database checksums with file checksums
 - [x] Audio CD support
-- [ ] Enhanced CD support
+- [x] Enhanced CD support
 - [ ] README.md (with acknowledgements)
 - [ ] proper Python package
 
