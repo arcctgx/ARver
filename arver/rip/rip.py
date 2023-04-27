@@ -4,6 +4,7 @@ import os
 import wave
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import ClassVar, List
 
 from arver.checksum.checksum import copy_crc, accuraterip_checksums
@@ -98,6 +99,13 @@ class WavFile:
         self._ar1, self._ar2 = accuraterip_checksums(self._path, track_no, total_tracks)
 
 
+class _Status(Enum):
+    """Possible track verification results."""
+    SUCCESS = 0
+    FAILED = 1
+    NODATA = 2
+
+
 @dataclass
 class TrackVerificationResult:
     """Results of AccurateRip verification of a single track."""
@@ -106,12 +114,16 @@ class TrackVerificationResult:
     version: str
     confidence: int
     response: int
-    success: bool
+    status: _Status
+
+    def _status_string(self) -> str:
+        results = {_Status.SUCCESS: 'OK', _Status.FAILED: 'FAILED', _Status.NODATA: 'N/A'}
+        return results[self.status]
 
     def as_table_row(self) -> str:
         """Return string formatted as row suitable for verification summary table."""
         short_name = _shorten_path(self.path)
-        status = 'OK' if self.success else 'FAILED'
+        status = self._status_string()
         confidence = str(self.confidence) if self.confidence != -1 else '--'
         response = str(self.response) if self.response != -1 else '--'
 
@@ -123,6 +135,8 @@ class TrackVerificationResult:
 class DiscVerificationResult:
     """Results of AccurateRip verification of a complete disc."""
     all_ok: ClassVar[str] = 'All tracks verified successfully.'
+
+    ok_nodata: ClassVar[str] = 'All tracks with available checksums verified successfully.'
 
     some_failed: ClassVar[str] = 'Verification of some tracks failed. Your ' \
     'disc may be damaged.'
@@ -144,12 +158,24 @@ class DiscVerificationResult:
 
     def summary(self) -> str:
         """Return a string with the description of verification result."""
-        num_failed = len([track for track in self.tracks if not track.success])
-        if num_failed == 0:
-            return self.all_ok
-        if num_failed == len(self.tracks):
-            return self.all_failed
-        return self.some_failed
+        num_failed = len([track for track in self.tracks if track.status == _Status.FAILED])
+        num_nodata = len([track for track in self.tracks if track.status == _Status.NODATA])
+
+        no_checksum = ''
+        if num_nodata != 0:
+            plural = 'tracks' if num_nodata > 1 else 'track'
+            no_checksum += f'{num_nodata} {plural} not present in AccurateRip database.\n'
+
+        if num_failed == 0 and num_nodata == 0:
+            return no_checksum + self.all_ok
+
+        if num_failed == 0 and num_nodata != 0:
+            return no_checksum + self.ok_nodata
+
+        if num_failed == len(self.tracks) - num_nodata:
+            return no_checksum + self.all_failed
+
+        return no_checksum + self.some_failed
 
 
 class Rip:
@@ -212,21 +238,30 @@ class Rip:
 
             ar1, ar2 = track._ar1, track._ar2
 
+            if len(checksums[num]) == 0:
+                results.append(
+                    TrackVerificationResult(track._path, ar2, 'ARv2', -1, -1, _Status.NODATA))
+                print('\tAccurateRip: no checksums available for this track')
+                continue
+
             if ar2 in checksums[num]:
                 conf = checksums[num][ar2]['confidence']
                 resp = checksums[num][ar2]['response']
                 print(f'\tAccurateRip: {ar2:08x} (ARv2), confidence {conf}, response {resp}')
-                results.append(TrackVerificationResult(track._path, ar2, 'ARv2', conf, resp, True))
+                results.append(
+                    TrackVerificationResult(track._path, ar2, 'ARv2', conf, resp, _Status.SUCCESS))
                 continue
 
             if ar1 in checksums[num]:
                 conf = checksums[num][ar1]['confidence']
                 resp = checksums[num][ar1]['response']
                 print(f'\tAccurateRip: {ar1:08x} (ARv1), confidence {conf}, response {resp}')
-                results.append(TrackVerificationResult(track._path, ar1, 'ARv1', conf, resp, True))
+                results.append(
+                    TrackVerificationResult(track._path, ar1, 'ARv1', conf, resp, _Status.SUCCESS))
                 continue
 
             print(f'\tAccurateRip: {ar2:08x} (ARv2) - no match!')
-            results.append(TrackVerificationResult(track._path, ar2, 'ARv2', -1, -1, False))
+            results.append(TrackVerificationResult(track._path, ar2, 'ARv2', -1, -1,
+                                                   _Status.FAILED))
 
         return DiscVerificationResult(results)
