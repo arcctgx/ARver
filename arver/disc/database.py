@@ -123,7 +123,7 @@ class AccurateRipDisc:
         """
         Convert AccurateRipDisc object to a dictionary for easy lookup of checksums
         during file verification. The conversion is "lossy": AccurateRip checksums
-        equal to zero and with zero confidence are omitted.
+        with zero confidence are omitted.
 
         Resulting dictionary has the following structure:
 
@@ -160,10 +160,7 @@ class AccurateRipDisc:
             for rsp in range(num_responses):
                 track = self.responses[rsp].tracks[trk]
 
-                if track.confidence == 0:
-                    continue
-
-                if track.checksum != 0:
+                if track.confidence != 0:
                     data[index][track.checksum] = {
                         'confidence': track.confidence,
                         'response': rsp + 1,
