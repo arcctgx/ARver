@@ -36,6 +36,31 @@ deep down the rabbit hole in the process).
 
 TODO
 
+## Restrictions
+
+### Using MusicBrainz disc IDs instead of physical discs
+
+The regular use case of ARver is to verify a set of audio files just after they
+have been ripped, while the CD they have been ripped from is still in the drive.
+
+Commands `arver` and `arver-discinfo` support an alternative mode of operation,
+where disc information is downloaded from MusicBrainz by disc ID lookup. While
+this can be useful, it is reliable only for Audio CDs. Information about data
+tracks is not encoded in MusicBrainz disc ID, but it is necessary to calculate
+AccurateRip disc ID. Attempts to verify discs with data tracks (e.g. Enhanced
+CDs) using disc ID lookup may not work at all, result in false negatives or low
+confidence values.
+
+### Verifying Copy Controlled CDs
+
+Copy Controlled CDs were designed specifically to prevent ripping. The way it
+is achieved makes these discs more sensitive to normal wear, and makes them
+not compliant with Red Book standard. Such CDs can often be ripped, but are
+more likely to produce errors.
+
+ARver is unable to distinguish these discs from regular Enhanced CDs. If your
+disc bears "Copy Controlled CD" logo, verification problems are expected.
+
 ## Installation
 
 TODO
