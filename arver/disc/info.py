@@ -90,9 +90,7 @@ def _have_disc() -> bool:
 
 def _is_multisession(device: cdio.Device) -> bool:
     """Check if disc has more than one session."""
-    first_session_lsn = device.get_first_track().get_lsn()
-    last_session_lsn = device.get_last_session()
-    return last_session_lsn > first_session_lsn
+    return device.get_last_session() > 0
 
 
 def _is_audio_only(track_list: List[_Track]) -> bool:
