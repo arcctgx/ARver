@@ -225,7 +225,17 @@ class DiscInfo:
         for num in range(first_track_num, num_tracks + 1):
             track = device.get_track(num)
             lba = track.get_lba()
-            frames = track.get_last_lsn() - track.get_lsn() + 1
+
+            if num < 99:
+                frames = track.get_last_lsn() - track.get_lsn() + 1
+            else:
+                # track.get_last_lsn() throws an exception for track 99. This looks
+                # like a bug in libcdio. Track 99 must be the last track on the CD,
+                # so we can use the lead out LBA that we already know to calculate
+                # the last LSN of track 99.
+                track_last_lsn = lead_out - LEAD_IN_FRAMES - 1
+                frames = track_last_lsn - track.get_lsn() + 1
+
             fmt = track.get_format()
             track_list.append(_Track(num, lba, frames, fmt))
 
