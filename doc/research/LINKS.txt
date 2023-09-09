@@ -1,23 +1,6 @@
-CD ripping:
-https://web.archive.org/web/20160528213242/https://thomas.apestaart.org/thomas/trac/wiki/DAD/Rip
-https://docs.linn.co.uk/wiki/index.php/CD_Ripping_Terminology
+Offset detection:
 
-
-AccurateRip:
-https://wiki.hydrogenaud.io/index.php?title=AccurateRip
-http://www.accuraterip.com/3rdparty-access.htm
-http://www.dbpoweramp.com/email.htm
-
-https://web.archive.org/web/20140708222045/https://hydrogenaud.io/forums/index.php?showtopic=97603
-https://web.archive.org/web/20140730020801/http://forum.dbpoweramp.com/showthread.php?20641-AccurateRip-CRC-Calculation
-
-
-Disc IDs:
-https://jonnyjd.github.io/libdiscid/
-https://musicbrainz.org/doc/Disc_ID_Calculation
-https://en.wikipedia.org/wiki/CDDB#Example_calculation_of_a_CDDB1_(FreeDB)_disc_ID
-
-
-libcdio / pycdio:
-https://www.gnu.org/software/libcdio/libcdio.html
-https://pypi.org/project/pycdio/
+https://forum.dbpoweramp.com/showthread.php?20641
+https://audiotools.sourceforge.net/programming/audiotools_accuraterip.html
+http://jonls.dk/2009/10/calculating-accuraterip-checksums/
+http://jonls.dk/2010/10/accuraterip-tools/
