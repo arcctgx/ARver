@@ -17,7 +17,7 @@
 [1.7, "o", "a"]
 [1.8, "o", "v"]
 [1.9, "o", "\r\n"]
-[3.5, "o", "AccurateRip disc ID: 003-00084264-001cc184-19117f03\r\nMusicBrainz disc ID: dUmct3Sk4dAt1a98qUKYKC0ZjYU-\r\n\r\ntrack     length     frames\r\n-----    --------    ------\r\n    1    16:43.33     75258\r\n    2    12:10.65     54815\r\n    3    45:45.05    205880\r\n\r\n"]
+[3.5, "o", "AccurateRip disc ID: 003-00084264-001cc184-19117f03\r\nMusicBrainz disc ID: dUmct3Sk4dAt1a98qUKYKC0ZjYU-\r\nDisc type: Audio CD\r\n\r\ntrack     length     frames\r\n-----    --------    ------\r\n    1    16:43.33     75258\r\n    2    12:10.65     54815\r\n    3    45:45.05    205880\r\n\r\n"]
 [4.5, "o", "Got 3 AccurateRip responses (max confidence: 4)\r\n\r\n"]
 [8.0, "o", "Verifying 3 tracks:\r\n\r\nTrack 1:\r\n\tPath: /home/arcctgx/journey_through_underworlds/track01.cdda.wav\r\n"]
 [8.1, "o", "\tCopy CRC: a1a6e78e\r\n\tAccurateRip: f91199a6 (ARv2), confidence 3, response 2\r\nTrack 2:\r\n\tPath: /home/arcctgx/journey_through_underworlds/track02.cdda.wav\r\n\tCopy CRC: 72707e79\r\n\tAccurateRip: f3748cb0 (ARv2), confidence 3, response 2\r\nTrack 3:\r\n\tPath: /home/arcctgx/journey_through_underworlds/track03.cdda.wav\r\n\tCopy CRC: 89fc35bb\r\n\tAccurateRip: c2c559b7 (ARv2) - no match!\r\n\r\n          file name               result    checksum    type    conf    resp\r\n------------------------------    ------    --------    ----    ----    ----\r\ntrack01.cdda.wav                      OK    f91199a6    ARv2       3       2\r\ntrack02.cdda.wav                      OK    f3748cb0    ARv2       3       2\r\ntrack03.cdda.wav                  FAILED    c2c559b7    ARv2      --      --\r\n\r\nVerification of some tracks failed. Your disc may be damaged.\r\n"]
