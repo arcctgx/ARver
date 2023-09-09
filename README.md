@@ -94,4 +94,13 @@ multiple issues toward the end of the third track.
 
 AccurateRip database is (c) Illustrate. Used with permission.
 
+Thanks to the following people and projects for source code and inspiration:
+
+* [leo-bogert/accuraterip-checksum]
+* [whipper-team/whipper]
+* [cyanreg/cyanrip]
+
 [disc rot]: https://en.wikipedia.org/wiki/Disc_rot
+[leo-bogert/accuraterip-checksum]: https://github.com/leo-bogert/accuraterip-checksum
+[whipper-team/whipper]: https://github.com/whipper-team/whipper
+[cyanreg/cyanrip]: https://github.com/cyanreg/cyanrip
