@@ -49,8 +49,9 @@ Several features are planned, but not implemented yet:
 
 #### Using MusicBrainz disc IDs instead of physical discs
 
-The regular use case of ARver is to verify a set of audio files just after they
-have been ripped, while the CD they have been ripped from is still in the drive.
+The regular use case of `ARver` is to verify a set of audio files right after
+they have been ripped, while the CD they have been ripped from is still in the
+drive.
 
 Commands `arver` and `arver-discinfo` support an alternative mode of operation,
 where disc information is downloaded from MusicBrainz by disc ID lookup. While
@@ -67,8 +68,8 @@ is achieved makes these discs more sensitive to normal wear, and makes them
 not compliant with Red Book standard. Such CDs can often be ripped, but are
 more likely to produce errors.
 
-ARver is unable to distinguish these discs from regular Enhanced CDs. If your
-disc bears "Copy Controlled CD" logo, verification problems are expected.
+`ARver` is unable to distinguish these discs from regular Enhanced CDs. If
+your disc bears "Copy Controlled CD" logo, verification problems are expected.
 
 ## Installation
 
@@ -76,8 +77,8 @@ TODO
 
 ## Usage example
 
-The following example demonstrates the typical use case of ARver: verification
-of files just ripped from a CD.
+This example demonstrates the typical use case of `arver`: verification of
+files just ripped from a CD.
 
 ![ARver usage example](doc/arver_usage.gif)
 
