@@ -20,18 +20,6 @@ occurred while ripping.
 `ARver` calculates the AccurateRip checksums of local files, fetches checksums
 for a given CD from the database, and displays a report which compares them.
 
-## Motivation
-
-At one time I had to re-rip my entire CD collection, and I needed to check the
-correctness of my rips (i.e. are `+` or `-` symbols reported by `cdparanoia`
-*really* as harmless as the docs say?)
-
-There already exist Linux CD rippers which utilize AccurateRip database to
-verify the results, such as `Whipper` and `cyanrip`, but they didn't fit my
-workflow too well. I needed a tool which only performs verification, so I
-decided to write my own program for that purpose (and maybe went a little too
-deep down the rabbit hole in the process).
-
 ## Features
 
 TODO
