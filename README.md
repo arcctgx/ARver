@@ -22,11 +22,32 @@ for a given CD from the database, and displays a report which compares them.
 
 ## Features
 
-TODO
+`ARver` package provides the following command-line tools:
 
-## Restrictions
+* `arver`: the main program. It determines the AccurateRip disc ID, fetches
+AccurateRip data, calculates checksums of ripped audio files, compares them
+with downloaded AccurateRip data and displays the result.
 
-### Using MusicBrainz disc IDs instead of physical discs
+* `arver-discinfo`: displays disc IDs and the Table of Contents, fetches and
+displays all AccurateRip track checksums.
+
+* `arver-ripinfo`: calculates checksums of audio files (ARv1, ARv2 and CRC32)
+and presents them as a table.
+
+* `arver-bin-parser`: parses cached binary AccurateRip response and displays
+all AccurateRip track checksums.
+
+### Planned features
+
+Several features are planned, but not implemented yet:
+
+* FLAC format support (only WAV format is supported now)
+* mixed-mode CD support (disc type is recognized, but verification fails)
+* offset detection (zero offset is assumed)
+
+### Restrictions
+
+#### Using MusicBrainz disc IDs instead of physical discs
 
 The regular use case of ARver is to verify a set of audio files just after they
 have been ripped, while the CD they have been ripped from is still in the drive.
@@ -39,7 +60,7 @@ AccurateRip disc ID. Attempts to verify discs with data tracks (e.g. Enhanced
 CDs) using disc ID lookup may not work at all, result in false negatives or low
 confidence values.
 
-### Verifying Copy Controlled CDs
+#### Verifying Copy Controlled CDs
 
 Copy Controlled CDs were designed specifically to prevent ripping. The way it
 is achieved makes these discs more sensitive to normal wear, and makes them
