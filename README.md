@@ -107,11 +107,13 @@ confidence values.
 
 Copy Controlled CDs were designed specifically to prevent ripping. The way it
 is achieved makes these discs more sensitive to normal wear, and makes them
-not compliant with Red Book standard. Such CDs can often be ripped, but are
-more likely to produce errors.
+not compliant with CD audio standard. Such CDs can often be ripped, but are
+much more likely to produce errors.
 
-`ARver` is unable to distinguish these discs from regular Enhanced CDs. If
-your disc bears "Copy Controlled CD" logo, verification problems are expected.
+These CDs appear to `arver` and `arver-discinfo` as ordinary Enhanced CDs
+(multisession with data track in the end). It is not possible to distinguish
+them from normal Enhanced CDs based on the table of contents alone. If your
+disc bears "Copy Controlled CD" logo, verification problems are expected.
 
 ## Usage example
 
