@@ -20,9 +20,51 @@ occurred while ripping.
 `ARver` calculates the AccurateRip checksums of local files, fetches checksums
 for a given CD from the database, and displays a report which compares them.
 
+## Installation
+
+For typical use:
+
+```sh
+python3 -m pip install arver
+```
+
+For development:
+
+```sh
+git clone https://github.com/arcctgx/ARver
+cd ARver
+python3 -m pip install --editable .
+```
+
+For packaging:
+
+```sh
+git clone https://github.com/arcctgx/ARver
+cd ARver
+python3 setup.py install --root=/tmp/pkg-arver
+# use contents of /tmp/pkg-arver to create a package.
+```
+
+### Dependencies
+
+`ARver` has following runtime dependencies:
+
+* `discid`
+* `musicbrainzngs`
+* `pycdio`
+* `requests`
+
+They will be installed automatically by `pip install` if needed. Alternatively,
+one can install them using provided `requirements.txt` file.
+
+The source code includes a `C` extension which depends on `libsndfile`.
+Installation from source requires a `C` compiler (`gcc`) and `libsndfile`
+headers. This makes `libsndfile` both runtime and compile-time dependency.
+Currently only installation from a source distribution is supported.
+
 ## Features
 
-`ARver` package provides the following command-line tools:
+The package provides following command-line tools:
 
 * `arver`: the main program. It determines the AccurateRip disc ID, fetches
 AccurateRip data, calculates checksums of ripped audio files, compares them
@@ -70,10 +112,6 @@ more likely to produce errors.
 
 `ARver` is unable to distinguish these discs from regular Enhanced CDs. If
 your disc bears "Copy Controlled CD" logo, verification problems are expected.
-
-## Installation
-
-TODO
 
 ## Usage example
 
