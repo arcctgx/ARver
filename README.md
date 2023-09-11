@@ -20,6 +20,22 @@ occurred while ripping.
 `ARver` calculates the AccurateRip checksums of local files, fetches checksums
 for a given CD from the database, and displays a report which compares them.
 
+## Usage example
+
+This example demonstrates the typical use case of `arver`: verification of
+files just ripped from a CD.
+
+![ARver usage example](doc/arver_usage.gif)
+
+The tracks have been ripped using `cdparanoia` prior to running `arver`.
+AccurateRip disc ID is calculated based on the TOC of the CD which still is
+in the drive. `arver` fetches the checksums from the database, and compares
+checksums of local files with database entries.
+
+In this case `arver` found that the last track was not ripped correctly, and
+reports an error. The CD is affected by [disc rot], and `cdparanoia` reported
+multiple issues toward the end of the third track.
+
 ## Installation
 
 For typical use:
@@ -114,22 +130,6 @@ These CDs appear to `arver` and `arver-discinfo` as ordinary Enhanced CDs
 (multisession with data track in the end). It is not possible to distinguish
 them from normal Enhanced CDs based on the table of contents alone. If your
 disc bears "Copy Controlled CD" logo, verification problems are expected.
-
-## Usage example
-
-This example demonstrates the typical use case of `arver`: verification of
-files just ripped from a CD.
-
-![ARver usage example](doc/arver_usage.gif)
-
-The tracks have been ripped using `cdparanoia` prior to running `arver`.
-AccurateRip disc ID is calculated based on the TOC of the CD which still is
-in the drive. `arver` fetches the checksums from the database, and compares
-checksums of local files with database entries.
-
-In this case `arver` found that the last track was not ripped correctly, and
-reports an error. The CD is affected by [disc rot], and `cdparanoia` reported
-multiple issues toward the end of the third track.
 
 ## Acknowledgements
 
