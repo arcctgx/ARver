@@ -87,13 +87,13 @@ is installed from the source distribution.
 The package provides following command-line tools:
 
 * `arver`: the main program. It determines the AccurateRip disc ID, fetches
-AccurateRip data, calculates checksums of ripped audio files, compares them
+AccurateRip data, calculates checksums of ripped WAV files, compares them
 with downloaded AccurateRip data and displays the result.
 
 * `arver-discinfo`: displays disc IDs and the Table of Contents, fetches and
 displays all AccurateRip track checksums.
 
-* `arver-ripinfo`: calculates checksums of audio files (ARv1, ARv2 and CRC32)
+* `arver-ripinfo`: calculates checksums of WAV files (ARv1, ARv2 and CRC32)
 and presents them as a table.
 
 * `arver-bin-parser`: parses cached binary AccurateRip response and displays
