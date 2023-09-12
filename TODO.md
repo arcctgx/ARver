@@ -13,9 +13,9 @@
 - [x] Audio CD support
 - [x] Enhanced CD support
 - [x] README.md (with acknowledgements)
-- [ ] proper Python package (pip-installable, with wheels)
+- [x] proper Python package (pip-installable, with wheels)
 
-## Nice to have (in no particular order)
+## Further development (in no particular order)
 
 - [ ] Mixed Mode CD support
 - [x] parser for cached AccurateRip response binary files

@@ -14,7 +14,7 @@ setup(name=APPNAME,
       url=URL,
       license='GPLv3',
       classifiers=[
-          'Development Status :: 4 - Beta', 'Environment :: Console',
+          'Development Status :: 5 - Production/Stable', 'Environment :: Console',
           'Intended Audience :: End Users/Desktop',
           'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
           'Natural Language :: English', 'Operating System :: POSIX :: Linux',

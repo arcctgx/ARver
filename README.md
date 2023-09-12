@@ -25,7 +25,7 @@ for a given CD from the database, and displays a report which compares them.
 This example demonstrates the typical use case of `arver`: verification of
 files just ripped from a CD.
 
-![ARver usage example](doc/arver_usage.gif)
+![Animated ARver usage example](doc/arver_usage.gif)
 
 The tracks have been ripped using `cdparanoia` prior to running `arver`.
 AccurateRip disc ID is calculated based on the TOC of the CD which still is
@@ -43,6 +43,10 @@ For typical use:
 ```sh
 python3 -m pip install arver
 ```
+
+Wheels are provided for `x86_64` architecture `CPython` versions from 3.7 to
+3.11. For other platforms and Python versions only installation from the source
+distribution is supported (see "Dependencies" section below).
 
 For development:
 
@@ -63,7 +67,7 @@ python3 setup.py install --root=/tmp/pkg-arver
 
 ### Dependencies
 
-`ARver` has following runtime dependencies:
+`ARver` depends on following Python packages at runtime:
 
 * `discid`
 * `musicbrainzngs`
@@ -73,10 +77,10 @@ python3 setup.py install --root=/tmp/pkg-arver
 They will be installed automatically by `pip install` if needed. Alternatively,
 one can install them using provided `requirements.txt` file.
 
-The source code includes a `C` extension which depends on `libsndfile`.
-Installation from source requires a `C` compiler (`gcc`) and `libsndfile`
-headers. This makes `libsndfile` both runtime and compile-time dependency.
-Currently only installation from a source distribution is supported.
+The source code includes a `C` extension which depends on `libsndfile`, so
+building from source requires a `C` compiler (`gcc`) and `libsndfile` headers.
+This makes `libsndfile` both compile-time and runtime dependency when `ARver`
+is installed from the source distribution.
 
 ## Features
 
