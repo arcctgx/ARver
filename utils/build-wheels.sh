@@ -10,7 +10,7 @@
 
 platform="manylinux2014_x86_64"
 package_dir="/package"
-wheel_dir="${package_dir}/wheelbarrow"
+wheel_dir="${package_dir}/wheelhouse"
 
 # start with clean state:
 rm -rf "${package_dir}/build" "${wheel_dir}"
