@@ -20,7 +20,7 @@ class TestAccurateRip(unittest.TestCase):
     middle_track = (0x3c8dd1d2, 0x56bba272)
     last_track = (0x9360d25a, 0xaa2de02d)
 
-    def test_only_track(self):
+    def test_wav_only_track(self):
         result = accuraterip_checksums(SAMPLE_WAV_PATH, 1, 1)
         self.assertTupleEqual(result, self.only_track)
 
