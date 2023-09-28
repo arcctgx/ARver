@@ -60,7 +60,6 @@ def main():
         print('No WAV files were loaded. Did you specify correct files?')
         sys.exit(3)
 
-    rip.calculate_checksums()
     verdict = rip.verify(disc)
 
     print()

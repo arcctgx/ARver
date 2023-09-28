@@ -217,7 +217,8 @@ class Rip:
     def calculate_checksums(self):
         """
         Iterate file list and calculate copy CRCs and AccurateRip checksums.
-        This method must be called before verify() can be used.
+        This method must be called before __str__() can be used, otherwise
+        all printed checksums will be 0x00000000.
         """
         total_tracks = len(self.tracks)
         for num, track in enumerate(self.tracks, start=1):
@@ -234,12 +235,14 @@ class Rip:
         checksums = disc_info.accuraterip_data.make_dict()
         results = []
 
+        total_tracks = len(self.tracks)
         for num, track in enumerate(self.tracks, start=1):
+            crc32 = copy_crc(track._path)
+            ar1, ar2 = accuraterip_checksums(track._path, num, total_tracks)
+
             print(f'Track {num}:')
             print(f'\tPath: {track._path}')
-            print(f'\tCopy CRC: {track._crc:08x}')
-
-            ar1, ar2 = track._ar1, track._ar2
+            print(f'\tCopy CRC: {crc32:08x}')
 
             if len(checksums[num]) == 0:
                 results.append(
