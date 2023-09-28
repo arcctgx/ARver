@@ -72,14 +72,14 @@ class WavFile:
     """WAV file to be verified against AccurateRip checksum."""
 
     def __init__(self, path):
-        self._path = path
+        self.path = path
         self._properties = WavProperties.from_file(path)
         self._ar1 = 0x0
         self._ar2 = 0x0
         self._crc = 0x0
 
     def __str__(self):
-        short_name = _shorten_path(self._path)
+        short_name = _shorten_path(self.path)
         is_cdda = 'yes' if self._properties.is_cdda() else 'no'
         frames = self._properties.samples // SAMPLES_PER_FRAME
         length_msf = frames_to_msf(frames)
@@ -90,11 +90,11 @@ class WavFile:
 
     def set_copy_crc(self):
         """Calculate and set copy CRC."""
-        self._crc = copy_crc(self._path)
+        self._crc = copy_crc(self.path)
 
     def set_accuraterip_checksums(self, track_no, total_tracks):
         """Calculate and set both types of AccurateRip checksums."""
-        self._ar1, self._ar2 = accuraterip_checksums(self._path, track_no, total_tracks)
+        self._ar1, self._ar2 = accuraterip_checksums(self.path, track_no, total_tracks)
 
 
 class _Status(Enum):
@@ -235,16 +235,16 @@ class Rip:
 
         total_tracks = len(self.tracks)
         for num, track in enumerate(self.tracks, start=1):
-            crc32 = copy_crc(track._path)
-            ar1, ar2 = accuraterip_checksums(track._path, num, total_tracks)
+            crc32 = copy_crc(track.path)
+            ar1, ar2 = accuraterip_checksums(track.path, num, total_tracks)
 
             print(f'Track {num}:')
-            print(f'\tPath: {track._path}')
+            print(f'\tPath: {track.path}')
             print(f'\tCopy CRC: {crc32:08x}')
 
             if len(checksums[num]) == 0:
                 results.append(
-                    TrackVerificationResult(track._path, ar2, 'ARv2', -1, -1, _Status.NODATA))
+                    TrackVerificationResult(track.path, ar2, 'ARv2', -1, -1, _Status.NODATA))
                 print('\tAccurateRip: no checksums available for this track')
                 continue
 
@@ -253,7 +253,7 @@ class Rip:
                 resp = checksums[num][ar2]['response']
                 print(f'\tAccurateRip: {ar2:08x} (ARv2), confidence {conf}, response {resp}')
                 results.append(
-                    TrackVerificationResult(track._path, ar2, 'ARv2', conf, resp, _Status.SUCCESS))
+                    TrackVerificationResult(track.path, ar2, 'ARv2', conf, resp, _Status.SUCCESS))
                 continue
 
             if ar1 in checksums[num]:
@@ -261,11 +261,10 @@ class Rip:
                 resp = checksums[num][ar1]['response']
                 print(f'\tAccurateRip: {ar1:08x} (ARv1), confidence {conf}, response {resp}')
                 results.append(
-                    TrackVerificationResult(track._path, ar1, 'ARv1', conf, resp, _Status.SUCCESS))
+                    TrackVerificationResult(track.path, ar1, 'ARv1', conf, resp, _Status.SUCCESS))
                 continue
 
             print(f'\tAccurateRip: {ar2:08x} (ARv2) - no match!')
-            results.append(TrackVerificationResult(track._path, ar2, 'ARv2', -1, -1,
-                                                   _Status.FAILED))
+            results.append(TrackVerificationResult(track.path, ar2, 'ARv2', -1, -1, _Status.FAILED))
 
         return DiscVerificationResult(results)
