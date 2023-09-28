@@ -68,26 +68,24 @@ def _shorten_path(path: str, max_length: int = 30) -> str:
     return name[:midpoint + adj] + '~' + name[-midpoint:]
 
 
-# pylint: disable=too-many-instance-attributes
 class WavFile:
     """WAV file to be verified against AccurateRip checksum."""
 
     def __init__(self, path):
         self._path = path
-        self._short_name = _shorten_path(path)
-
         self._properties = WavProperties.from_file(path)
-        self._is_cdda = 'yes' if self._properties.is_cdda() else 'no'
-        self._frames = self._properties.samples // SAMPLES_PER_FRAME
-        self._length = frames_to_msf(self._frames)
-
         self._ar1 = 0x0
         self._ar2 = 0x0
         self._crc = 0x0
 
     def __str__(self):
-        return f'{self._short_name:<30s}    {self._is_cdda:>4s}    ' + \
-               f'{self._length:>8s}    {self._frames:>6d}    ' + \
+        short_name = _shorten_path(self._path)
+        is_cdda = 'yes' if self._properties.is_cdda() else 'no'
+        frames = self._properties.samples // SAMPLES_PER_FRAME
+        length_msf = frames_to_msf(frames)
+
+        return f'{short_name:<30s}    {is_cdda:>4s}    ' + \
+               f'{length_msf:>8s}    {frames:>6d}    ' + \
                f'{self._crc:08x}    {self._ar1:08x}    {self._ar2:08x}'
 
     def set_copy_crc(self):
