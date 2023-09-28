@@ -74,9 +74,9 @@ class WavFile:
     def __init__(self, path):
         self.path = path
         self._properties = WavProperties.from_file(path)
-        self._ar1 = 0x0
-        self._ar2 = 0x0
-        self._crc = 0x0
+        self._arv1 = None
+        self._arv2 = None
+        self._crc32 = None
 
     def __str__(self):
         short_name = _shorten_path(self.path)
@@ -84,17 +84,21 @@ class WavFile:
         frames = self._properties.samples // SAMPLES_PER_FRAME
         length_msf = frames_to_msf(frames)
 
+        arv1 = f'{self._arv1:08x}' if self._arv1 is not None else 'unknown'
+        arv2 = f'{self._arv2:08x}' if self._arv2 is not None else 'unknown'
+        crc32 = f'{self._crc32:08x}' if self._crc32 is not None else 'unknown'
+
         return f'{short_name:<30s}    {is_cdda:>4s}    ' + \
                f'{length_msf:>8s}    {frames:>6d}    ' + \
-               f'{self._crc:08x}    {self._ar1:08x}    {self._ar2:08x}'
+               f'{crc32:>8s}    {arv1:>8s}    {arv2:>8s}'
 
     def set_copy_crc(self):
         """Calculate and set copy CRC."""
-        self._crc = copy_crc(self.path)
+        self._crc32 = copy_crc(self.path)
 
     def set_accuraterip_checksums(self, track_no, total_tracks):
         """Calculate and set both types of AccurateRip checksums."""
-        self._ar1, self._ar2 = accuraterip_checksums(self.path, track_no, total_tracks)
+        self._arv1, self._arv2 = accuraterip_checksums(self.path, track_no, total_tracks)
 
 
 class _Status(Enum):
@@ -216,7 +220,7 @@ class Rip:
         """
         Iterate file list and calculate copy CRCs and AccurateRip checksums.
         This method must be called before __str__() can be used, otherwise
-        all printed checksums will be 0x00000000.
+        all printed checksums will be "unknown".
         """
         total_tracks = len(self.tracks)
         for num, track in enumerate(self.tracks, start=1):
