@@ -5,7 +5,7 @@ import wave
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import ClassVar, List
+from typing import ClassVar, List, Optional
 
 from arver.checksum.checksum import copy_crc, accuraterip_checksums
 from arver.disc.info import DiscInfo
@@ -30,7 +30,7 @@ class WavProperties:
     samples: int
 
     @classmethod
-    def from_file(cls, path):
+    def from_file(cls, path: str) -> 'WavProperties':
         """Read audio properties from a WAV file. Returns None on error."""
         try:
             with wave.open(path) as wav:
@@ -40,7 +40,7 @@ class WavProperties:
         except (OSError, wave.Error) as exc:
             raise AudioFormatError from exc
 
-    def is_cdda(self):
+    def is_cdda(self) -> bool:
         """
         Determine if specified WAV file has been ripped from a CD.
 
@@ -71,14 +71,14 @@ def _shorten_path(path: str, max_length: int = 30) -> str:
 class WavFile:
     """WAV file to be verified against AccurateRip checksum."""
 
-    def __init__(self, path):
-        self.path = path
-        self._properties = WavProperties.from_file(path)
-        self._arv1 = None
-        self._arv2 = None
-        self._crc32 = None
+    def __init__(self, path: str) -> None:
+        self.path: str = path
+        self._properties: WavProperties = WavProperties.from_file(path)
+        self._arv1: Optional[int] = None
+        self._arv2: Optional[int] = None
+        self._crc32: Optional[int] = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         short_name = _shorten_path(self.path)
         is_cdda = 'yes' if self._properties.is_cdda() else 'no'
         frames = self._properties.samples // SAMPLES_PER_FRAME
@@ -92,11 +92,11 @@ class WavFile:
                f'{length_msf:>8s}    {frames:>6d}    ' + \
                f'{crc32:>8s}    {arv1:>8s}    {arv2:>8s}'
 
-    def set_copy_crc(self):
+    def set_copy_crc(self) -> None:
         """Calculate and set copy CRC."""
         self._crc32 = copy_crc(self.path)
 
-    def set_accuraterip_checksums(self, track_no, total_tracks):
+    def set_accuraterip_checksums(self, track_no: int, total_tracks: int) -> None:
         """Calculate and set both types of AccurateRip checksums."""
         self._arv1, self._arv2 = accuraterip_checksums(self.path, track_no, total_tracks)
 
@@ -183,11 +183,11 @@ class DiscVerificationResult:
 class Rip:
     """This class represents a set of ripped WAV files to be verified."""
 
-    def __init__(self, paths):
-        self._paths = paths
+    def __init__(self, paths: List[str]) -> None:
+        self._paths: List[str] = paths
         self._discard_htoa()
 
-        self.tracks = []
+        self.tracks: List[WavFile] = []
         for path in self._paths:
             try:
                 self.tracks.append(WavFile(path))
@@ -195,12 +195,12 @@ class Rip:
                 # ignore non-audio or unsupported audio format
                 continue
 
-    def _discard_htoa(self):
+    def _discard_htoa(self) -> None:
         """Discard paths where file names match commonly used HTOA naming patterns."""
         htoa_patterns = ['track00.wav', 'track00.cdda.wav']
         self._paths = [path for path in self._paths if os.path.basename(path) not in htoa_patterns]
 
-    def __str__(self):
+    def __str__(self) -> str:
         header = f'{"file name":^30s}    ' + \
             f'{"CDDA":^4s}    {"length":^8s}    {"frames":^6s}    ' + \
             f'{"CRC":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
@@ -213,10 +213,10 @@ class Rip:
             str_.append(str(track))
         return '\n'.join(str_)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.tracks)
 
-    def calculate_checksums(self):
+    def calculate_checksums(self) -> None:
         """
         Iterate file list and calculate copy CRCs and AccurateRip checksums.
         This method must be called before __str__() can be used, otherwise
@@ -235,7 +235,7 @@ class Rip:
             raise ValueError('Cannot verify: missing AccurateRip data!')
 
         checksums = disc_info.accuraterip_data.make_dict()
-        results = []
+        results: List[TrackVerificationResult] = []
 
         total_tracks = len(self.tracks)
         for num, track in enumerate(self.tracks, start=1):
