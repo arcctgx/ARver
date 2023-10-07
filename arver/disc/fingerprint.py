@@ -1,8 +1,7 @@
-"""Functions for calculating disc identifiers from CD TOC."""
+"""Functions for calculating disc fingerprints (disc IDs) from CD TOC."""
 
 from typing import List, Tuple
-
-import discid
+from discid import put
 
 from arver.disc.utils import LEAD_IN_FRAMES
 
@@ -17,11 +16,11 @@ def freedb_id(offsets: List[int], leadout: int) -> str:
 
     Including the track from the second session is crucial. discid module
     ignores the second session when reading a physical CD, and returns a
-    FreeDB ID incompatile with one used by AccurateRip database.
+    FreeDB ID incompatible with one used by AccurateRip database.
 
     The second argument is the LBA offset of the lead out track.
     """
-    disc = discid.put(1, len(offsets), leadout, offsets)
+    disc = put(1, len(offsets), leadout, offsets)
     return disc.freedb_id
 
 
@@ -39,7 +38,7 @@ def musicbrainz_id(offsets: List[int], sectors: int) -> str:
     including lead in. This is equivalent to LBA lead out offset in Audio and
     Mixed Mode CDs, but not in Enhanced CDs.
     """
-    disc = discid.put(1, len(offsets), sectors, offsets)
+    disc = put(1, len(offsets), sectors, offsets)
     return disc.id
 
 

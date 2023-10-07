@@ -11,7 +11,7 @@ import pycdio
 
 from arver import APPNAME, VERSION, URL
 from arver.disc.database import AccurateRipDisc, AccurateRipFetcher
-from arver.disc.id import freedb_id, musicbrainz_id, accuraterip_ids
+from arver.disc.fingerprint import freedb_id, musicbrainz_id, accuraterip_ids
 from arver.disc.utils import frames_to_msf, LEAD_IN_FRAMES
 
 PREGAP_TRACK_NUM = -1
