@@ -6,7 +6,7 @@ import argparse
 import sys
 
 from arver import VERSION
-from arver.disc_info import get_disc
+from arver.disc.info import get_disc_info
 from arver.rip.rip import Rip
 
 
@@ -28,7 +28,7 @@ def _parse_args():
     parser.add_argument('-i',
                         '--disc-id',
                         metavar='disc_id',
-                        nargs=1,
+                        nargs='?',
                         help='get disc TOC from MusicBrainz by disc ID')
 
     parser.add_argument('-v', '--version', action='version', version=VERSION)
@@ -38,7 +38,7 @@ def _parse_args():
 
 def main():
     args = _parse_args()
-    disc = get_disc(args.disc_id)
+    disc = get_disc_info(args.disc_id)
 
     if disc is None:
         print('Failed to get disc info, exiting.')
