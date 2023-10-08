@@ -120,6 +120,20 @@ static accuraterip_t accuraterip(const sample_t *data, size_t size, unsigned tra
     return (accuraterip_t){.v1 = v1, .v2 = v2};
 }
 
+static size_t remove_zero_samples(sample_t *data, size_t size)
+{
+    size_t i, j;
+
+    for (i=0, j=0; i < size; i++) {
+        if (data[i]) {
+            data[j] = data[i];
+            j++;
+        }
+    }
+
+    return j;
+}
+
 static PyObject *checksums(PyObject *self, PyObject *args)
 {
     const char *path = NULL;
@@ -166,12 +180,18 @@ static PyObject *checksums(PyObject *self, PyObject *args)
         return NULL;
     }
 
+    accuraterip_t ar = accuraterip(data, size, track, total_tracks);
+
     uint32_t crc = crc32(0L, Z_NULL, 0);
     crc = crc32(crc, (uint8_t*)data, 2*size);   // 2 bytes per CDDA sample
-    accuraterip_t ar = accuraterip(data, size, track, total_tracks);
+
+    size_t new_size = remove_zero_samples(data, size);
+    uint32_t crcss = crc32(0L, Z_NULL, 0);
+    crcss = crc32(crcss, (uint8_t*)data, 2*new_size);
+
     free(data);
 
-    return Py_BuildValue("III", ar.v1, ar.v2, crc);
+    return Py_BuildValue("IIII", ar.v1, ar.v2, crc, crcss);
 }
 
 static PyObject *nframes(PyObject *self, PyObject *args)
