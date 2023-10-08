@@ -54,6 +54,7 @@ class AudioFile:
         self._arv1: Optional[int] = None
         self._arv2: Optional[int] = None
         self._crc32: Optional[int] = None
+        self._crc32ss: Optional[int] = None
 
     def as_table_row(self) -> str:
         """
@@ -69,10 +70,11 @@ class AudioFile:
         arv1 = f'{self._arv1:08x}' if self._arv1 is not None else 'unknown'
         arv2 = f'{self._arv2:08x}' if self._arv2 is not None else 'unknown'
         crc32 = f'{self._crc32:08x}' if self._crc32 is not None else 'unknown'
+        crc32ss = f'{self._crc32ss:08x}' if self._crc32ss is not None else 'unknown'
 
         return f'{short_name:<{NAME_WIDTH}s}    {is_cdda:>4s}    ' + \
                f'{length_msf:>8s}    {self.cdda_frames:>6d}    ' + \
-               f'{crc32:>8s}    {arv1:>8s}    {arv2:>8s}'
+               f'{crc32:>8s}    {crc32ss:>8s}    {arv1:>8s}    {arv2:>8s}'
 
     def _is_cd_rip(self) -> bool:
         """
@@ -83,7 +85,8 @@ class AudioFile:
 
     def set_checksums(self, track_no: int, total_tracks: int) -> None:
         """Calculate and set AccurateRip and CRC32 checksums."""
-        self._arv1, self._arv2, self._crc32 = get_checksums(self.path, track_no, total_tracks)
+        self._arv1, self._arv2, self._crc32, self._crc32ss = get_checksums(
+            self.path, track_no, total_tracks)
 
 
 class _Status(Enum):
@@ -207,10 +210,10 @@ class Rip:
 
         header = f'{"file name":^{NAME_WIDTH}s}    ' + \
             f'{"CDDA":^4s}    {"length":^8s}    {"frames":^6s}    ' + \
-            f'{"CRC32":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
+            f'{"CRC32":^8s}    {"CRCSS":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
 
         underline = f'{NAME_WIDTH*"-"}    {4*"-"}    {8*"-"}    {6*"-"}    ' + \
-                    f'{8*"-"}    {8*"-"}    {8*"-"}'
+                    f'{8*"-"}    {8*"-"}    {8*"-"}    {8*"-"}'
 
         table = [header, underline] + [track.as_table_row() for track in self.tracks]
         return '\n'.join(table)
@@ -300,11 +303,11 @@ class Rip:
 
         for toc_idx, track in enumerate(self.tracks, start=toc_idx_start):
             rip_idx = toc_idx if not mixed_mode else toc_idx - 1
-            ar1, ar2, crc32 = get_checksums(track.path, rip_idx, len(self))
+            ar1, ar2, crc32, crc32ss = get_checksums(track.path, rip_idx, len(self))
 
             print(f'Track {toc_idx}:')
             print(f'\tPath: {track.path}')
-            print(f'\tCopy CRC: {crc32:08x}')
+            print(f'\tCRC32: {crc32:08x} (skip silence: {crc32ss:08x})')
 
             if len(checksums[toc_idx]) == 0:
                 results.append(

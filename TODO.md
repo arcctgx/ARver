@@ -22,7 +22,7 @@
 - [x] full FLAC support (audio file properties + CRC calculation)
 - [x] Mixed Mode CD support
 - [x] warn if lengths of ripped tracks don't match CD TOC
-- [ ] calculate copy CRC without zero samples ("skip silence" CRC)
+- [x] calculate copy CRC without zero samples ("skip silence" CRC)
 - [ ] create log file with results
 - [ ] offset detection
 - [ ] write-up of all I learned about CDs and AccurateRip

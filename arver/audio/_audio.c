@@ -138,6 +138,22 @@ static void *crc32_thread(void *ptr)
     return NULL;
 }
 
+// Remove silent samples from the audio data. This prepares the input data for
+// calculating "skip silence" CRC32. This irreversibly modifies the input data!
+static size_t remove_zero_samples(Sample *data, size_t size)
+{
+    size_t i, j;
+
+    for (i=0, j=0; i < size; i++) {
+        if (data[i]) {
+            data[j] = data[i];
+            j++;
+        }
+    }
+
+    return j;
+}
+
 static PyObject *checksums(PyObject *self, PyObject *args)
 {
     const char *path = NULL;
@@ -186,12 +202,12 @@ static PyObject *checksums(PyObject *self, PyObject *args)
 
     // Py_BEGIN_ALLOW_THREADS implicitly creates a new scope. The variables holding the
     // results must be accessible in both outer and inner scopes, so define them here.
-    Checksum crc32;
+    Checksum crc;
     AccurateRip ar;
 
     Py_BEGIN_ALLOW_THREADS
         pthread_t worker;
-        CRC32Param par = {.data = data, .size = size, .crc32 = &crc32};
+        CRC32Param par = {.data = data, .size = size, .crc32 = &crc};
         int status = pthread_create(&worker, NULL, crc32_thread, &par);
         if (status != 0) {
             Py_BLOCK_THREADS
@@ -203,9 +219,14 @@ static PyObject *checksums(PyObject *self, PyObject *args)
         pthread_join(worker, NULL);
     Py_END_ALLOW_THREADS
 
+    // This can't be done in parallel because it modifies the audio data.
+    size_t new_size = remove_zero_samples(data, size);
+    Checksum crcss = crc32(0L, Z_NULL, 0);
+    crcss = crc32(crcss, (uint8_t*)data, 2*new_size);   // 2 bytes per CDDA sample
+
     free(data);
 
-    return Py_BuildValue("III", ar.v1, ar.v2, crc32);
+    return Py_BuildValue("IIII", ar.v1, ar.v2, crc, crcss);
 }
 
 static PyObject *frame_count(PyObject *self, PyObject *args)

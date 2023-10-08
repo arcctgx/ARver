@@ -7,10 +7,11 @@ from arver.audio import _audio  # type: ignore
 # pylint: disable=c-extension-no-member
 
 
-def get_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[int, int, int]:
+def get_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[int, int, int, int]:
     """
     Calculate AccurateRip and CRC32 checksums of specified file.
-    Return a triple of checksums (v1, v2, crc32) as unsigned integers.
+    Return a tuple of checksums (ARv1, ARv2, CRC32, skip silence
+    CRC32) as unsigned integers.
 
     This function supports WAV and FLAC files compliant with CDDA
     standard (16-bit stereo LPCM, 44100 Hz). Underlying C extension
