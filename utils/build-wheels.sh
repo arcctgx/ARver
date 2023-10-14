@@ -4,8 +4,7 @@
 # This script is intended to be executed inside manylinux container, e.g.:
 #
 # docker run --rm -v "$(pwd)":/package \
-#   quay.io/pypa/manylinux2014_x86_64 \
-#   /package/utils/build-wheels.sh
+#   arcctgx/arver-builder /package/utils/build-wheels.sh
 #
 
 platform="manylinux2014_x86_64"
@@ -17,9 +16,6 @@ rm -rf "${package_dir}/build" "${wheel_dir}"
 
 # ARver requires Python >= 3.7, so remove Python-3.6 symlink:
 rm -rf /opt/python/cp36-cp36m
-
-# install system packages required to build C extensions:
-yum install -y libsndfile-devel
 
 # build CPython wheels:
 for pybin in /opt/python/cp*/bin
