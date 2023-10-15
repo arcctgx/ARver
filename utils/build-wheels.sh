@@ -3,7 +3,7 @@
 # Script for building manylinux wheels. Adapted from pypa/python-manylinux-demo.
 # This script is intended to be executed inside manylinux container, e.g.:
 #
-# docker run --rm -v "$(pwd)":/package \
+# docker run --rm -u 1000:100 -v "$(pwd)":/package \
 #   arcctgx/arver-builder /package/utils/build-wheels.sh
 #
 
@@ -13,9 +13,6 @@ wheel_dir="${package_dir}/wheelhouse"
 
 # start with clean state:
 rm -rf "${package_dir}/build" "${wheel_dir}"
-
-# ARver requires Python >= 3.7, so remove Python-3.6 symlink:
-rm -rf /opt/python/cp36-cp36m
 
 # build CPython wheels:
 for pybin in /opt/python/cp*/bin
