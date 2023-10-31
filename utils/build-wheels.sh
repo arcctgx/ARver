@@ -1,15 +1,21 @@
 #!/bin/bash -eux
 
 # Script for building manylinux wheels. Adapted from pypa/python-manylinux-demo.
-# This script is intended to be executed inside manylinux container, e.g.:
+# This script is intended to be executed inside manylinux container, with package
+# sources available in /package directory inside the container, e.g.:
 #
-# docker run --rm -u 1000:100 -v "$(pwd)":/package \
+# docker run --rm -u 1000:100 -v "$(pwd):/package" \
 #   arcctgx/arver-builder /package/utils/build-wheels.sh
 #
 
 platform="manylinux2014_x86_64"
 package_dir="/package"
 wheel_dir="${package_dir}/wheelhouse"
+
+if [[ ! -d "${package_dir}" ]]; then
+    echo "The directory ${package_dir} is not available inside container."
+    exit 1
+fi
 
 # start with clean state:
 rm -rf "${package_dir}/build" "${wheel_dir}"
