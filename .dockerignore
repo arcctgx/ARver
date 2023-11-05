@@ -1,0 +1,14 @@
+.git
+.mypy_cache
+.vscode
+
+**/__pycache__
+**/*.pyc
+**/*.so
+**/*.o
+
+*.egg-info
+
+build
+dist
+wheelhouse

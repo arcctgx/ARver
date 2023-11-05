@@ -28,6 +28,6 @@ WORKDIR /
 # ARver requires Python >= 3.7, so remove Python-3.6 symlink
 RUN rm -rf /opt/python/cp36-cp36m
 
-COPY ./build-wheels.sh /
+COPY ./utils/build-wheels.sh /
 
 CMD ["/build-wheels.sh"]
