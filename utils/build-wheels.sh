@@ -1,11 +1,11 @@
 #!/bin/bash -eux
 
 # Script for building manylinux wheels. Adapted from pypa/python-manylinux-demo.
-# This script is intended to be executed inside manylinux container, with package
-# sources available in /package directory inside the container, e.g.:
+# This script is the entry point of arcctgx/arver-builder container. It expects
+# package sources to be available in /package directory inside the container.
+# This can be achieved with Docker bind mount, e.g.:
 #
-# docker run --rm -u 1000:100 -v "$(pwd):/package" \
-#   arcctgx/arver-builder /package/utils/build-wheels.sh
+# docker run --rm -u 1000:100 -v "$(pwd):/package" arcctgx/arver-builder
 #
 
 platform="manylinux2014_x86_64"
