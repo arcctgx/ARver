@@ -10,6 +10,10 @@ ADD https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz \
 
 WORKDIR /tmp/
 
+COPY ./utils/SHA256SUMS.txt .
+
+RUN sha256sum -c SHA256SUMS.txt
+
 RUN tar xf libogg-1.3.5.tar.xz && cd libogg-1.3.5 && \
     ./configure --prefix=/usr --libdir=/usr/lib64 && \
     make -j "$(nproc --all)" && make install && ldconfig && \
