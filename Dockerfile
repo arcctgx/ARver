@@ -42,7 +42,7 @@ RUN tar xf libsndfile-1.2.2.tar.xz && cd libsndfile-1.2.2 && \
 WORKDIR /
 
 # ARver requires Python >= 3.7, so remove Python-3.6 symlink
-RUN rm -rf /opt/python/cp36-cp36m
+RUN rm -v /opt/python/cp36-cp36m
 
 COPY ./utils/build-wheels.sh /
 
