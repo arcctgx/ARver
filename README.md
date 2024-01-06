@@ -135,6 +135,18 @@ These CDs appear to `arver` and `arver-discinfo` as ordinary Enhanced CDs
 them from normal Enhanced CDs based on the table of contents alone. If your
 disc bears "Copy Controlled CD" logo, verification problems are expected.
 
+#### Hidden Track One Audio ("pregap track")
+
+In some discs audio content is hidden in the pregap of track one. Many CD
+rippers (e.g. `EAC` or `cdparanoia`) can detect and rip it. Unfortunately,
+AccurateRip database does not store checksums of such tracks, so they can't
+be verified.
+
+`ARver` will detect the presence of track one pregap, and will display it in
+CD TOC summary. If your ripper did extract the pregap track, do not pass its
+file name as argument to `arver`. It will change the track sequence and cause
+verification errors in other tracks.
+
 ## Acknowledgements
 
 AccurateRip database is (c) Illustrate. Used with permission.
