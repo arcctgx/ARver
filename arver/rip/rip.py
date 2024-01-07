@@ -29,8 +29,8 @@ def _shorten_path(path: str, max_length: int = 30) -> str:
     return name[:midpoint + adj] + '~' + name[-midpoint:]
 
 
-class WavFile:
-    """WAV file to be verified against AccurateRip checksum."""
+class AudioFile:
+    """Audio file to be verified against AccurateRip checksum."""
 
     def __init__(self, path: str) -> None:
         self.path: str = path
@@ -154,16 +154,16 @@ class DiscVerificationResult:
 
 
 class Rip:
-    """This class represents a set of ripped WAV files to be verified."""
+    """This class represents a set of ripped audio files to be verified."""
 
     def __init__(self, paths: List[str]) -> None:
         self._paths: List[str] = paths
         self._discard_htoa()
 
-        self.tracks: List[WavFile] = []
+        self.tracks: List[AudioFile] = []
         for path in self._paths:
             try:
-                self.tracks.append(WavFile(path))
+                self.tracks.append(AudioFile(path))
             except AudioFormatError:
                 # ignore non-audio or unsupported audio format
                 continue

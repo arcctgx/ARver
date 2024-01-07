@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 from arver.checksum import accuraterip  # type: ignore
 
 
-def accuraterip_checksums(wav_file, track_no, total_tracks) -> Tuple[int, int]:
+def accuraterip_checksums(path, track_no, total_tracks) -> Tuple[int, int]:
     """
     Calculate AccurateRip v1 and v2 checksums of specified file.
     WAV and FLAC formats are supported.
@@ -18,7 +18,7 @@ def accuraterip_checksums(wav_file, track_no, total_tracks) -> Tuple[int, int]:
     pair of zeros if an error occurred during checksum calculation.
     """
     # pylint: disable=c-extension-no-member
-    ar1, ar2 = accuraterip.compute(wav_file, track_no, total_tracks)
+    ar1, ar2 = accuraterip.compute(path, track_no, total_tracks)
 
     if ar1 is None or ar2 is None:
         return 0x0, 0x0

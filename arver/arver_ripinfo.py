@@ -1,5 +1,5 @@
 """
-Display properties of a set of WAV files, including copy CRCs and
+Display properties of a set of audio files, including copy CRCs and
 two types of AccurateRip checksums.
 """
 
@@ -32,7 +32,7 @@ def main():
 
     rip = Rip(args.rip_files)
     if len(rip) == 0:
-        print('No WAV files were loaded. Did you specify correct files?')
+        print('No audio files were loaded. Did you specify correct files?')
         sys.exit(1)
 
     rip.calculate_checksums()
