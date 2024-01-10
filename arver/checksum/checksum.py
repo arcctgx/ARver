@@ -1,9 +1,6 @@
-"""Functions for calculating checksums of WAV files."""
+"""Functions for calculating checksums of audio files."""
 
-import binascii
-import wave
-
-from typing import Tuple
+from typing import Optional, Tuple
 
 from arver.checksum import accuraterip  # type: ignore
 
@@ -29,15 +26,13 @@ def accuraterip_checksums(wav_file, track_no, total_tracks) -> Tuple[int, int]:
     return ar1, ar2
 
 
-def copy_crc(wav_file):
+def copy_crc(path: str) -> Optional[int]:
     """
-    Calculate copy CRC of ripped WAV file.
+    Calculate copy CRC of ripped audio file.
     Returns an unsigned integer on success or None on error.
     """
+    # pylint: disable=c-extension-no-member
     try:
-        with wave.open(wav_file) as wav:
-            nframes = wav.getnframes()
-            data = wav.readframes(nframes)
-            return binascii.crc32(data) & 0xffffffff
-    except (OSError, wave.Error):
+        return accuraterip.crc32(path)
+    except (OSError, TypeError):
         return None

@@ -1,7 +1,7 @@
 /*
  ============================================================================
  Name        : checksum.c
- Authors     : Leo Bogert (http://leo.bogert.de), Andreas Oberritter
+ Authors     : Leo Bogert (http://leo.bogert.de), Andreas Oberritter, arcctgx
  License     : GPLv3
  Description : A Python C extension to compute the AccurateRip checksum of WAV or FLAC tracks.
                Implemented according to http://www.hydrogenaudio.org/forums/index.php?showtopic=97603
@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <sndfile.h>
 #include <Python.h>
+#include <zlib.h>
 
 static bool check_fileformat(const SF_INFO *sfinfo)
 {
@@ -142,8 +143,75 @@ err:
 	return Py_BuildValue("OO", Py_None, Py_None);
 }
 
+static uint16_t *load_samples(SNDFILE *sndfile, SF_INFO info, size_t *size)
+{
+    size_t samples = info.frames * info.channels;
+    uint16_t *audio = calloc(samples, sizeof(uint16_t));
+
+    if (audio == NULL) {
+        return NULL;
+    }
+
+    if (sf_readf_short(sndfile, (short*)audio, info.frames) != info.frames) {
+        free(audio);
+        return NULL;
+    }
+
+    *size = samples;
+    return audio;
+}
+
+static PyObject *crc32_compute(PyObject *self, PyObject *args)
+{
+    const char *path = NULL;
+    SNDFILE *file = NULL;
+    SF_INFO info = {0};
+
+    if (!PyArg_ParseTuple(args, "s", &path)) {
+        return NULL;
+    }
+
+    if ((file = sf_open(path, SFM_READ, &info)) == NULL) {
+        PyErr_SetString(PyExc_OSError, sf_strerror(file));
+        return NULL;
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "path: %s\n", path);
+    fprintf(stderr, "frames: %ld\n", info.frames);
+    fprintf(stderr, "CDDA sectors: %ld\n", info.frames/588);
+    fprintf(stderr, "length: %.1f seconds\n", (double)info.frames/588/75);
+    fprintf(stderr, "channels: %d\n", info.channels);
+    fprintf(stderr, "sampling rate: %d Hz\n", info.samplerate);
+    int swab = sf_command(file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0);
+    fprintf(stderr, "endianness swapped: %s\n", swab ? "yes" : "no");
+#endif
+
+    if (!check_fileformat(&info)) {
+        sf_close(file);
+        PyErr_SetString(PyExc_TypeError, "Unsupported audio format.");
+        return NULL;
+    }
+
+    size_t samples = 0;
+    uint16_t *audio = load_samples(file, info, &samples);
+    sf_close(file);
+
+    if (audio == NULL) {
+        PyErr_SetString(PyExc_OSError, "Failed to load audio samples.");
+        return NULL;
+    }
+
+    uint32_t crc = crc32(0L, Z_NULL, 0);
+    crc = crc32(crc, (uint8_t*)audio, 2*samples);
+    free(audio);
+
+    return PyLong_FromUnsignedLong(crc);
+}
+
 static PyMethodDef accuraterip_methods[] = {
 	{ "compute", accuraterip_compute, METH_VARARGS, "Compute AccurateRip v1 and v2 checksums" },
+	{ "crc32", crc32_compute, METH_VARARGS, PyDoc_STR("Calculate CRC32 checksum of an audio file.") },
 	{ NULL, NULL, 0, NULL },
 };
 

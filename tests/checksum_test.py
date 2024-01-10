@@ -62,7 +62,6 @@ class TestCopyCRC(unittest.TestCase):
         result = copy_crc(SAMPLE_WAV_PATH)
         self.assertEqual(result, self.crc32)
 
-    @unittest.skip("FLAC support not fully implemented yet")
     def test_flac(self):
         result = copy_crc(SAMPLE_FLAC_PATH)
         self.assertEqual(result, self.crc32)
