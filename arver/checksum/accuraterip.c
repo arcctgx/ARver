@@ -209,9 +209,34 @@ static PyObject *crc32_compute(PyObject *self, PyObject *args)
     return PyLong_FromUnsignedLong(crc);
 }
 
+static PyObject *get_nframes(PyObject *self, PyObject *args)
+{
+    const char *path = NULL;
+    SNDFILE *file = NULL;
+    SF_INFO info = {0};
+
+    if (!PyArg_ParseTuple(args, "s", &path)) {
+        return NULL;
+    }
+
+    if ((file = sf_open(path, SFM_READ, &info)) == NULL) {
+        PyErr_SetString(PyExc_OSError, sf_strerror(file));
+        return NULL;
+    }
+    sf_close(file);
+
+    if (!check_fileformat(&info)) {
+        PyErr_SetString(PyExc_TypeError, "Unsupported audio format.");
+        return NULL;
+    }
+
+    return PyLong_FromLong(info.frames);
+}
+
 static PyMethodDef accuraterip_methods[] = {
 	{ "compute", accuraterip_compute, METH_VARARGS, "Compute AccurateRip v1 and v2 checksums" },
 	{ "crc32", crc32_compute, METH_VARARGS, PyDoc_STR("Calculate CRC32 checksum of an audio file.") },
+	{ "nframes", get_nframes, METH_VARARGS, PyDoc_STR("Get the number of frames in an audio file.") },
 	{ NULL, NULL, 0, NULL },
 };
 
