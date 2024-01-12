@@ -103,7 +103,6 @@ all AccurateRip track checksums.
 
 Several features are planned, but not implemented yet:
 
-* FLAC format support (only WAV format is supported now)
 * mixed-mode CD support (disc type is recognized, but verification fails)
 * offset detection (zero offset is assumed)
 

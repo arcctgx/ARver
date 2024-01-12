@@ -1,60 +1,21 @@
 """Representation of a set of ripped CDDA files."""
 
 import os
-import wave
 
 from dataclasses import dataclass
 from enum import Enum
 from typing import ClassVar, List, Optional
 
 from arver.checksum.checksum import copy_crc, accuraterip_checksums
+from arver.checksum.properties import get_nframes
 from arver.disc.info import DiscInfo
-from arver.disc.utils import FRAMES_PER_SECOND, frames_to_msf
+from arver.disc.utils import frames_to_msf
 
-CHANNELS = 2
-BYTES_PER_SAMPLE = 2
-SAMPLES_PER_SECOND = 44100
-SAMPLES_PER_FRAME = SAMPLES_PER_SECOND // FRAMES_PER_SECOND
+AUDIO_FRAMES_PER_CD_SECTOR = 588
 
 
 class AudioFormatError(Exception):
     """Raised when unsupported audio file (or non-audio file) is read."""
-
-
-@dataclass
-class WavProperties:
-    """Basic properties of a WAV file."""
-    channels: int
-    byte_width: int
-    sample_rate: int
-    samples: int
-
-    @classmethod
-    def from_file(cls, path: str) -> 'WavProperties':
-        """Read audio properties from a WAV file. Returns None on error."""
-        try:
-            with wave.open(path) as wav:
-                params = wav.getparams()
-                frames = wav.getnframes()
-                return cls(params.nchannels, params.sampwidth, params.framerate, frames)
-        except (OSError, wave.Error) as exc:
-            raise AudioFormatError from exc
-
-    def is_cdda(self) -> bool:
-        """
-        Determine if specified WAV file has been ripped from a CD.
-
-        WAV files ripped from a CD are 16-bit LPCM stereo with 44.1 kHz frequency.
-        Python wave module doesn't provide means to determine if the file is LPCM
-        or anything else, so the method doesn't check that.
-
-        If WAV file is ripped from a CD, its number of samples must be evenly
-        divisible by the number of samples per CD frame.
-        """
-        return self.channels == CHANNELS and \
-            self.byte_width == BYTES_PER_SAMPLE and \
-            self.sample_rate == SAMPLES_PER_SECOND and \
-            self.samples % SAMPLES_PER_FRAME == 0
 
 
 def _shorten_path(path: str, max_length: int = 30) -> str:
@@ -73,24 +34,36 @@ class WavFile:
 
     def __init__(self, path: str) -> None:
         self.path: str = path
-        self._properties: WavProperties = WavProperties.from_file(path)
+
+        try:
+            self._audio_frames = get_nframes(path)
+        except (OSError, TypeError) as exc:
+            raise AudioFormatError from exc
+
         self._arv1: Optional[int] = None
         self._arv2: Optional[int] = None
         self._crc32: Optional[int] = None
 
     def __str__(self) -> str:
         short_name = _shorten_path(self.path)
-        is_cdda = 'yes' if self._properties.is_cdda() else 'no'
-        frames = self._properties.samples // SAMPLES_PER_FRAME
-        length_msf = frames_to_msf(frames)
+        is_cdda = 'yes' if self._is_cd_rip() else 'no'
+        cdda_frames = self._audio_frames // AUDIO_FRAMES_PER_CD_SECTOR
+        length_msf = frames_to_msf(cdda_frames)
 
         arv1 = f'{self._arv1:08x}' if self._arv1 is not None else 'unknown'
         arv2 = f'{self._arv2:08x}' if self._arv2 is not None else 'unknown'
         crc32 = f'{self._crc32:08x}' if self._crc32 is not None else 'unknown'
 
         return f'{short_name:<30s}    {is_cdda:>4s}    ' + \
-               f'{length_msf:>8s}    {frames:>6d}    ' + \
+               f'{length_msf:>8s}    {cdda_frames:>6d}    ' + \
                f'{crc32:>8s}    {arv1:>8s}    {arv2:>8s}'
+
+    def _is_cd_rip(self) -> bool:
+        """
+        If an audio file was ripped from a CD, its number of frames is
+        evenly divisible by the number of audio frames per CD sector.
+        """
+        return self._audio_frames % AUDIO_FRAMES_PER_CD_SECTOR == 0
 
     def set_copy_crc(self) -> None:
         """Calculate and set copy CRC."""
@@ -197,7 +170,7 @@ class Rip:
 
     def _discard_htoa(self) -> None:
         """Discard paths where file names match commonly used HTOA naming patterns."""
-        htoa_patterns = ['track00.wav', 'track00.cdda.wav']
+        htoa_patterns = ['track00.wav', 'track00.cdda.wav', 'track00.flac', 'track00.cdda.flac']
         self._paths = [path for path in self._paths if os.path.basename(path) not in htoa_patterns]
 
     def __str__(self) -> str:

@@ -21,7 +21,7 @@
 - [x] parser for cached AccurateRip response binary files
 - [x] show copy CRC of ripped files in results
 - [ ] calculate copy CRC with or without zero samples
-- [ ] full FLAC support (audio file properties + CRC calculation)
+- [x] full FLAC support (audio file properties + CRC calculation)
 - [ ] warn if lengths of ripped tracks don't match CD TOC
 - [ ] create log file with results
 - [ ] offset detection
