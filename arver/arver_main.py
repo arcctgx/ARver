@@ -5,9 +5,9 @@ Verify rip correctness using AccurateRip database.
 import argparse
 import sys
 
-from arver import VERSION
 from arver.disc.info import get_disc_info
 from arver.rip.rip import Rip
+from arver.version import version_string
 
 
 def _parse_args():
@@ -31,7 +31,7 @@ def _parse_args():
                         nargs='?',
                         help='get disc TOC from MusicBrainz by disc ID')
 
-    parser.add_argument('-v', '--version', action='version', version=VERSION)
+    parser.add_argument('-v', '--version', action='version', version=version_string())
 
     return parser.parse_args()
 

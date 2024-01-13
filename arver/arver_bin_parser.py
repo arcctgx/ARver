@@ -6,8 +6,8 @@ by certain AccurateRip-aware CD rippers (e.g. EAC or Whipper).
 import argparse
 import sys
 
-from arver import VERSION
 from arver.disc.database import AccurateRipParser
+from arver.version import version_string
 
 
 def _parse_args():
@@ -15,7 +15,7 @@ def _parse_args():
         description="""Display AccurateRip disc data cached in a dBAR file.""")
 
     parser.add_argument('dbar_file', nargs=1, help='cached AccurateRip response file')
-    parser.add_argument('-v', '--version', action='version', version=VERSION)
+    parser.add_argument('-v', '--version', action='version', version=version_string())
 
     return parser.parse_args()
 

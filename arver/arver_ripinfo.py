@@ -6,8 +6,8 @@ two types of AccurateRip checksums.
 import argparse
 import sys
 
-from arver import VERSION
 from arver.rip.rip import Rip
+from arver.version import version_string
 
 
 def _parse_args():
@@ -22,7 +22,7 @@ def _parse_args():
                         nargs='+',
                         metavar='file',
                         help='audio file for calculating checksums')
-    parser.add_argument('-v', '--version', action='version', version=VERSION)
+    parser.add_argument('-v', '--version', action='version', version=version_string())
 
     return parser.parse_args()
 
