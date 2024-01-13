@@ -233,10 +233,16 @@ static PyObject *get_nframes(PyObject *self, PyObject *args)
     return PyLong_FromLong(info.frames);
 }
 
+static PyObject *libsndfile_version(PyObject *self, PyObject *args)
+{
+    return PyUnicode_FromString(sf_version_string());
+}
+
 static PyMethodDef accuraterip_methods[] = {
 	{ "compute", accuraterip_compute, METH_VARARGS, "Compute AccurateRip v1 and v2 checksums" },
 	{ "crc32", crc32_compute, METH_VARARGS, PyDoc_STR("Calculate CRC32 checksum of an audio file.") },
 	{ "nframes", get_nframes, METH_VARARGS, PyDoc_STR("Get the number of frames in an audio file.") },
+	{ "libsndfile_version", libsndfile_version, METH_VARARGS,  PyDoc_STR("Get libsndfile version string.") },
 	{ NULL, NULL, 0, NULL },
 };
 

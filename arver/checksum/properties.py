@@ -1,4 +1,9 @@
-"""Functions for getting properties of supported audio files."""
+"""
+Functions for getting properties of supported audio files,
+or of libsndfile library itself.
+"""
+
+# pylint: disable=c-extension-no-member
 
 from arver.checksum import accuraterip
 
@@ -13,5 +18,9 @@ def get_nframes(path: str) -> int:
     will raise TypeError for any other audio format, or OSError when
     libsndfile can't load audio samples from the file for any reason.
     """
-    # pylint: disable=c-extension-no-member
     return accuraterip.nframes(path)
+
+
+def libsndfile_version() -> str:
+    """Return libsndfile version string."""
+    return accuraterip.libsndfile_version()
