@@ -15,13 +15,13 @@
 - [x] README.md (with acknowledgements)
 - [x] proper Python package (pip-installable, with wheels)
 
-## Further development (in no particular order)
+## Further development
 
-- [ ] Mixed Mode CD support
-- [x] parser for cached AccurateRip response binary files
 - [x] show copy CRC of ripped files in results
-- [ ] calculate copy CRC with or without zero samples
+- [x] parser for cached AccurateRip response binary files
 - [x] full FLAC support (audio file properties + CRC calculation)
+- [ ] Mixed Mode CD support
+- [ ] calculate copy CRC without zero samples ("skip silence" CRC)
 - [ ] warn if lengths of ripped tracks don't match CD TOC
 - [ ] create log file with results
 - [ ] offset detection

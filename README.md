@@ -99,13 +99,6 @@ and presents them as a table.
 * `arver-bin-parser`: parses cached binary AccurateRip response and displays
 all AccurateRip track checksums.
 
-### Planned features
-
-Several features are planned, but not implemented yet:
-
-* mixed-mode CD support (disc type is recognized, but verification fails)
-* offset detection (zero offset is assumed)
-
 ### Restrictions
 
 #### Using MusicBrainz disc IDs instead of physical discs
