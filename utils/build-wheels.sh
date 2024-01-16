@@ -34,5 +34,5 @@ do
         continue
     fi
 
-    auditwheel repair "${wheel}" --plat "${platform}" --wheel-dir "${wheel_dir}"
+    auditwheel repair "${wheel}" --plat "${platform}" --strip --wheel-dir "${wheel_dir}"
 done
