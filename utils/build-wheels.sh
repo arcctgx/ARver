@@ -23,7 +23,7 @@ rm -rf "${package_dir}/build" "${wheel_dir}"
 # build CPython wheels:
 for pybin in /opt/python/cp*/bin
 do
-    "${pybin}/pip" wheel "${package_dir}" --no-deps --no-cache-dir --wheel-dir "${wheel_dir}"
+    "${pybin}/pip" wheel "${package_dir}" --wheel-dir "${wheel_dir}"
 done
 
 # vendor required shared libraries in wheels:
