@@ -1,4 +1,4 @@
-"""Main arver package."""
+"""Main ARver package."""
 
 APPNAME = 'ARver'
 VERSION = 'v1.0.0'

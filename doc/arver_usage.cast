@@ -1,4 +1,4 @@
-{"version": 2, "width": 78, "height": 21, "timestamp": 1672441563, "title": "Basic arver usage", "env": {"SHELL": "/bin/bash", "TERM": "xterm"}}
+{"version": 2, "width": 78, "height": 21, "timestamp": 1672441563, "title": "Basic ARver usage", "env": {"SHELL": "/bin/bash", "TERM": "xterm"}}
 [0.2, "o", "\u001b[01;32m[arcctgx@auriga]\u001b[00;31m\u001b[01;34m ~\u001b[00m $ "]
 [0.3, "o", "a"]
 [0.4, "o", "r"]
