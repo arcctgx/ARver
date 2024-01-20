@@ -101,6 +101,15 @@ all AccurateRip track checksums.
 
 ### Restrictions
 
+#### CD read offset corrections
+
+Audio files must be corrected for [CD drive read offset] (e.g. by using `-O`
+option in `cdparanoia`). This is crucial for AccurateRip verification: without
+it the checksums of ripped tracks cannot be directly compared with database
+entries. `ARver` expects the input files to have zero offset, i.e. it assumes
+that required offset corrections were applied by the CD ripper. If this is not
+the case, all tracks will be reported as failing verification.
+
 #### Using MusicBrainz disc IDs instead of physical discs
 
 The regular use case of `ARver` is to verify a set of audio files right after
@@ -150,6 +159,7 @@ Thanks to the following people and projects for source code and inspiration:
 * [cyanreg/cyanrip]
 
 [disc rot]: https://en.wikipedia.org/wiki/Disc_rot
+[CD drive read offset]: http://www.accuraterip.com/driveoffsets.htm
 [leo-bogert/accuraterip-checksum]: https://github.com/leo-bogert/accuraterip-checksum
 [whipper-team/whipper]: https://github.com/whipper-team/whipper
 [cyanreg/cyanrip]: https://github.com/cyanreg/cyanrip
