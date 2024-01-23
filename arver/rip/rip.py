@@ -194,10 +194,9 @@ class Rip:
         This method must be called before __str__() can be used, otherwise
         all printed checksums will be "unknown".
         """
-        total_tracks = len(self.tracks)
         for num, track in enumerate(self.tracks, start=1):
             track.set_copy_crc()
-            track.set_accuraterip_checksums(num, total_tracks)
+            track.set_accuraterip_checksums(num, len(self))
 
     def verify(self, disc_info: DiscInfo) -> DiscVerificationResult:
         """Verify a set of ripped files against a CD with specified TOC."""
@@ -209,10 +208,9 @@ class Rip:
         checksums = disc_info.accuraterip_data.make_dict()
         results: List[TrackVerificationResult] = []
 
-        total_tracks = len(self.tracks)
         for num, track in enumerate(self.tracks, start=1):
             crc32 = copy_crc(track.path)
-            ar1, ar2 = accuraterip_checksums(track.path, num, total_tracks)
+            ar1, ar2 = accuraterip_checksums(track.path, num, len(self))
 
             print(f'Track {num}:')
             print(f'\tPath: {track.path}')
