@@ -1,8 +1,8 @@
 # Data track handling in AccurateRip disc ID calculation
 
-It seems that the data tracks present in enhanced and mixed mode CDs require
-special treatment during calculation of AccurateRip disc IDs. While mixed mode
-CDs are not popular anymore, enhanced CDs are still widespread.
+Data tracks present in enhanced and mixed mode CDs require special treatment
+during calculation of AccurateRip disc IDs. While mixed mode CDs are not
+popular anymore, enhanced CDs are still widespread.
 
 To figure out how to deal with this problem I ripped several CDs of different
 types using various AccurateRip-aware programs, and compared the results I got.
@@ -17,7 +17,8 @@ format: `nnn-aaaaaaaa-bbbbbbbb-ffffffff`. The fields are:
 * `ffffffff`: [FreeDB disc ID] (hex).
 
 All fields are padded with zeros if they would be shorter than 3 or 8 digits.
-The three types of disc IDs are calculated based on the CD table of contents.
+The three types of disc IDs are calculated based on the CD table of contents
+(TOC).
 
 ## Enhanced CD (Blue Book)
 
@@ -27,15 +28,16 @@ one data track.
 Calculated full AccurateRip disc IDs are:
 
 * `010-00164419-00b9f6e2-9e11600b` (calculated by `dBpoweramp` and `EAC` - correct)
-* `010-00154c2f-00af4fd4-890e120a` (calculated by `Whipper` and `ARver` - wrong!)
+* `010-00154c2f-00af4fd4-890e120a` (calculated by `Whipper` and `ARver` prior to `v0.5.0` - wrong!)
 
 Only the number of tracks (`010`) is the same, all three disc IDs are different.
 `dBpoweramp` and `EAC` verify the checksums of my ripped files correctly, but
-`Whipper` or `ARver` do not (I get no matching checksums).
+`Whipper` and old `ARver` versions do not (I get no matching checksums).
 
-`dBpoweramp` is provided by the same entity that operates AccurateRip database,
+`dBpoweramp` is developed by the same entity that operates AccurateRip database,
 so its results can be considered authoritative. Actually it is interesting that
-`Whipper` and `ARver` get any AccurateRip results at all, instead of a 404 error.
+`Whipper` and old `ARver` versions get any AccurateRip results at all, instead
+of a 404 error.
 
 ### Disc data
 
@@ -132,8 +134,9 @@ The total CD length is 1h 00m 04s = 3604 s (3602 s excluding lead in).
 delta = 4448 s - 3602 s = 846 s
 
 Where does this 846 seconds difference come from? The data track is offset
-from the end of last audio track by the usual `11400` sectors (`2:32.00` = 152
-seconds). The data track is `11:34.16` long (= 694 seconds and 16 sectors).
+from the end of last audio track by the usual `11400` sectors (152 seconds,
+or `2:32.00`). The data track is 333651 - 281585 = 52066 sectors long (694
+seconds and 16 sectors, or `11:34.16`).
 
 152 s + 694 s = 846 s
 
@@ -162,26 +165,28 @@ or from MusicBrainz based on disc ID.
 the information about existence of data tracks, can be acquired by reading a
 physical CD using `pycdio`.
 
-The numbers in examples follow the data from "Disc data" section above.
+The numbers in examples follow the data from "Disc data" section above, with
+LSN offsets reported by `pycdio` converted to LBA (LBA = LSN + 150).
 
 #### FreeDB disc ID
 
 This is what the calculation looks like if we are not aware of the data track:
 
 ```python
+>>> from arver.disc.fingerprint import freedb_id
 >>> lba_offsets = [150, 12767, 40487, 63225, 93410, 118115, 151865, 184340, 215260, 247455]
 >>> sectors = 270335
 >>> freedb_id(lba_offsets, sectors)
-'890e120a'  # same as MusicBrainz - NOK
+'890e120a'  # same as MusicBrainz or Whipper - NOK
 ```
 
-We can get the correct result if we know there is a data track, and we know the
-true lead out offset:
+We can obtain the correct result only if we know that there is a data track
+and we know its offset (taking into account the usual `11400` sectors gap
+after the last audio track). We must also know the true lead out offset:
 
 ```python
->>> lba_offsets = [150, 12767, 40487, 63225, 93410, 118115, 151865, 184340, 215260, 247455]
->>> sectors = 270335
->>> lba_offsets.append(11400 + sectors)     # add data track with the usual gap
+>>> from arver.disc.fingerprint import freedb_id
+>>> lba_offsets = [150, 12767, 40487, 63225, 93410, 118115, 151865, 184340, 215260, 247455, 281735]
 >>> true_leadout = 333801
 >>> freedb_id(lba_offsets, true_leadout)
 '9e11600b'  # same as EAC - OK
@@ -192,18 +197,20 @@ true lead out offset:
 AccurateRip ID calculation requires knowing the true lead out offset too:
 
 ```python
+>>> from arver.disc.fingerprint import accuraterip_ids
 >>> lba_offsets = [150, 12767, 40487, 63225, 93410, 118115, 151865, 184340, 215260, 247455]
->>> leadout = 270335
->>> accuraterip_ids(lba_offsets, leadout)
-('00154c2f', '00af4fd4')    # NOK
+>>> sectors = 270335
+>>> accuraterip_ids(lba_offsets, sectors)
+('00154c2f', '00af4fd4')    # same as Whipper - NOK
 ```
 
 Specifying the true lead out offset corrects the calculated AccurateRip disc
 IDs of an enhanced CD. No manipulation of offset list is necessary:
 
 ```python
+>>> from arver.disc.fingerprint import accuraterip_ids
 >>> lba_offsets = [150, 12767, 40487, 63225, 93410, 118115, 151865, 184340, 215260, 247455]
->>> true_leadout = 333801     # 333651 + 150, lead out LBA
+>>> true_leadout = 333801
 >>> accuraterip_ids(lba_offsets, true_leadout)
 ('00164419', '00b9f6e2')    # same as EAC - OK
 ```
