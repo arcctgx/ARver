@@ -308,4 +308,61 @@ AccurateRip database and there is nothing `arver` can do to work around it.
 Note: tracks 23 and 28 have zero checksums with zero confidence as well, but
 this is because they are too short. `arver` handles these tracks correctly.
 
+### Mixed mode CD verification in ARver
+
+The table below presents differences between track numbers in the CD table
+of contents (TOC) and in the set of audio files extracted from a CD (a rip).
+The data track is not extracted, so there is no file corresponding to CD TOC
+track 1 in the rip. This is why file names start from `track02`.
+
+|  TOC #  |  rip #  | type  |    file name     |
+|:-------:|:-------:|:-----:|:----------------:|
+| 1 / 29  |   --    | data  |        --        |
+| 2 / 29  | 1 / 28  | audio | track02.cdda.wav |
+| 3 / 29  | 2 / 28  | audio | track03.cdda.wav |
+| 4 / 29  | 3 / 28  | audio | track04.cdda.wav |
+|   ...   |   ...   |  ...  |       ...        |
+| 29 / 29 | 28 / 28 | audio | track29.cdda.wav |
+
+It appears that the checksum of the first audio track (i.e. CD TOC track 2) in
+AccurateRip response is calculated as if samples were omitted at the beginning.
+This is fortunate: it means that checksum calculation can be based on the rip
+index, just like in other supported disc types. Basing the calculation on the
+rip index omits some samples at the beginning of the first track and in the end
+of the last track. Whether the latter is actually required for mixed mode CDs
+is not clear (and irrelevant).
+
+When comparing AccurateRip checksums of local files with database response,
+it is useful to think in terms of two different indexes:
+
+* the rip index used for calculating AccurateRip checksums,
+* the CD TOC index used for lookups in the database response.
+
+These indexes are equivalent when verifying an audio or enhanced CD, but
+their values become different when verifying a mixed mode CD: the value of
+the rip index will be equal to CD TOC index minus one.
+
+Putting all of this together, to verify audio tracks ripped from a mixed mode CD
+`arver` must:
+
+* iterate over CD TOC index starting from track 2,
+* calculate AccurateRip checksums of an audio file using:
+  * the rip index as the track number,
+  * the number of files in the rip as the total number of tracks,
+* look up expected checksums in the database response using CD TOC index.
+
+As discussed previously, AccurateRip response for a mixed mode CD contains a
+zero confidence checksum of the data track, but no checksums of the last audio
+track. In other words, useless data track checksum occupies a slot that could
+have been used by an audio track. This results in an edge case: there is no
+AccurateRip checksum in the response that corresponds to the final value of
+CD TOC index. This would lead to a runtime error on dictionary lookup.
+
+The workaround for that is inserting an "artificial" track with no available
+checksums to the end of AccurateRip response when converting database response
+to a dictionary. This achieves two things: first, it avoids the lookup error.
+Second, it makes `arver` treat the final track as one which has no checksums
+in the database. Track verification result is then correctly shown as `N/A`
+in the summary.
+
 [FreeDB disc ID]: <https://en.wikipedia.org/wiki/CDDB#Example_calculation_of_a_CDDB1_(FreeDB)_disc_ID>
