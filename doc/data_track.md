@@ -218,54 +218,54 @@ IDs of an enhanced CD. No manipulation of offset list is necessary:
 ## Mixed mode CD (Yellow Book)
 
 Let's use "Mortal Kombat Trilogy" game CD as an example. It contains 29 tracks:
-the first one is the game data, the rest are audio tracks.
+the first one is game data, the rest are audio tracks.
 
 The AccurateRip disc ID calculated by EAC is `028-00517a54-05a845d2-af0da31d`.
-One can immediately see that the initial number in the disc ID is the number
-of *audio* tracks, not the total number of tracks.
+The initial number in the disc ID appears to be the number of audio tracks,
+not the total number of tracks.
 
 Calculation of FreeDB disc ID requires offsets of all tracks, regardless of
 their type. `discid` is able to provide them for mixed mode CDs, because the
 data track and audio tracks share the same CD session. Lead out offset is
 correct too, because there is just one session and the last audio track is
-not followed by a data track. This means that the FreeDB disc ID can be
-calculated based on the data provided by `discid` alone.
+not followed by a data track. This means the FreeDB disc ID can be calculated
+based on information provided by `discid` alone:
 
 ```python
+>>> from arver.disc.fingerprint import freedb_id
 >>> offsets = [150, 66728, 76502, 85963, 93760, 104048, 116066, 124743, 134206, 142916, 151852, 160720,
 ...     169425, 178731, 188459, 196711, 206354, 214845, 223686, 225746, 226384, 232668, 239447, 239931,
 ...     244989, 254264, 260066, 261222, 261674]
 >>> leadout = 261976
 >>> freedb_id(offsets, leadout)
-'af0da31d'     # same as EAC - OK
+'af0da31d'    # same as EAC - OK
 ```
 
-The tricky part is the calculation of AccurateRip disc IDs. Using the same data
-as above results in one of the two fingerprints being incorrect:
+Calculation of AccurateRip disc IDs is the tricky part. Using the same data
+as above results in one fingerprint being incorrect:
 
 ```python
+>>> from arver.disc.fingerprint import accuraterip_ids
 >>> accuraterip_ids(offsets, leadout)
-('00517a54', '05f9c027')      # 00517a54 is OK, 05f9c027 is not
+('00517a54', '05f9c027')    # 00517a54 is OK, 05f9c027 is not
 ```
 
-But, taking into account that the number in the beginning of the full AR disc
-ID is the number of audio tracks, what if we omit the data track's offset in
-the calculation?
+To calculate them correctly the data track offset must be omitted:
 
 ```python
 >>> accuraterip_ids(offsets[1:], leadout)
-('00517a54', '05a845d2')      # both are correct now
+('00517a54', '05a845d2')    # both are correct now
 ```
 
-So it seems that the offset list must not include the data tracks. Therefore,
-correct handling of mixed mode CDs requires information that `discid` cannot
-provide. `pycdio` must be used to determine which tracks are data tracks. Once
-this is known, it becomes possible to filter out offsets of data tracks.
+This demonstrates that handling mixed mode CDs requires information `discid`
+cannot provide: one needs to know which tracks are data tracks to omit their
+offsets from the list. Track type information can be acquired with `pycdio`
+package.
 
-### Sample AccurateRip response for a Yellow Book CD
+### Sample AccurateRip response for a mixed mode CD
 
-As indicated above, MK Trilogy CD contains 28 audio tracks. AccurateRip response
-for that CD is following:
+As indicated above, "Mortal Kombat Trilogy" CD contains 28 audio tracks.
+AccurateRip response for that CD is following:
 
 ```text
 disc ID: 028-00517a54-05a845d2-af0da31d
@@ -299,15 +299,13 @@ track 27:   e5ecb215   (confidence: 1)
 track 28:   00000000   (confidence: 0)
 ```
 
-Note that the first track has checksum `00000000` with zero confidence. This
-corresponds to CD track 1, i.e. the *data track*! Since AccurateRip response
-only contains 28 tracks, it means that the checksum of one audio track is
-not included. Indeed, there is no checksum of the final audio track. This
-seems to be a limitation of AccurateRip database and there is nothing `ARver`
-can do to work around it.
+The first track has checksum `00000000` with zero confidence. This corresponds
+to CD track 1, i.e. to the data track. Since AccurateRip response contains only
+28 tracks, it means the checksum of one audio track is missing: there is no
+checksum of the final audio track (track 29). This seems to be a limitation of
+AccurateRip database and there is nothing `arver` can do to work around it.
 
-Also note that some *audio* tracks have zero checksums with zero confidences
-as well. This is because they are too short: apparently AccurateRip provides a
-checksum only if the track length exceeds some threshold.
+Note: tracks 23 and 28 have zero checksums with zero confidence as well, but
+this is because they are too short. `arver` handles these tracks correctly.
 
 [FreeDB disc ID]: <https://en.wikipedia.org/wiki/CDDB#Example_calculation_of_a_CDDB1_(FreeDB)_disc_ID>
