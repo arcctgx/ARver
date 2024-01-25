@@ -1,6 +1,5 @@
 """Utilities for communicating with AccurateRip database."""
 
-import json
 import struct
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
@@ -103,9 +102,6 @@ class AccurateRipDisc:
             str_ += '\n\n'
 
         return str_.strip()
-
-    def __repr__(self):
-        return json.dumps(self.make_dict(), indent=2)
 
     def __len__(self):
         return len(self.responses)
