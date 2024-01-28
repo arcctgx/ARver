@@ -1,8 +1,8 @@
 """Representation of a set of ripped CDDA files."""
 
-import os
 from dataclasses import dataclass
 from enum import Enum
+from os.path import basename
 from typing import ClassVar, List, Optional
 
 from arver.checksum.checksum import accuraterip_checksums, copy_crc
@@ -19,7 +19,7 @@ class AudioFormatError(Exception):
 
 def _shorten_path(path: str, max_length: int = 30) -> str:
     """Shorten long path to an abbreviated file name of specified maximum length."""
-    name = os.path.basename(path)
+    name = basename(path)
     if len(name) <= max_length:
         return name
 
@@ -170,7 +170,7 @@ class Rip:
     def _discard_htoa(self) -> None:
         """Discard paths where file names match commonly used HTOA naming patterns."""
         htoa_patterns = ['track00.wav', 'track00.cdda.wav', 'track00.flac', 'track00.cdda.flac']
-        self._paths = [path for path in self._paths if os.path.basename(path) not in htoa_patterns]
+        self._paths = [path for path in self._paths if basename(path) not in htoa_patterns]
 
     def __str__(self) -> str:
         header = f'{"file name":^30s}    ' + \
