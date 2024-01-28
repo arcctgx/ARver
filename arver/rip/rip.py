@@ -7,7 +7,7 @@ from typing import ClassVar, List, Optional
 
 from arver.checksum.checksum import accuraterip_checksums, copy_crc
 from arver.checksum.properties import get_nframes
-from arver.disc.info import DiscInfo, _DiscType
+from arver.disc.info import DiscInfo, DiscType
 from arver.disc.utils import frames_to_msf
 
 AUDIO_FRAMES_PER_CD_SECTOR = 588
@@ -213,7 +213,7 @@ class Rip:
         checksums = disc_info.accuraterip_data.make_dict()
         results: List[TrackVerificationResult] = []
 
-        mixed_mode = disc_info.type == _DiscType.MIXED_MODE
+        mixed_mode = disc_info.type == DiscType.MIXED_MODE
         toc_idx_start = 1 if not mixed_mode else 2
 
         for toc_idx, track in enumerate(self.tracks, start=toc_idx_start):

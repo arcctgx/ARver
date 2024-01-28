@@ -41,7 +41,7 @@ class _Track:
         return f'{numstr}    {self.msf():>8s}    {self.frames:6d}\n'
 
 
-class _DiscType(Enum):
+class DiscType(Enum):
     """
     Disc types relevant to ARver:
 
@@ -99,7 +99,7 @@ def _is_audio_only(track_list: List[_Track]) -> bool:
     return len(types) == 1 and 'audio' in types
 
 
-def _get_disc_type(device: cdio.Device, track_list: List[_Track]) -> _DiscType:
+def _get_disc_type(device: cdio.Device, track_list: List[_Track]) -> DiscType:
     """
     Determine disc type based on the following rules:
 
@@ -110,20 +110,20 @@ def _get_disc_type(device: cdio.Device, track_list: List[_Track]) -> _DiscType:
     Anything else -> unsupported disc (no idea what that could be)
     """
     if 'audio' not in [track.type for track in track_list]:
-        return _DiscType.UNSUPPORTED
+        return DiscType.UNSUPPORTED
 
     multisession = _is_multisession(device)
 
     if not multisession and _is_audio_only(track_list):
-        return _DiscType.AUDIO
+        return DiscType.AUDIO
 
     if not multisession and track_list[0].type == 'data':
-        return _DiscType.MIXED_MODE
+        return DiscType.MIXED_MODE
 
     if multisession and track_list[-1].type == 'data':
-        return _DiscType.ENHANCED
+        return DiscType.ENHANCED
 
-    return _DiscType.UNSUPPORTED
+    return DiscType.UNSUPPORTED
 
 
 def _calculate_track_lengths(offset_list: List[int], sectors: int) -> List[int]:
@@ -181,7 +181,7 @@ class DiscInfo:
     pregap: Optional[_Track]
     track_list: List[_Track]
     lead_out: int
-    type: _DiscType
+    type: DiscType
     accuraterip_data: Optional[AccurateRipDisc] = field(default=None, init=False)
 
     def _format_tracklist(self):
@@ -242,10 +242,10 @@ class DiscInfo:
         pregap = _get_pregap_track(track_list)
 
         disc_type = _get_disc_type(device, track_list)
-        if disc_type == _DiscType.UNSUPPORTED:
+        if disc_type == DiscType.UNSUPPORTED:
             return None
 
-        if disc_type == _DiscType.ENHANCED:
+        if disc_type == DiscType.ENHANCED:
             _fix_last_audio_track(track_list)
 
         return cls(pregap, track_list, lead_out, disc_type)
@@ -278,7 +278,7 @@ class DiscInfo:
             track_list.append(_Track(num, *track_data, 'audio'))
 
         pregap = _get_pregap_track(track_list)
-        return cls(pregap, track_list, lead_out, _DiscType.DISC_ID)
+        return cls(pregap, track_list, lead_out, DiscType.DISC_ID)
 
     def _audio_tracks(self) -> List[_Track]:
         """Return a list of audio tracks on the CD."""
@@ -295,11 +295,11 @@ class DiscInfo:
     def disc_type(self) -> str:
         """Return a string describing disc type."""
         types = {
-            _DiscType.UNSUPPORTED: 'Unsupported CD type',
-            _DiscType.AUDIO: 'Audio CD',
-            _DiscType.MIXED_MODE: 'Mixed Mode CD',
-            _DiscType.ENHANCED: 'Enhanced CD',
-            _DiscType.DISC_ID: 'None (disc ID lookup)'
+            DiscType.UNSUPPORTED: 'Unsupported CD type',
+            DiscType.AUDIO: 'Audio CD',
+            DiscType.MIXED_MODE: 'Mixed Mode CD',
+            DiscType.ENHANCED: 'Enhanced CD',
+            DiscType.DISC_ID: 'None (disc ID lookup)'
         }
         return types[self.type]
 
@@ -313,7 +313,7 @@ class DiscInfo:
         # calculation requires all track offsets regardless of track type. In
         # Enhanced CDs the first session only contains audio tracks, so by
         # using just the audio track offsets the second session is omitted.
-        if self.type == _DiscType.ENHANCED:
+        if self.type == DiscType.ENHANCED:
             offsets = self._audio_offsets()
         else:
             offsets = self._all_offsets()
