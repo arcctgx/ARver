@@ -121,7 +121,7 @@ class AccurateRipDisc:
         during file verification. The conversion is "lossy": AccurateRip checksums
         with zero confidence are omitted.
 
-        Resulting dictionary has the following structure:
+        For a disc with N tracks, resulting dictionary has the following structure:
 
         {
             "1": {
@@ -138,11 +138,20 @@ class AccurateRipDisc:
                 ...
             },
             ...
+            "N": {
+                ...
+            },
+            "N+1": {}
         }
 
         Conversion assumes that checksums other than zero are unique in scope of
         one track. If this is not the case, lower confidence value from later
         response may overwrite higher confidence value from earlier response.
+
+        The "N+1" track with no checksums is needed to prevent out-of-bounds
+        dictionary lookup when verifying mixed mode CDs. It is never reached
+        when handling other disc types. See doc/data_track.md for a detailed
+        description.
         """
         data = {}
 
@@ -161,6 +170,9 @@ class AccurateRipDisc:
                         'confidence': track.confidence,
                         'response': rsp + 1,
                     }
+
+        # An extra track for handling mixed mode CDs.
+        data[index + 1] = {}
 
         return data
 

@@ -20,7 +20,7 @@
 - [x] show copy CRC of ripped files in results
 - [x] parser for cached AccurateRip response binary files
 - [x] full FLAC support (audio file properties + CRC calculation)
-- [ ] Mixed Mode CD support
+- [x] Mixed Mode CD support
 - [ ] calculate copy CRC without zero samples ("skip silence" CRC)
 - [ ] warn if lengths of ripped tracks don't match CD TOC
 - [ ] create log file with results

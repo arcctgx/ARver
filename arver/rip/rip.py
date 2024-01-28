@@ -7,7 +7,7 @@ from typing import ClassVar, List, Optional
 
 from arver.checksum.checksum import accuraterip_checksums, copy_crc
 from arver.checksum.properties import get_nframes
-from arver.disc.info import DiscInfo
+from arver.disc.info import DiscInfo, _DiscType
 from arver.disc.utils import frames_to_msf
 
 AUDIO_FRAMES_PER_CD_SECTOR = 588
@@ -199,7 +199,12 @@ class Rip:
             track.set_accuraterip_checksums(num, len(self))
 
     def verify(self, disc_info: DiscInfo) -> DiscVerificationResult:
-        """Verify a set of ripped files against a CD with specified TOC."""
+        """
+        Verify a set of ripped files against a CD with specified TOC.
+
+        See doc/data_track.md for a description of handling mixed mode CDs,
+        including the distinction between TOC index and rip index.
+        """
         print(f'Verifying {len(self)} tracks:\n')
 
         if disc_info.accuraterip_data is None:
@@ -208,31 +213,35 @@ class Rip:
         checksums = disc_info.accuraterip_data.make_dict()
         results: List[TrackVerificationResult] = []
 
-        for num, track in enumerate(self.tracks, start=1):
-            crc32 = copy_crc(track.path)
-            ar1, ar2 = accuraterip_checksums(track.path, num, len(self))
+        mixed_mode = disc_info.type == _DiscType.MIXED_MODE
+        toc_idx_start = 1 if not mixed_mode else 2
 
-            print(f'Track {num}:')
+        for toc_idx, track in enumerate(self.tracks, start=toc_idx_start):
+            rip_idx = toc_idx if not mixed_mode else toc_idx - 1
+            ar1, ar2 = accuraterip_checksums(track.path, rip_idx, len(self))
+            crc32 = copy_crc(track.path)
+
+            print(f'Track {toc_idx}:')
             print(f'\tPath: {track.path}')
             print(f'\tCopy CRC: {crc32:08x}')
 
-            if len(checksums[num]) == 0:
+            if len(checksums[toc_idx]) == 0:
                 results.append(
                     TrackVerificationResult(track.path, ar2, 'ARv2', -1, -1, _Status.NODATA))
                 print('\tAccurateRip: no checksums available for this track')
                 continue
 
-            if ar2 in checksums[num]:
-                conf = checksums[num][ar2]['confidence']
-                resp = checksums[num][ar2]['response']
+            if ar2 in checksums[toc_idx]:
+                conf = checksums[toc_idx][ar2]['confidence']
+                resp = checksums[toc_idx][ar2]['response']
                 print(f'\tAccurateRip: {ar2:08x} (ARv2), confidence {conf}, response {resp}')
                 results.append(
                     TrackVerificationResult(track.path, ar2, 'ARv2', conf, resp, _Status.SUCCESS))
                 continue
 
-            if ar1 in checksums[num]:
-                conf = checksums[num][ar1]['confidence']
-                resp = checksums[num][ar1]['response']
+            if ar1 in checksums[toc_idx]:
+                conf = checksums[toc_idx][ar1]['confidence']
+                resp = checksums[toc_idx][ar1]['response']
                 print(f'\tAccurateRip: {ar1:08x} (ARv1), confidence {conf}, response {resp}')
                 results.append(
                     TrackVerificationResult(track.path, ar1, 'ARv1', conf, resp, _Status.SUCCESS))

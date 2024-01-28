@@ -1,5 +1,5 @@
 """Main ARver package."""
 
 APPNAME = 'ARver'
-VERSION = 'v1.1.0'
+VERSION = 'v1.2.0.dev0'
 URL = 'https://github.com/arcctgx/ARver'
