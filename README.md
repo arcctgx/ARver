@@ -120,9 +120,15 @@ Commands `arver` and `arver-discinfo` support an alternative mode of operation,
 where disc information is downloaded from MusicBrainz by disc ID lookup. While
 this can be useful, it is reliable only for Audio CDs. Information about data
 tracks is not encoded in MusicBrainz disc ID, but it is necessary to calculate
-AccurateRip disc ID. Attempts to verify discs with data tracks (e.g. Enhanced
-CDs) using disc ID lookup may not work at all, result in false negatives or low
-confidence values.
+AccurateRip disc ID. Attempts to verify discs with data tracks (Enhanced or
+Mixed Mode CDs) using disc ID lookup may not work at all, result in false
+negatives or low confidence values.
+
+#### Verifying Mixed Mode CDs
+
+AccurateRip database does not store checksums of last audio tracks in Mixed
+Mode CDs. These tracks cannot be verified and their verification status will
+always show as `N/A` in the results summary.
 
 #### Verifying Copy Controlled CDs
 
