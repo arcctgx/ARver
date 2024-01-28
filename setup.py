@@ -1,5 +1,6 @@
-from setuptools import setup, find_packages, Extension
-from arver import APPNAME, VERSION, URL
+from setuptools import Extension, find_packages, setup
+
+from arver import APPNAME, URL, VERSION
 
 with open('README.md', encoding='utf-8') as f:
     readme = f.read()

@@ -6,7 +6,7 @@ from typing import ClassVar, List, Optional
 
 import requests
 
-from arver import APPNAME, VERSION, URL
+from arver import APPNAME, URL, VERSION
 
 FETCH_TIMEOUT_SECONDS = 5
 URL_BASE = 'http://www.accuraterip.com/accuraterip/'

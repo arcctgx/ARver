@@ -1,6 +1,7 @@
 """Functions for calculating disc fingerprints (disc IDs) from CD TOC."""
 
 from typing import List, Tuple
+
 from discid import put
 
 from arver.disc.utils import LEAD_IN_FRAMES

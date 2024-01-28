@@ -1,12 +1,11 @@
 """Representation of a set of ripped CDDA files."""
 
 import os
-
 from dataclasses import dataclass
 from enum import Enum
 from typing import ClassVar, List, Optional
 
-from arver.checksum.checksum import copy_crc, accuraterip_checksums
+from arver.checksum.checksum import accuraterip_checksums, copy_crc
 from arver.checksum.properties import get_nframes
 from arver.disc.info import DiscInfo
 from arver.disc.utils import frames_to_msf
