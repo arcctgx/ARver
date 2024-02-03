@@ -1,3 +1,4 @@
+.coverage
 .git
 .mypy_cache
 .vscode
@@ -11,4 +12,5 @@
 
 build
 dist
+htmlcov
 wheelhouse
