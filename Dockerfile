@@ -41,8 +41,8 @@ RUN tar xf libsndfile-1.2.2.tar.xz && cd libsndfile-1.2.2 && \
 
 WORKDIR /
 
-# ARver requires Python >= 3.7, so remove Python-3.6 symlink
-RUN rm -v /opt/python/cp36-cp36m
+# Remove unsupported Python versions:
+RUN rm -v /opt/python/cp36-cp36m /opt/python/cp312-cp312
 
 COPY ./utils/pip.conf /etc/
 
