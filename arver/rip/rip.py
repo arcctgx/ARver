@@ -36,6 +36,7 @@ class AudioFile:
 
         try:
             self._audio_frames = get_nframes(path)
+            self.cdda_frames = self._audio_frames // AUDIO_FRAMES_PER_CD_SECTOR
         except (OSError, TypeError) as exc:
             raise AudioFormatError from exc
 
@@ -46,15 +47,14 @@ class AudioFile:
     def __str__(self) -> str:
         short_name = _shorten_path(self.path)
         is_cdda = 'yes' if self._is_cd_rip() else 'no'
-        cdda_frames = self._audio_frames // AUDIO_FRAMES_PER_CD_SECTOR
-        length_msf = frames_to_msf(cdda_frames)
+        length_msf = frames_to_msf(self.cdda_frames)
 
         arv1 = f'{self._arv1:08x}' if self._arv1 is not None else 'unknown'
         arv2 = f'{self._arv2:08x}' if self._arv2 is not None else 'unknown'
         crc32 = f'{self._crc32:08x}' if self._crc32 is not None else 'unknown'
 
         return f'{short_name:<30s}    {is_cdda:>4s}    ' + \
-               f'{length_msf:>8s}    {cdda_frames:>6d}    ' + \
+               f'{length_msf:>8s}    {self.cdda_frames:>6d}    ' + \
                f'{crc32:>8s}    {arv1:>8s}    {arv2:>8s}'
 
     def _is_cd_rip(self) -> bool:
