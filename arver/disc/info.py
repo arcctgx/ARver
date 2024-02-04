@@ -280,13 +280,13 @@ class DiscInfo:
         pregap = _get_pregap_track(track_list)
         return cls(pregap, track_list, lead_out, DiscType.DISC_ID)
 
-    def _audio_tracks(self) -> List[_Track]:
+    def audio_tracks(self) -> List[_Track]:
         """Return a list of audio tracks on the CD."""
         return [track for track in self.track_list if track.type == 'audio']
 
     def _audio_offsets(self) -> List[int]:
         """Return a list of offsets of audio tracks on the CD."""
-        return [track.lba for track in self._audio_tracks()]
+        return [track.lba for track in self.audio_tracks()]
 
     def _all_offsets(self) -> List[int]:
         """Return a list of offsets of all tracks on the CD."""
@@ -305,7 +305,7 @@ class DiscInfo:
 
     def musicbrainz_id(self) -> str:
         """Return MusicBrainz disc ID as string."""
-        last_audio_track = self._audio_tracks()[-1]
+        last_audio_track = self.audio_tracks()[-1]
         sectors = last_audio_track.lba + last_audio_track.frames
 
         # Calculation of MusicBrainz disc IDs requires track offsets from the
@@ -322,7 +322,7 @@ class DiscInfo:
 
     def accuraterip_id(self) -> str:
         """Return AccurateRip disc ID as string."""
-        num = len(self._audio_tracks())
+        num = len(self.audio_tracks())
         freedb = freedb_id(self._all_offsets(), self.lead_out)
         ar1, ar2 = accuraterip_ids(self._audio_offsets(), self.lead_out)
         return f'{num:03d}-{ar1:8s}-{ar2:8s}-{freedb:8s}'
