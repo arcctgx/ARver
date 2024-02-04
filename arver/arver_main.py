@@ -1,6 +1,4 @@
-"""
-Verify rip correctness using AccurateRip database.
-"""
+"""Verify rip correctness using AccurateRip database."""
 
 import argparse
 import sys
@@ -31,6 +29,11 @@ def _parse_args():
                         nargs='?',
                         help='get disc TOC from MusicBrainz by disc ID')
 
+    parser.add_argument('-p',
+                        '--permissive',
+                        action='store_true',
+                        help='ignore mismatched track lengths')
+
     parser.add_argument('-v', '--version', action='version', version=version_string())
 
     return parser.parse_args()
@@ -60,7 +63,11 @@ def main():
         print('No audio files were loaded. Did you specify correct files?')
         sys.exit(3)
 
-    verdict = rip.verify(disc)
+    try:
+        verdict = rip.verify(disc, args.permissive)
+    except ValueError:
+        print("Audio files don't match CD TOC, exiting.")
+        sys.exit(4)
 
     print()
     print(verdict.as_table())

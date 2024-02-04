@@ -198,13 +198,50 @@ class Rip:
             track.set_copy_crc()
             track.set_accuraterip_checksums(num, len(self))
 
-    def verify(self, disc_info: DiscInfo) -> DiscVerificationResult:
+    def _sanity_check(self, disc: DiscInfo, permissive: bool) -> None:
+        """
+        Make sure that the disc and rip are matching: the rip must have the
+        same number of files as the number of audio tracks on CD, and their
+        lenghts must be the same. ValueError is raised when difference is
+        detected.
+
+        Mismatch in the number of tracks is always fatal. Differences in track
+        lengths can be ignored by enabling permissive mode.
+        """
+        num_files = len(self)
+        num_tracks = len(disc.audio_tracks())
+
+        if num_files != num_tracks:
+            print(f'Track number mismatch: {num_files} to verify, but {num_tracks} on disc.')
+            if num_files == num_tracks + 1 and disc.pregap is not None:
+                print('Make sure the pregap track is not included.')
+            raise ValueError
+
+        num_mismatched = 0
+        for audio_file, cd_track in zip(self.tracks, disc.audio_tracks()):
+            delta = audio_file.cdda_frames - cd_track.frames
+            if delta != 0:
+                num_mismatched += 1
+                filename = basename(audio_file.path)
+                relation = 'shorter' if delta < 0 else 'longer'
+                print(f'{filename} is {abs(delta)} frames {relation} than CD track {cd_track.num}')
+
+        if num_mismatched != 0:
+            print()
+
+        if not permissive and num_mismatched != 0:
+            print('Track length mismatch. Retry in permissive mode to verify anyway.')
+            raise ValueError
+
+    def verify(self, disc_info: DiscInfo, permissive: bool) -> DiscVerificationResult:
         """
         Verify a set of ripped files against a CD with specified TOC.
 
         See doc/data_track.md for a description of handling mixed mode CDs,
         including the distinction between TOC index and rip index.
         """
+        self._sanity_check(disc_info, permissive)
+
         print(f'Verifying {len(self)} tracks:\n')
 
         if disc_info.accuraterip_data is None:
