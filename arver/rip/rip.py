@@ -219,14 +219,14 @@ class Rip:
 
         num_mismatched = 0
         for audio_file, cd_track in zip(self.tracks, disc.audio_tracks()):
-            delta = audio_file.cdda_frames - cd_track.frames
+            delta = cd_track.frames - audio_file.cdda_frames
             if delta != 0:
                 num_mismatched += 1
-                filename = basename(audio_file.path)
                 diff = abs(delta)
                 frames = 'frames' if diff > 1 else 'frame'
                 relation = 'shorter' if delta < 0 else 'longer'
-                print(f'{filename} is {diff} {frames} {relation} than CD track {cd_track.num}')
+                filename = basename(audio_file.path)
+                print(f'CD track {cd_track.num} is {diff} {frames} {relation} than "{filename}"')
 
         if num_mismatched != 0:
             print()
