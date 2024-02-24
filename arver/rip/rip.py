@@ -157,6 +157,7 @@ class Rip:
 
     def __init__(self, paths: List[str]) -> None:
         self._paths: List[str] = paths
+        self._have_checksums = False
         self._discard_htoa()
 
         self.tracks: List[AudioFile] = []
@@ -173,6 +174,8 @@ class Rip:
         self._paths = [path for path in self._paths if basename(path) not in htoa_patterns]
 
     def __str__(self) -> str:
+        self._calculate_checksums()
+
         header = f'{"file name":^30s}    ' + \
             f'{"CDDA":^4s}    {"length":^8s}    {"frames":^6s}    ' + \
             f'{"CRC":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
@@ -188,15 +191,24 @@ class Rip:
     def __len__(self) -> int:
         return len(self.tracks)
 
-    def calculate_checksums(self) -> None:
+    def _calculate_checksums(self) -> None:
         """
         Iterate file list and calculate copy CRCs and AccurateRip checksums.
-        This method must be called before __str__() can be used, otherwise
-        all printed checksums will be "unknown".
+        It only makes no sense to calculate checksums once for a given rip, so
+        only the first call of this method will perform calculation. Any further
+        calls will be no-ops.
+
+        This method must be called at least once before rip information is printed,
+        otherwise all checksums are "unknown".
         """
+        if self._have_checksums is True:
+            return
+
         for num, track in enumerate(self.tracks, start=1):
             track.set_copy_crc()
             track.set_accuraterip_checksums(num, len(self))
+
+        self._have_checksums = True
 
     def _sanity_check(self, disc: DiscInfo, permissive: bool) -> None:
         """

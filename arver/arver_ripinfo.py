@@ -35,7 +35,6 @@ def main():
         print('No audio files were loaded. Did you specify correct files?')
         sys.exit(1)
 
-    rip.calculate_checksums()
     print(rip)
 
 
