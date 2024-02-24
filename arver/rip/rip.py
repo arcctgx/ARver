@@ -223,8 +223,10 @@ class Rip:
             if delta != 0:
                 num_mismatched += 1
                 filename = basename(audio_file.path)
+                diff = abs(delta)
+                frames = 'frames' if diff > 1 else 'frame'
                 relation = 'shorter' if delta < 0 else 'longer'
-                print(f'{filename} is {abs(delta)} frames {relation} than CD track {cd_track.num}')
+                print(f'{filename} is {diff} {frames} {relation} than CD track {cd_track.num}')
 
         if num_mismatched != 0:
             print()
