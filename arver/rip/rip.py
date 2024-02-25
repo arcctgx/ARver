@@ -44,7 +44,13 @@ class AudioFile:
         self._arv2: Optional[int] = None
         self._crc32: Optional[int] = None
 
-    def __str__(self) -> str:
+    def as_table_row(self) -> str:
+        """
+        Return string formatted as a row suitable for rip info table.
+
+        If file checksums were not calculated prior to method call, they are
+        printed as "unknown".
+        """
         short_name = _shorten_path(self.path)
         is_cdda = 'yes' if self._is_cd_rip() else 'no'
         length_msf = frames_to_msf(self.cdda_frames)
@@ -95,7 +101,7 @@ class TrackVerificationResult:
         return results[self.status]
 
     def as_table_row(self) -> str:
-        """Return string formatted as row suitable for verification summary table."""
+        """Return string formatted as a row suitable for verification summary table."""
         short_name = _shorten_path(self.path)
         status = self._status_string()
         confidence = str(self.confidence) if self.confidence != -1 else '--'
@@ -122,13 +128,12 @@ class DiscVerificationResult:
 
     def as_table(self) -> str:
         """Format verification results as a table."""
-
         header = f'{"file name":^30s}    {"result":>6s}    ' \
             f'{"checksum":8s}    {"type":4s}    ' \
             f'{"conf":4s}    {"resp":4s}'.rstrip()
         underline = f'{30*"-"}    {6*"-"}    {8*"-"}    {4*"-"}    {4*"-"}    {4*"-"}'
-        text = [header, underline] + [track.as_table_row() for track in self.tracks]
-        return '\n'.join(text)
+        table = [header, underline] + [track.as_table_row() for track in self.tracks]
+        return '\n'.join(table)
 
     def summary(self) -> str:
         """Return a string with the description of verification result."""
@@ -173,7 +178,13 @@ class Rip:
         htoa_patterns = ['track00.wav', 'track00.cdda.wav', 'track00.flac', 'track00.cdda.flac']
         self._paths = [path for path in self._paths if basename(path) not in htoa_patterns]
 
-    def __str__(self) -> str:
+    def as_table(self) -> str:
+        """
+        Format rip information as a table.
+
+        The first call of this method calculates all checksums, so there will
+        be a delay before it returns. Subsequent calls will return instantly.
+        """
         self._calculate_checksums()
 
         header = f'{"file name":^30s}    ' + \
@@ -183,10 +194,8 @@ class Rip:
         underline = f'{30*"-"}    {4*"-"}    {8*"-"}    {6*"-"}    ' + \
                     f'{8*"-"}    {8*"-"}    {8*"-"}'
 
-        str_ = [header, underline]
-        for track in self.tracks:
-            str_.append(str(track))
-        return '\n'.join(str_)
+        table = [header, underline] + [track.as_table_row() for track in self.tracks]
+        return '\n'.join(table)
 
     def __len__(self) -> int:
         return len(self.tracks)

@@ -35,7 +35,7 @@ def main():
         print('No audio files were loaded. Did you specify correct files?')
         sys.exit(1)
 
-    print(rip)
+    print(rip.as_table())
 
 
 if __name__ == '__main__':
