@@ -50,18 +50,20 @@ def main():
     print(disc)
     print()
 
-    disc.fetch_accuraterip_data()
-    if disc.accuraterip_data is None:
-        print('Failed to download AccurateRip data, exiting.')
-        sys.exit(2)
-
-    print(disc.accuraterip_data.summary())
-    print()
-
     rip = Rip(args.rip_files)
     if len(rip) == 0:
         print('No audio files were loaded. Did you specify correct files?')
+        sys.exit(2)
+
+    disc.fetch_accuraterip_data()
+    if disc.accuraterip_data is None:
+        print('Cannot verify, showing rip info instead.')
+        print()
+        print(rip.as_table())
         sys.exit(3)
+
+    print(disc.accuraterip_data.summary())
+    print()
 
     try:
         verdict = rip.verify(disc, args.permissive)
