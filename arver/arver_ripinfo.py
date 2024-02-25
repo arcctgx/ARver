@@ -22,6 +22,13 @@ def _parse_args():
                         nargs='+',
                         metavar='file',
                         help='audio file for calculating checksums')
+
+    parser.add_argument('-x',
+                        '--exclude',
+                        action='append',
+                        metavar='pattern',
+                        help='file name pattern to exclude')
+
     parser.add_argument('-v', '--version', action='version', version=version_string())
 
     return parser.parse_args()
@@ -30,7 +37,7 @@ def _parse_args():
 def main():
     args = _parse_args()
 
-    rip = Rip(args.rip_files)
+    rip = Rip(args.rip_files, args.exclude)
     if len(rip) == 0:
         print('No audio files were loaded. Did you specify correct files?')
         sys.exit(1)

@@ -152,7 +152,8 @@ be verified.
 `ARver` will detect the presence of track one pregap, and will display it in
 CD TOC summary. If your ripper did extract the pregap track, do not pass its
 file name as argument to `arver`. It will change the track sequence and cause
-verification errors in other tracks.
+verification errors in other tracks. If you used a wildcard to specify audio
+files, use `-x/--exclude` option to ignore the pregap track.
 
 ## Acknowledgements
 

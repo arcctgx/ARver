@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
+from fnmatch import fnmatch
 from os.path import basename
 from typing import ClassVar, List, Optional
 
@@ -160,10 +161,10 @@ class DiscVerificationResult:
 class Rip:
     """This class represents a set of ripped audio files to be verified."""
 
-    def __init__(self, paths: List[str]) -> None:
+    def __init__(self, paths: List[str], exclude: Optional[List[str]] = None) -> None:
         self._paths: List[str] = paths
         self._have_checksums = False
-        self._discard_htoa()
+        self._discard_htoa(exclude)
 
         self.tracks: List[AudioFile] = []
         for path in self._paths:
@@ -173,9 +174,20 @@ class Rip:
                 # ignore non-audio or unsupported audio format
                 continue
 
-    def _discard_htoa(self) -> None:
-        """Discard paths where file names match commonly used HTOA naming patterns."""
+    def _discard_htoa(self, exclude: Optional[List[str]] = None) -> None:
+        """
+        Discard paths matching HTOA patterns.
+
+        If exclude argument is None, a list of common naming patterns is used.
+        The default list is ignored when any exclude patterns are specified.
+        """
         htoa_patterns = ['track00.wav', 'track00.cdda.wav', 'track00.flac', 'track00.cdda.flac']
+
+        if exclude is not None:
+            htoa_patterns = []
+            for pattern in exclude:
+                htoa_patterns += [basename(path) for path in self._paths if fnmatch(path, pattern)]
+
         self._paths = [path for path in self._paths if basename(path) not in htoa_patterns]
 
     def as_table(self) -> str:
