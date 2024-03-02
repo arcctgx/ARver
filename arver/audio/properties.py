@@ -5,7 +5,7 @@ or of libsndfile library itself.
 
 # pylint: disable=c-extension-no-member
 
-from arver.checksum import accuraterip
+from arver.audio import accuraterip
 
 
 def get_nframes(path: str) -> int:

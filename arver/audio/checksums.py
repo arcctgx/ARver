@@ -2,7 +2,7 @@
 
 from typing import Optional, Tuple
 
-from arver.checksum import accuraterip  # type: ignore
+from arver.audio import accuraterip  # type: ignore
 
 
 def accuraterip_checksums(path, track_no, total_tracks) -> Tuple[int, int]:

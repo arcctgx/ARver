@@ -5,7 +5,7 @@
 import os
 import unittest
 
-from arver.checksum.checksum import accuraterip_checksums, copy_crc
+from arver.audio.checksums import accuraterip_checksums, copy_crc
 
 CWD = os.path.abspath(os.path.dirname(__file__))
 SAMPLE_WAV_PATH = CWD + '/data/sample.wav'

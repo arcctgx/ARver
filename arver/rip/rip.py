@@ -6,8 +6,8 @@ from fnmatch import fnmatch
 from os.path import basename
 from typing import ClassVar, List, Optional
 
-from arver.checksum.checksum import accuraterip_checksums, copy_crc
-from arver.checksum.properties import get_nframes
+from arver.audio.checksums import accuraterip_checksums, copy_crc
+from arver.audio.properties import get_nframes
 from arver.disc.info import DiscInfo, DiscType
 from arver.disc.utils import frames_to_msf
 

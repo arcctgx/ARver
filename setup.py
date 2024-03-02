@@ -36,8 +36,8 @@ setup(name=APPNAME,
           ]
       },
       ext_modules=[
-          Extension('arver.checksum.accuraterip',
-                    sources=['arver/checksum/accuraterip.c'],
+          Extension('arver.audio.accuraterip',
+                    sources=['arver/audio/_audio.c'],
                     libraries=['sndfile', 'z'])
       ],
       install_requires=['discid', 'musicbrainzngs', 'pycdio', 'requests'])

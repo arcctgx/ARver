@@ -5,7 +5,7 @@
 import os
 import unittest
 
-from arver.checksum.properties import get_nframes
+from arver.audio.properties import get_nframes
 
 CWD = os.path.abspath(os.path.dirname(__file__))
 NOT_AUDIO_PATH = CWD + '/data/not_audio'
