@@ -20,6 +20,23 @@ occurred while ripping.
 `ARver` calculates the AccurateRip checksums of local files, fetches checksums
 for a given CD from the database, and displays a report which compares them.
 
+## Features
+
+The package provides following command-line tools:
+
+* `arver`: the main program. It determines the AccurateRip disc ID, fetches
+AccurateRip data, calculates checksums of ripped audio files, compares them
+with downloaded AccurateRip data and displays the result.
+
+* `arver-discinfo`: displays disc IDs and the Table of Contents, fetches and
+displays all AccurateRip track checksums.
+
+* `arver-ripinfo`: calculates checksums of audio files (ARv1, ARv2 and CRC32)
+and presents them as a table.
+
+* `arver-bin-parser`: parses cached binary AccurateRip response and displays
+all AccurateRip track checksums.
+
 ## Usage example
 
 This example demonstrates the typical use case of `arver`: verification of
@@ -82,26 +99,9 @@ building from source requires a `C` compiler (`gcc`) and `libsndfile` headers.
 This makes `libsndfile` both compile-time and runtime dependency when `ARver`
 is installed from the source distribution.
 
-## Features
+## Restrictions
 
-The package provides following command-line tools:
-
-* `arver`: the main program. It determines the AccurateRip disc ID, fetches
-AccurateRip data, calculates checksums of ripped audio files, compares them
-with downloaded AccurateRip data and displays the result.
-
-* `arver-discinfo`: displays disc IDs and the Table of Contents, fetches and
-displays all AccurateRip track checksums.
-
-* `arver-ripinfo`: calculates checksums of audio files (ARv1, ARv2 and CRC32)
-and presents them as a table.
-
-* `arver-bin-parser`: parses cached binary AccurateRip response and displays
-all AccurateRip track checksums.
-
-### Restrictions
-
-#### CD read offset corrections
+### CD read offset corrections
 
 Audio files must be corrected for [CD drive read offset] (e.g. by using `-O`
 option in `cdparanoia`). This is crucial for AccurateRip verification: without
@@ -110,7 +110,7 @@ entries. `ARver` expects the input files to have zero offset, i.e. it assumes
 that required offset corrections were applied by the CD ripper. If this is not
 the case, all tracks will be reported as failing verification.
 
-#### Using MusicBrainz disc IDs instead of physical discs
+### Using MusicBrainz disc IDs instead of physical discs
 
 The regular use case of `ARver` is to verify a set of audio files right after
 they have been ripped, while the CD they have been ripped from is still in the
@@ -124,13 +124,13 @@ AccurateRip disc ID. Attempts to verify discs with data tracks (Enhanced or
 Mixed Mode CDs) using disc ID lookup may not work at all, result in false
 negatives or low confidence values.
 
-#### Verifying Mixed Mode CDs
+### Verifying Mixed Mode CDs
 
 AccurateRip database does not store checksums of last audio tracks in Mixed
 Mode CDs. These tracks cannot be verified and their verification status will
 always show as `N/A` in the results summary.
 
-#### Verifying Copy Controlled CDs
+### Verifying Copy Controlled CDs
 
 Copy Controlled CDs were designed specifically to prevent ripping. The way it
 is achieved makes these discs more sensitive to normal wear, and makes them
@@ -142,7 +142,7 @@ These CDs appear to `arver` and `arver-discinfo` as ordinary Enhanced CDs
 them from normal Enhanced CDs based on the table of contents alone. If your
 disc bears "Copy Controlled CD" logo, verification problems are expected.
 
-#### Hidden Track One Audio ("pregap track")
+### Hidden Track One Audio ("pregap track")
 
 In some discs audio content is hidden in the pregap of track one. Many CD
 rippers (e.g. `EAC` or `cdparanoia`) can detect and rip it. Unfortunately,
