@@ -110,19 +110,18 @@ entries. `ARver` expects the input files to have zero offset, i.e. it assumes
 that required offset corrections were applied by the CD ripper. If this is not
 the case, all tracks will be reported as failing verification.
 
-### Using MusicBrainz disc IDs instead of physical discs
+### Hidden Track One Audio ("pregap track")
 
-The regular use case of `ARver` is to verify a set of audio files right after
-they have been ripped, while the CD they have been ripped from is still in the
-drive.
+In some discs audio content is hidden in the pregap of track one. Many CD
+rippers (e.g. `EAC` or `cdparanoia`) can detect and rip it. Unfortunately,
+AccurateRip database does not store checksums of such tracks, so they can't
+be verified.
 
-Commands `arver` and `arver-discinfo` support an alternative mode of operation,
-where disc information is downloaded from MusicBrainz by disc ID lookup. While
-this can be useful, it is reliable only for Audio CDs. Information about data
-tracks is not encoded in MusicBrainz disc ID, but it is necessary to calculate
-AccurateRip disc ID. Attempts to verify discs with data tracks (Enhanced or
-Mixed Mode CDs) using disc ID lookup may not work at all, result in false
-negatives or low confidence values.
+`ARver` will detect the presence of track one pregap, and will display it in
+CD TOC summary. If your ripper did extract the pregap track, do not pass its
+file name as argument to `arver`. It will change the track sequence and cause
+verification errors in other tracks. If you used a wildcard to specify audio
+files, use `-x/--exclude` option to ignore the pregap track.
 
 ### Verifying Mixed Mode CDs
 
@@ -142,18 +141,19 @@ These CDs appear to `arver` and `arver-discinfo` as ordinary Enhanced CDs
 them from normal Enhanced CDs based on the table of contents alone. If your
 disc bears "Copy Controlled CD" logo, verification problems are expected.
 
-### Hidden Track One Audio ("pregap track")
+### Using MusicBrainz disc IDs instead of physical discs
 
-In some discs audio content is hidden in the pregap of track one. Many CD
-rippers (e.g. `EAC` or `cdparanoia`) can detect and rip it. Unfortunately,
-AccurateRip database does not store checksums of such tracks, so they can't
-be verified.
+The regular use case of `ARver` is to verify a set of audio files right after
+they have been ripped, while the CD they have been ripped from is still in the
+drive.
 
-`ARver` will detect the presence of track one pregap, and will display it in
-CD TOC summary. If your ripper did extract the pregap track, do not pass its
-file name as argument to `arver`. It will change the track sequence and cause
-verification errors in other tracks. If you used a wildcard to specify audio
-files, use `-x/--exclude` option to ignore the pregap track.
+Commands `arver` and `arver-discinfo` support an alternative mode of operation,
+where disc information is downloaded from MusicBrainz by disc ID lookup. While
+this can be useful, it is reliable only for Audio CDs. Information about data
+tracks is not encoded in MusicBrainz disc ID, but it is necessary to calculate
+AccurateRip disc ID. Attempts to verify discs with data tracks (Enhanced or
+Mixed Mode CDs) using disc ID lookup may not work at all, result in false
+negatives or low confidence values.
 
 ## Acknowledgements
 
