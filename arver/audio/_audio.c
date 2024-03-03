@@ -1,11 +1,22 @@
-/*
- ============================================================================
- Name        : checksum.c
- Authors     : Leo Bogert (http://leo.bogert.de), Andreas Oberritter, arcctgx
- License     : GPLv3
- Description : A Python C extension to compute the AccurateRip checksum of WAV or FLAC tracks.
-               Implemented according to http://www.hydrogenaudio.org/forums/index.php?showtopic=97603
- ============================================================================
+/* This file is part of ARver.
+ *
+ * ARver is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * ARver is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * ARver. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/* A Python C extension to compute the AccurateRip checksums of WAV or FLAC tracks,
+ * implemented according to <https://hydrogenaud.io/index.php/topic,97603.0.html>.
+ *
+ * Authors: Leo Bogert <http://leo.bogert.de>, Andreas Oberritter, arcctgx.
  */
 
 #include <stdbool.h>
