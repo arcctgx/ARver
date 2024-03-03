@@ -1,4 +1,4 @@
-.PHONY: release image wheels test sdist clean
+.PHONY: release image wheels test sdist clean gitclean
 
 CWD = $(shell pwd -P)
 USER = $(shell id -u)
@@ -20,3 +20,6 @@ sdist:
 
 clean:
 	$(RM) -vrf build dist wheelhouse
+
+gitclean:
+	git clean -e .vscode -fdx
