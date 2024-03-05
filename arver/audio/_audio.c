@@ -19,14 +19,13 @@
  * Authors: Leo Bogert <http://leo.bogert.de>, Andreas Oberritter, arcctgx.
  */
 
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
-#include <string.h>
 #include <stdint.h>
 #include <sndfile.h>
-#include <Python.h>
 #include <zlib.h>
 
 static bool check_fileformat(const SF_INFO *sfinfo)
@@ -103,55 +102,51 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
     uint32_t v1, v2;
     void *audio_data;
     size_t size;
-    SF_INFO sfinfo;
+    SF_INFO sfinfo = {0};
     SNDFILE *sndfile = NULL;
 
-    if (!PyArg_ParseTuple(args, "sII", &filename, &track_number, &total_tracks))
-        goto err;
+    if (!PyArg_ParseTuple(args, "sII", &filename, &track_number, &total_tracks)) {
+        return NULL;
+    }
 
     if (track_number < 1 || track_number > total_tracks) {
-        fprintf(stderr, "Invalid track_number!\n");
-        goto err;
+        return PyErr_Format(PyExc_ValueError, "Invalid track_number: %d/%d", track_number, total_tracks);
     }
 
     if (total_tracks < 1 || total_tracks > 99) {
-        fprintf(stderr, "Invalid total_tracks!\n");
-        goto err;
+        return PyErr_Format(PyExc_ValueError, "Invalid total_tracks: %d", total_tracks);
+
     }
 
 #ifdef DEBUG
     printf("Reading %s\n", filename);
 #endif
 
-    memset(&sfinfo, 0, sizeof(sfinfo));
     sndfile = sf_open(filename, SFM_READ, &sfinfo);
     if (sndfile == NULL) {
-        fprintf(stderr, "sf_open failed! sf_error==%i\n", sf_error(NULL));
-        goto err;
+        PyErr_SetString(PyExc_OSError, sf_strerror(NULL));
+        return NULL;
     }
 
     if (!check_fileformat(&sfinfo)) {
-        fprintf(stderr, "check_fileformat failed!\n");
-        goto err;
+        sf_close(sndfile);
+        PyErr_SetString(PyExc_TypeError, "check_fileformat failed!");
+        return NULL;
     }
 
     size = sfinfo.frames * sfinfo.channels * sizeof(uint16_t);
     audio_data = load_full_audiodata(sndfile, &sfinfo, size);
+    sf_close(sndfile);
+
     if (audio_data == NULL) {
-        fprintf(stderr, "load_full_audiodata failed!\n");
-        goto err;
+        PyErr_SetString(PyExc_OSError, "load_full_audiodata failed!");
+        return NULL;
     }
 
     compute_checksums(audio_data, size, track_number, total_tracks, &v1, &v2);
     free(audio_data);
-    sf_close(sndfile);
 
     return Py_BuildValue("II", v1, v2);
-
-err:
-    if (sndfile)
-        sf_close(sndfile);
-    return Py_BuildValue("OO", Py_None, Py_None);
 }
 
 static uint16_t *load_samples(SNDFILE *sndfile, SF_INFO info, size_t *size)
@@ -250,7 +245,7 @@ static PyObject *libsndfile_version(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef accuraterip_methods[] = {
-    { "compute", accuraterip_compute, METH_VARARGS, "Compute AccurateRip v1 and v2 checksums" },
+    { "compute", accuraterip_compute, METH_VARARGS, PyDoc_STR("Calculate AccurateRip v1 and v2 checksums.") },
     { "crc32", crc32_compute, METH_VARARGS, PyDoc_STR("Calculate CRC32 checksum of an audio file.") },
     { "nframes", get_nframes, METH_VARARGS, PyDoc_STR("Get the number of frames in an audio file.") },
     { "libsndfile_version", libsndfile_version, METH_VARARGS,  PyDoc_STR("Get libsndfile version string.") },
