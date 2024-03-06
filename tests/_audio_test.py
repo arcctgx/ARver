@@ -8,7 +8,7 @@ here. Returned values are verified elsewhere using Python wrapper functions.
 import os
 import unittest
 
-from arver.audio.accuraterip import compute, crc32
+from arver.audio.accuraterip import compute, crc32, nframes
 
 CWD = os.path.abspath(os.path.dirname(__file__))
 NOT_AUDIO_PATH = CWD + '/data/not_audio'
@@ -55,3 +55,19 @@ class TestExceptionsCrc32(unittest.TestCase):
     def test_unsupported_audio_format(self):
         with self.assertRaisesRegex(TypeError, 'Unsupported audio format'):
             crc32(SAMPLE_VORBIS_PATH)
+
+
+class TestExceptionsNframes(unittest.TestCase):
+    """Test exceptions raised when getting the number of audio frames in a file."""
+
+    def test_nonexistent_file(self):
+        with self.assertRaisesRegex(OSError, 'No such file or directory'):
+            nframes('does_not_exist.flac')
+
+    def test_not_audio(self):
+        with self.assertRaisesRegex(OSError, 'File contains data in an unknown format'):
+            nframes(NOT_AUDIO_PATH)
+
+    def test_unsupported_audio_format(self):
+        with self.assertRaisesRegex(TypeError, 'Unsupported audio format'):
+            nframes(SAMPLE_VORBIS_PATH)
