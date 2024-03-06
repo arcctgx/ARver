@@ -109,13 +109,12 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    if (track_number < 1 || track_number > total_tracks) {
-        return PyErr_Format(PyExc_ValueError, "Invalid track_number: %d/%d", track_number, total_tracks);
-    }
-
     if (total_tracks < 1 || total_tracks > 99) {
         return PyErr_Format(PyExc_ValueError, "Invalid total_tracks: %d", total_tracks);
+    }
 
+    if (track_number < 1 || track_number > total_tracks) {
+        return PyErr_Format(PyExc_ValueError, "Invalid track_number: %d/%d", track_number, total_tracks);
     }
 
 #ifdef DEBUG
