@@ -4,35 +4,35 @@ from typing import Optional, Tuple
 
 from arver.audio import accuraterip  # type: ignore
 
+# pylint: disable=c-extension-no-member
 
-def accuraterip_checksums(path, track_no, total_tracks) -> Tuple[int, int]:
+
+def accuraterip_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[int, int]:
     """
     Calculate AccurateRip v1 and v2 checksums of specified file.
-    WAV and FLAC formats are supported.
+    Return a pair of checksums (v1, v2) as unsigned integers.
+
+    This function supports WAV and FLAC files compliant with CDDA
+    standard (16-bit stereo LPCM, 44100 Hz). Underlying C extension
+    will raise TypeError for any other audio format, or OSError when
+    libsndfile can't load audio samples from the file for any reason.
 
     The track_no and total_tracks arguments are used to recognize
     if the track is the first or the last one on CD. These two
     tracks are treated specially by AccurateRip checksum algorithm.
-
-    Return a pair of checksums (v1, v2) as unsigned integers, or a
-    pair of zeros if an error occurred during checksum calculation.
+    ValueError is raised if the track numbers are not valid.
     """
-    # pylint: disable=c-extension-no-member
-    ar1, ar2 = accuraterip.compute(path, track_no, total_tracks)
-
-    if ar1 is None or ar2 is None:
-        return 0x0, 0x0
-
-    return ar1, ar2
+    return accuraterip.compute(path, track_no, total_tracks)
 
 
-def copy_crc(path: str) -> Optional[int]:
+def copy_crc(path: str) -> int:
     """
-    Calculate copy CRC of ripped audio file.
-    Returns an unsigned integer on success or None on error.
+    Calculate CRC32 checksum of an audio file based only on audio
+    frames. Return an unsigned integer.
+
+    This function supports WAV and FLAC files compliant with CDDA
+    standard (16-bit stereo LPCM, 44100 Hz). Underlying C extension
+    will raise TypeError for any other audio format, or OSError when
+    libsndfile can't load audio samples from the file for any reason.
     """
-    # pylint: disable=c-extension-no-member
-    try:
-        return accuraterip.crc32(path)
-    except (OSError, TypeError):
-        return None
+    return accuraterip.crc32(path)
