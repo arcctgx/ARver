@@ -68,30 +68,32 @@ static uint16_t *load_samples(SNDFILE *sndfile, SF_INFO info, size_t *size)
     return audio;
 }
 
-static void compute_checksums(const uint16_t *audio, size_t samples, size_t track_number, size_t total_tracks, uint32_t *v1, uint32_t *v2)
+static void compute_checksums(const uint16_t *audio, size_t samples, size_t track, size_t total_tracks, uint32_t *v1, uint32_t *v2)
 {
+    uint32_t *audio_data = (uint32_t*)audio;
+    size_t data_size = samples / 2;     // 2 samples per CDDA frame
+    const size_t skip_frames = 5 * 588; // 5 CDDA sectors * 588 audio frames per sector
+
+    uint32_t sum_from = 0;
+    if (track == 1) {
+        sum_from += skip_frames;
+    }
+
+    uint32_t sum_to = data_size;
+    if (track == total_tracks) {
+        sum_to -= skip_frames;
+    }
+
     uint32_t csum_hi = 0;
     uint32_t csum_lo = 0;
-    uint32_t AR_CRCPosCheckFrom = 0;
-    uint32_t *audio_data = (uint32_t*)audio;
-    size_t Datauint32_tSize = samples / 2;
-    uint32_t AR_CRCPosCheckTo = Datauint32_tSize;
-    const size_t SectorBytes = 2352;        // each sector
-    uint32_t MulBy = 1;
-    size_t i;
-
-    if (track_number == 1)          // first?
-        AR_CRCPosCheckFrom += ((SectorBytes * 5) / sizeof(uint32_t));
-    if (track_number == total_tracks)       // last?
-        AR_CRCPosCheckTo -= ((SectorBytes * 5) / sizeof(uint32_t));
-
-    for (i = 0; i < Datauint32_tSize; i++) {
-        if (MulBy >= AR_CRCPosCheckFrom && MulBy <= AR_CRCPosCheckTo) {
-            uint64_t product = (uint64_t)audio_data[i] * (uint64_t)MulBy;
+    uint32_t multiplier = 1;
+    for (size_t i = 0; i < data_size; i++) {
+        if (multiplier >= sum_from && multiplier <= sum_to) {
+            uint64_t product = (uint64_t)audio_data[i] * (uint64_t)multiplier;
             csum_hi += (uint32_t)(product >> 32);
             csum_lo += (uint32_t)(product);
         }
-        MulBy++;
+        multiplier++;
     }
 
     *v1 = csum_lo;
