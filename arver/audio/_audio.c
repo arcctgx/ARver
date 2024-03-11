@@ -50,27 +50,31 @@ static bool check_fileformat(const SF_INFO *sfinfo)
     return false;
 }
 
-static void *load_full_audiodata(SNDFILE *sndfile, const SF_INFO *sfinfo, size_t size)
+static uint16_t *load_samples(SNDFILE *sndfile, SF_INFO info, size_t *size)
 {
-    void *data = malloc(size);
+    size_t samples = info.frames * info.channels;
+    uint16_t *audio = calloc(samples, sizeof(uint16_t));
 
-    if(data == NULL)
-        return NULL;
-
-    if(sf_readf_short(sndfile, data, sfinfo->frames) !=  sfinfo->frames) {
-        free(data);
+    if (audio == NULL) {
         return NULL;
     }
 
-    return data;
+    if (sf_readf_short(sndfile, (short*)audio, info.frames) != info.frames) {
+        free(audio);
+        return NULL;
+    }
+
+    *size = samples;
+    return audio;
 }
 
-static void compute_checksums(const uint32_t *audio_data, size_t audio_data_size, size_t track_number, size_t total_tracks, uint32_t *v1, uint32_t *v2)
+static void compute_checksums(const uint16_t *audio, size_t samples, size_t track_number, size_t total_tracks, uint32_t *v1, uint32_t *v2)
 {
     uint32_t csum_hi = 0;
     uint32_t csum_lo = 0;
     uint32_t AR_CRCPosCheckFrom = 0;
-    size_t Datauint32_tSize = audio_data_size / sizeof(uint32_t);
+    uint32_t *audio_data = (uint32_t*)audio;
+    size_t Datauint32_tSize = samples / 2;
     uint32_t AR_CRCPosCheckTo = Datauint32_tSize;
     const size_t SectorBytes = 2352;        // each sector
     uint32_t MulBy = 1;
@@ -100,7 +104,7 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
     unsigned int track_number;
     unsigned int total_tracks;
     uint32_t v1, v2;
-    void *audio_data;
+    uint16_t *audio_data;
     size_t size;
     SF_INFO sfinfo = {0};
     SNDFILE *sndfile = NULL;
@@ -133,12 +137,12 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    size = sfinfo.frames * sfinfo.channels * sizeof(uint16_t);
-    audio_data = load_full_audiodata(sndfile, &sfinfo, size);
+    size = 0;
+    audio_data = load_samples(sndfile, sfinfo, &size);
     sf_close(sndfile);
 
     if (audio_data == NULL) {
-        PyErr_SetString(PyExc_OSError, "load_full_audiodata failed!");
+        PyErr_SetString(PyExc_OSError, "load_samples failed!");
         return NULL;
     }
 
@@ -146,24 +150,6 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
     free(audio_data);
 
     return Py_BuildValue("II", v1, v2);
-}
-
-static uint16_t *load_samples(SNDFILE *sndfile, SF_INFO info, size_t *size)
-{
-    size_t samples = info.frames * info.channels;
-    uint16_t *audio = calloc(samples, sizeof(uint16_t));
-
-    if (audio == NULL) {
-        return NULL;
-    }
-
-    if (sf_readf_short(sndfile, (short*)audio, info.frames) != info.frames) {
-        free(audio);
-        return NULL;
-    }
-
-    *size = samples;
-    return audio;
 }
 
 static PyObject *crc32_compute(PyObject *self, PyObject *args)
