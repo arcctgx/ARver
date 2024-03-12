@@ -28,50 +28,53 @@
 #include <sndfile.h>
 #include <zlib.h>
 
-static bool check_fileformat(const SF_INFO *sfinfo)
+typedef uint16_t sample_t;  // CDDA 16-bit sample (single channel)
+typedef uint32_t frame_t;   // CDDA stereo frame (a pair of 16-bit samples)
+
+static bool check_fileformat(const SF_INFO *info)
 {
 #ifdef DEBUG
-    printf("Channels: %i\n", sfinfo->channels);
-    printf("Format: %X\n", sfinfo->format);
-    printf("Frames: %li\n", sfinfo->frames);
-    printf("Samplerate: %i\n", sfinfo->samplerate);
-    printf("Sections: %i\n", sfinfo->sections);
-    printf("Seekable: %i\n", sfinfo->seekable);
+    printf("Channels: %i\n", info->channels);
+    printf("Format: %X\n", info->format);
+    printf("Frames: %li\n", info->frames);
+    printf("Samplerate: %i\n", info->samplerate);
+    printf("Sections: %i\n", info->sections);
+    printf("Seekable: %i\n", info->seekable);
 #endif
 
-    switch (sfinfo->format & SF_FORMAT_TYPEMASK) {
+    switch (info->format & SF_FORMAT_TYPEMASK) {
     case SF_FORMAT_WAV:
     case SF_FORMAT_FLAC:
-        return (sfinfo->channels == 2) &&
-               (sfinfo->samplerate == 44100) &&
-               ((sfinfo->format & SF_FORMAT_SUBMASK) == SF_FORMAT_PCM_16);
+        return (info->channels == 2) &&
+               (info->samplerate == 44100) &&
+               ((info->format & SF_FORMAT_SUBMASK) == SF_FORMAT_PCM_16);
     }
 
     return false;
 }
 
-static uint16_t *load_samples(SNDFILE *sndfile, SF_INFO info, size_t *size)
+static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
 {
-    size_t samples = info.frames * info.channels;
-    uint16_t *audio = calloc(samples, sizeof(uint16_t));
+    size_t nsamples = info.frames * info.channels;
+    sample_t *data = calloc(nsamples, sizeof(sample_t));
 
-    if (audio == NULL) {
+    if (data == NULL) {
         return NULL;
     }
 
-    if (sf_readf_short(sndfile, (short*)audio, info.frames) != info.frames) {
-        free(audio);
+    if (sf_readf_short(file, (short*)data, info.frames) != info.frames) {
+        free(data);
         return NULL;
     }
 
-    *size = samples;
-    return audio;
+    *size = nsamples;
+    return data;
 }
 
-static void compute_checksums(const uint16_t *audio, size_t samples, size_t track, size_t total_tracks, uint32_t *v1, uint32_t *v2)
+static void compute_checksums(const sample_t *data, size_t size, size_t track, size_t total_tracks, uint32_t *v1, uint32_t *v2)
 {
-    uint32_t *audio_data = (uint32_t*)audio;
-    size_t data_size = samples / 2;     // 2 samples per CDDA frame
+    const frame_t *frames = (const frame_t*)data;
+    const size_t nframes = size / 2;    // 2 samples per CDDA frame
     const size_t skip_frames = 5 * 588; // 5 CDDA sectors * 588 audio frames per sector
 
     uint32_t sum_from = 0;
@@ -79,7 +82,7 @@ static void compute_checksums(const uint16_t *audio, size_t samples, size_t trac
         sum_from += skip_frames;
     }
 
-    uint32_t sum_to = data_size;
+    uint32_t sum_to = nframes;
     if (track == total_tracks) {
         sum_to -= skip_frames;
     }
@@ -87,9 +90,9 @@ static void compute_checksums(const uint16_t *audio, size_t samples, size_t trac
     uint32_t csum_hi = 0;
     uint32_t csum_lo = 0;
     uint32_t multiplier = 1;
-    for (size_t i = 0; i < data_size; i++) {
+    for (size_t i = 0; i < nframes; i++) {
         if (multiplier >= sum_from && multiplier <= sum_to) {
-            uint64_t product = (uint64_t)audio_data[i] * (uint64_t)multiplier;
+            uint64_t product = (uint64_t)frames[i] * (uint64_t)multiplier;
             csum_hi += (uint32_t)(product >> 32);
             csum_lo += (uint32_t)(product);
         }
@@ -102,16 +105,14 @@ static void compute_checksums(const uint16_t *audio, size_t samples, size_t trac
 
 static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
 {
-    const char *filename;
-    unsigned int track_number;
+    const char *path;
+    unsigned int track;
     unsigned int total_tracks;
     uint32_t v1, v2;
-    uint16_t *audio_data;
-    size_t size;
-    SF_INFO sfinfo = {0};
-    SNDFILE *sndfile = NULL;
+    SF_INFO info = {0};
+    SNDFILE *file = NULL;
 
-    if (!PyArg_ParseTuple(args, "sII", &filename, &track_number, &total_tracks)) {
+    if (!PyArg_ParseTuple(args, "sII", &path, &track, &total_tracks)) {
         return NULL;
     }
 
@@ -119,37 +120,37 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
         return PyErr_Format(PyExc_ValueError, "Invalid total_tracks: %d", total_tracks);
     }
 
-    if (track_number < 1 || track_number > total_tracks) {
-        return PyErr_Format(PyExc_ValueError, "Invalid track_number: %d/%d", track_number, total_tracks);
+    if (track < 1 || track > total_tracks) {
+        return PyErr_Format(PyExc_ValueError, "Invalid track: %d/%d", track, total_tracks);
     }
 
 #ifdef DEBUG
-    printf("Reading %s\n", filename);
+    printf("Reading %s\n", path);
 #endif
 
-    sndfile = sf_open(filename, SFM_READ, &sfinfo);
-    if (sndfile == NULL) {
+    file = sf_open(path, SFM_READ, &info);
+    if (file == NULL) {
         PyErr_SetString(PyExc_OSError, sf_strerror(NULL));
         return NULL;
     }
 
-    if (!check_fileformat(&sfinfo)) {
-        sf_close(sndfile);
+    if (!check_fileformat(&info)) {
+        sf_close(file);
         PyErr_SetString(PyExc_TypeError, "check_fileformat failed!");
         return NULL;
     }
 
-    size = 0;
-    audio_data = load_samples(sndfile, sfinfo, &size);
-    sf_close(sndfile);
+    size_t size = 0;
+    sample_t *data = load_audio_data(file, info, &size);
+    sf_close(file);
 
-    if (audio_data == NULL) {
-        PyErr_SetString(PyExc_OSError, "load_samples failed!");
+    if (data == NULL) {
+        PyErr_SetString(PyExc_OSError, "load_audio_data failed!");
         return NULL;
     }
 
-    compute_checksums(audio_data, size, track_number, total_tracks, &v1, &v2);
-    free(audio_data);
+    compute_checksums(data, size, track, total_tracks, &v1, &v2);
+    free(data);
 
     return Py_BuildValue("II", v1, v2);
 }
@@ -186,18 +187,18 @@ static PyObject *crc32_compute(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    size_t samples = 0;
-    uint16_t *audio = load_samples(file, info, &samples);
+    size_t size = 0;
+    sample_t *data = load_audio_data(file, info, &size);
     sf_close(file);
 
-    if (audio == NULL) {
+    if (data == NULL) {
         PyErr_SetString(PyExc_OSError, "Failed to load audio samples.");
         return NULL;
     }
 
     uint32_t crc = crc32(0L, Z_NULL, 0);
-    crc = crc32(crc, (uint8_t*)audio, 2*samples);
-    free(audio);
+    crc = crc32(crc, (uint8_t*)data, 2*size);   // 2 bytes per CDDA sample
+    free(data);
 
     return PyLong_FromUnsignedLong(crc);
 }

@@ -25,7 +25,7 @@ class TestExceptionsAccurateRip(unittest.TestCase):
 
     def test_invalid_track_number(self):
         for track, total in [(-1, 1), (0, 10), (99, 10), (1000, 99)]:
-            with self.assertRaisesRegex(ValueError, 'Invalid track_number'):
+            with self.assertRaisesRegex(ValueError, 'Invalid track'):
                 compute('file.wav', track, total)
 
     def test_nonexistent_file(self):
