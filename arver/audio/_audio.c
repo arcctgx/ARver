@@ -31,23 +31,23 @@
 typedef uint16_t sample_t;  // CDDA 16-bit sample (single channel)
 typedef uint32_t frame_t;   // CDDA stereo frame (a pair of 16-bit samples)
 
-static bool check_fileformat(const SF_INFO *info)
+static bool check_format(SF_INFO info)
 {
 #ifdef DEBUG
-    printf("Channels: %i\n", info->channels);
-    printf("Format: %X\n", info->format);
-    printf("Frames: %li\n", info->frames);
-    printf("Samplerate: %i\n", info->samplerate);
-    printf("Sections: %i\n", info->sections);
-    printf("Seekable: %i\n", info->seekable);
+    printf("Channels: %i\n", info.channels);
+    printf("Format: %X\n", info.format);
+    printf("Frames: %li\n", info.frames);
+    printf("Samplerate: %i\n", info.samplerate);
+    printf("Sections: %i\n", info.sections);
+    printf("Seekable: %i\n", info.seekable);
 #endif
 
-    switch (info->format & SF_FORMAT_TYPEMASK) {
+    switch (info.format & SF_FORMAT_TYPEMASK) {
     case SF_FORMAT_WAV:
     case SF_FORMAT_FLAC:
-        return (info->channels == 2) &&
-               (info->samplerate == 44100) &&
-               ((info->format & SF_FORMAT_SUBMASK) == SF_FORMAT_PCM_16);
+        return (info.channels == 2) &&
+               (info.samplerate == 44100) &&
+               ((info.format & SF_FORMAT_SUBMASK) == SF_FORMAT_PCM_16);
     }
 
     return false;
@@ -134,9 +134,9 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    if (!check_fileformat(&info)) {
+    if (!check_format(info)) {
         sf_close(file);
-        PyErr_SetString(PyExc_TypeError, "check_fileformat failed!");
+        PyErr_SetString(PyExc_TypeError, "check_format failed!");
         return NULL;
     }
 
@@ -181,7 +181,7 @@ static PyObject *crc32_compute(PyObject *self, PyObject *args)
     fprintf(stderr, "endianness swapped: %s\n", swab ? "yes" : "no");
 #endif
 
-    if (!check_fileformat(&info)) {
+    if (!check_format(info)) {
         sf_close(file);
         PyErr_SetString(PyExc_TypeError, "Unsupported audio format.");
         return NULL;
@@ -219,7 +219,7 @@ static PyObject *get_nframes(PyObject *self, PyObject *args)
     }
     sf_close(file);
 
-    if (!check_fileformat(&info)) {
+    if (!check_format(info)) {
         PyErr_SetString(PyExc_TypeError, "Unsupported audio format.");
         return NULL;
     }

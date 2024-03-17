@@ -37,7 +37,7 @@ class TestExceptionsAccurateRip(unittest.TestCase):
             compute(NOT_AUDIO_PATH, 1, 9)
 
     def test_unsupported_audio_format(self):
-        with self.assertRaisesRegex(TypeError, 'check_fileformat failed'):
+        with self.assertRaisesRegex(TypeError, 'check_format failed'):
             compute(SAMPLE_VORBIS_PATH, 1, 9)
 
 
