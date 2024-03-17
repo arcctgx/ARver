@@ -34,12 +34,12 @@ typedef uint32_t frame_t;   // CDDA stereo frame (a pair of 16-bit samples)
 static bool check_format(SF_INFO info)
 {
 #ifdef DEBUG
-    printf("Channels: %i\n", info.channels);
-    printf("Format: %X\n", info.format);
-    printf("Frames: %li\n", info.frames);
-    printf("Samplerate: %i\n", info.samplerate);
-    printf("Sections: %i\n", info.sections);
-    printf("Seekable: %i\n", info.seekable);
+    fprintf(stderr, "format: 0x%08x\n", info.format);
+    fprintf(stderr, "frames: %ld\n", info.frames);
+    fprintf(stderr, "CDDA sectors: %ld\n", info.frames/588);
+    fprintf(stderr, "length: %.1f seconds\n", (double)info.frames/588/75);
+    fprintf(stderr, "channels: %d\n", info.channels);
+    fprintf(stderr, "sampling rate: %d Hz\n", info.samplerate);
 #endif
 
     switch (info.format & SF_FORMAT_TYPEMASK) {
@@ -124,15 +124,17 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
         return PyErr_Format(PyExc_ValueError, "Invalid track: %d/%d", track, total_tracks);
     }
 
-#ifdef DEBUG
-    printf("Reading %s\n", path);
-#endif
-
     file = sf_open(path, SFM_READ, &info);
     if (file == NULL) {
         PyErr_SetString(PyExc_OSError, sf_strerror(NULL));
         return NULL;
     }
+
+#ifdef DEBUG
+    fprintf(stderr, "path: %s\n", path);
+    int swab = sf_command(file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0);
+    fprintf(stderr, "endianness swapped: %s\n", swab ? "yes" : "no");
+#endif
 
     if (!check_format(info)) {
         sf_close(file);
@@ -172,11 +174,6 @@ static PyObject *crc32_compute(PyObject *self, PyObject *args)
 
 #ifdef DEBUG
     fprintf(stderr, "path: %s\n", path);
-    fprintf(stderr, "frames: %ld\n", info.frames);
-    fprintf(stderr, "CDDA sectors: %ld\n", info.frames/588);
-    fprintf(stderr, "length: %.1f seconds\n", (double)info.frames/588/75);
-    fprintf(stderr, "channels: %d\n", info.channels);
-    fprintf(stderr, "sampling rate: %d Hz\n", info.samplerate);
     int swab = sf_command(file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0);
     fprintf(stderr, "endianness swapped: %s\n", swab ? "yes" : "no");
 #endif
