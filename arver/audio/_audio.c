@@ -21,7 +21,6 @@
 
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -31,7 +30,7 @@
 typedef uint16_t sample_t;  // CDDA 16-bit sample (single channel)
 typedef uint32_t frame_t;   // CDDA stereo frame (a pair of 16-bit samples)
 
-static bool check_format(SF_INFO info)
+static int check_format(SF_INFO info)
 {
 #ifdef DEBUG
     fprintf(stderr, "format: 0x%08x\n", info.format);
@@ -50,7 +49,7 @@ static bool check_format(SF_INFO info)
                ((info.format & SF_FORMAT_SUBMASK) == SF_FORMAT_PCM_16);
     }
 
-    return false;
+    return 0;
 }
 
 static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
