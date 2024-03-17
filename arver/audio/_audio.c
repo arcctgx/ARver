@@ -30,6 +30,12 @@
 typedef uint16_t sample_t;  // CDDA 16-bit sample (single channel)
 typedef uint32_t frame_t;   // CDDA stereo frame (a pair of 16-bit samples)
 
+// A pair of AccurateRip checksums
+typedef struct accuraterip_t {
+    uint32_t v1;
+    uint32_t v2;
+} accuraterip_t;
+
 static int check_format(SF_INFO info)
 {
 #ifdef DEBUG
@@ -70,7 +76,7 @@ static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     return data;
 }
 
-static void compute_checksums(const sample_t *data, size_t size, size_t track, size_t total_tracks, uint32_t *v1, uint32_t *v2)
+static accuraterip_t ar_crc(const sample_t *data, size_t size, size_t track, size_t total_tracks)
 {
     const frame_t *frames = (const frame_t*)data;
     const size_t nframes = size / 2;    // 2 samples per CDDA frame
@@ -86,6 +92,7 @@ static void compute_checksums(const sample_t *data, size_t size, size_t track, s
         sum_to -= skip_frames;
     }
 
+    uint32_t v1, v2;
     uint32_t csum_hi = 0;
     uint32_t csum_lo = 0;
     uint32_t multiplier = 1;
@@ -98,8 +105,10 @@ static void compute_checksums(const sample_t *data, size_t size, size_t track, s
         multiplier++;
     }
 
-    *v1 = csum_lo;
-    *v2 = csum_lo + csum_hi;
+    v1 = csum_lo;
+    v2 = csum_lo + csum_hi;
+
+    return (accuraterip_t){.v1 = v1, .v2 = v2};
 }
 
 static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
@@ -107,7 +116,6 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
     const char *path;
     unsigned int track;
     unsigned int total_tracks;
-    uint32_t v1, v2;
     SF_INFO info = {0};
     SNDFILE *file = NULL;
 
@@ -150,10 +158,10 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    compute_checksums(data, size, track, total_tracks, &v1, &v2);
+    accuraterip_t ar = ar_crc(data, size, track, total_tracks);
     free(data);
 
-    return Py_BuildValue("II", v1, v2);
+    return Py_BuildValue("II", ar.v1, ar.v2);
 }
 
 static PyObject *crc32_compute(PyObject *self, PyObject *args)
