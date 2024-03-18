@@ -1,0 +1,67 @@
+{
+ "disc": {
+  "id": "ZvhSySPNhWlmkC1x3pEYDnMyoho-",
+  "sectors": "90928",
+  "offset-list": [
+   150
+  ],
+  "offset-count": 1,
+  "release-list": [
+   {
+    "id": "5eaf5596-a85d-4c61-843d-b8b70f0c8b86",
+    "title": "Kir",
+    "status": "Official",
+    "quality": "normal",
+    "packaging": "Digipak",
+    "text-representation": {
+     "language": "pol",
+     "script": "Latn"
+    },
+    "date": "2015-09-15",
+    "country": "PL",
+    "release-event-list": [
+     {
+      "date": "2015-09-15",
+      "area": {
+       "id": "dd7f80c8-f017-3d01-8608-2a8c9c32b954",
+       "name": "Poland",
+       "sort-name": "Poland",
+       "iso-3166-1-code-list": [
+        "PL"
+       ]
+      }
+     }
+    ],
+    "release-event-count": 1,
+    "barcode": "",
+    "cover-art-archive": {
+     "artwork": "true",
+     "count": "1",
+     "front": "true",
+     "back": "false"
+    },
+    "medium-list": [
+     {
+      "position": "1",
+      "format": "Enhanced CD",
+      "disc-list": [
+       {
+        "id": "ZvhSySPNhWlmkC1x3pEYDnMyoho-",
+        "sectors": "90928",
+        "offset-list": [
+         150
+        ],
+        "offset-count": 1
+       }
+      ],
+      "disc-count": 1,
+      "track-list": [],
+      "track-count": 1
+     }
+    ],
+    "medium-count": 1
+   }
+  ],
+  "release-count": 1
+ }
+}

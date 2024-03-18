@@ -1,0 +1,111 @@
+{
+ "disc": {
+  "id": "X_fUy2PVsk5KK7JciFqBc0CetiI-",
+  "sectors": "179805",
+  "offset-list": [
+   150,
+   12437,
+   28357,
+   46302,
+   67095,
+   72790,
+   114245,
+   150420,
+   158545
+  ],
+  "offset-count": 9,
+  "release-list": [
+   {
+    "id": "f1824e6c-99dd-4869-94e0-1f7182b0d2f4",
+    "title": "Faustmusik: Musik f\u00fcr \u201eFaust: Mein Brustkorb, Mein Helm\u201c von Werner Schwab",
+    "status": "Official",
+    "quality": "normal",
+    "packaging": "Digipak",
+    "text-representation": {
+     "language": "deu",
+     "script": "Latn"
+    },
+    "date": "1996-02-22",
+    "country": "DE",
+    "release-event-list": [
+     {
+      "date": "1996-02-22",
+      "area": {
+       "id": "85752fda-13c4-31a3-bee5-0e5cb1f51dad",
+       "name": "Germany",
+       "sort-name": "Germany",
+       "iso-3166-1-code-list": [
+        "DE"
+       ]
+      }
+     },
+     {
+      "date": "1996-02-22",
+      "area": {
+       "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
+       "name": "United Kingdom",
+       "sort-name": "United Kingdom",
+       "iso-3166-1-code-list": [
+        "GB"
+       ]
+      }
+     }
+    ],
+    "release-event-count": 2,
+    "barcode": "4005902310826",
+    "asin": "B0000252HE",
+    "cover-art-archive": {
+     "artwork": "true",
+     "count": "5",
+     "front": "true",
+     "back": "true"
+    },
+    "medium-list": [
+     {
+      "position": "1",
+      "format": "CD",
+      "disc-list": [
+       {
+        "id": "X_fUy2PVsk5KK7JciFqBc0CetiI-",
+        "sectors": "179805",
+        "offset-list": [
+         150,
+         12437,
+         28357,
+         46302,
+         67095,
+         72790,
+         114245,
+         150420,
+         158545
+        ],
+        "offset-count": 9
+       },
+       {
+        "id": "exjpU.1VYanRcyGf0YodBBpECxM-",
+        "sectors": "179785",
+        "offset-list": [
+         182,
+         12460,
+         28385,
+         46327,
+         67112,
+         72825,
+         114275,
+         150447,
+         158572
+        ],
+        "offset-count": 9
+       }
+      ],
+      "disc-count": 2,
+      "track-list": [],
+      "track-count": 9
+     }
+    ],
+    "medium-count": 1
+   }
+  ],
+  "release-count": 1
+ }
+}
