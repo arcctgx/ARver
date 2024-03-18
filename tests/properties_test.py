@@ -8,8 +8,8 @@ import unittest
 from arver.audio.properties import get_nframes
 
 CWD = os.path.abspath(os.path.dirname(__file__))
-SAMPLE_WAV_PATH = CWD + '/data/sample.wav'
-SAMPLE_FLAC_PATH = CWD + '/data/sample.flac'
+SAMPLE_WAV_PATH = CWD + '/data/samples/sample.wav'
+SAMPLE_FLAC_PATH = CWD + '/data/samples/sample.flac'
 
 
 class TestGetNFrames(unittest.TestCase):

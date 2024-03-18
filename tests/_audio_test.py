@@ -11,8 +11,8 @@ import unittest
 from arver.audio.accuraterip import compute, crc32, nframes
 
 CWD = os.path.abspath(os.path.dirname(__file__))
-NOT_AUDIO_PATH = CWD + '/data/not_audio'
-SAMPLE_VORBIS_PATH = CWD + '/data/sample.ogg'
+NOT_AUDIO_PATH = CWD + '/data/samples/not_audio'
+SAMPLE_VORBIS_PATH = CWD + '/data/samples/sample.ogg'
 
 
 class TestExceptionsAccurateRip(unittest.TestCase):
