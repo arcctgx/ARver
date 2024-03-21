@@ -236,21 +236,23 @@ static PyObject *libsndfile_version(PyObject *self, PyObject *args)
     return PyUnicode_FromString(sf_version_string());
 }
 
-static PyMethodDef accuraterip_methods[] = {
-    { "compute", accuraterip_compute, METH_VARARGS, PyDoc_STR("Calculate AccurateRip v1 and v2 checksums.") },
+static PyMethodDef methods[] = {
+    { "compute", accuraterip_compute, METH_VARARGS, PyDoc_STR("Calculate AccurateRip checksums of an audio file.") },
     { "crc32", crc32_compute, METH_VARARGS, PyDoc_STR("Calculate CRC32 checksum of an audio file.") },
-    { "nframes", get_nframes, METH_VARARGS, PyDoc_STR("Get the number of frames in an audio file.") },
-    { "libsndfile_version", libsndfile_version, METH_VARARGS,  PyDoc_STR("Get libsndfile version string.") },
+    { "nframes", get_nframes, METH_VARARGS, PyDoc_STR("Get the number of audio frames in a file.") },
+    { "libsndfile_version", libsndfile_version, METH_NOARGS, PyDoc_STR("Get libsndfile version string.") },
     { NULL, NULL, 0, NULL },
 };
 
-static struct PyModuleDef accuraterip_module = {
+static struct PyModuleDef module = {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "accuraterip",
-    .m_methods = accuraterip_methods,
+    .m_doc = PyDoc_STR("Functions for reading samples and for calculating audio file checksums."),
+    .m_methods = methods,
+    .m_size = -1
 };
 
 PyMODINIT_FUNC PyInit_accuraterip(void)
 {
-    return PyModule_Create(&accuraterip_module);
+    return PyModule_Create(&module);
 }
