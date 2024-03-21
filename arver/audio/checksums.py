@@ -1,6 +1,6 @@
 """Functions for calculating checksums of audio files."""
 
-from typing import Optional, Tuple
+from typing import Tuple
 
 from arver.audio import accuraterip  # type: ignore
 
