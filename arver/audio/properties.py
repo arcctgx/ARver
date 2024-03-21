@@ -5,7 +5,7 @@ or of libsndfile library itself.
 
 # pylint: disable=c-extension-no-member
 
-from arver.audio import accuraterip
+from arver.audio import _audio
 
 
 def get_nframes(path: str) -> int:
@@ -18,9 +18,9 @@ def get_nframes(path: str) -> int:
     will raise TypeError for any other audio format, or OSError when
     libsndfile can't load audio samples from the file for any reason.
     """
-    return accuraterip.nframes(path)
+    return _audio.nframes(path)
 
 
 def libsndfile_version() -> str:
     """Return libsndfile version string."""
-    return accuraterip.libsndfile_version()
+    return _audio.libsndfile_version()

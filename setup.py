@@ -36,7 +36,7 @@ setup(name=APPNAME,
           ]
       },
       ext_modules=[
-          Extension('arver.audio.accuraterip',
+          Extension('arver.audio._audio',
                     sources=['arver/audio/_audio.c'],
                     libraries=['sndfile', 'z'])
       ],

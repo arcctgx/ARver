@@ -2,7 +2,7 @@
 
 from typing import Tuple
 
-from arver.audio import accuraterip  # type: ignore
+from arver.audio import _audio  # type: ignore
 
 # pylint: disable=c-extension-no-member
 
@@ -22,7 +22,7 @@ def accuraterip_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[
     tracks are treated specially by AccurateRip checksum algorithm.
     ValueError is raised if the track numbers are not valid.
     """
-    return accuraterip.compute(path, track_no, total_tracks)
+    return _audio.accuraterip(path, track_no, total_tracks)
 
 
 def copy_crc(path: str) -> int:
@@ -35,4 +35,4 @@ def copy_crc(path: str) -> int:
     will raise TypeError for any other audio format, or OSError when
     libsndfile can't load audio samples from the file for any reason.
     """
-    return accuraterip.crc32(path)
+    return _audio.crc32(path)

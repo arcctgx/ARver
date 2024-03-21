@@ -13,8 +13,8 @@
  * ARver. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* A Python C extension to compute the AccurateRip checksums of WAV or FLAC tracks,
- * implemented according to <https://hydrogenaud.io/index.php/topic,97603.0.html>.
+/* A Python C extension to compute the AccurateRip and CRC32 checksums of WAV or FLAC
+ * tracks, implemented according to <https://hydrogenaud.io/index.php/topic,97603.0.html>.
  *
  * Authors: Leo Bogert <http://leo.bogert.de>, Andreas Oberritter, arcctgx.
  */
@@ -111,7 +111,7 @@ static accuraterip_t ar_crc(const sample_t *data, size_t size, size_t track, siz
     return (accuraterip_t){.v1 = v1, .v2 = v2};
 }
 
-static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
+static PyObject *accuraterip(PyObject *self, PyObject *args)
 {
     const char *path;
     unsigned int track;
@@ -164,7 +164,7 @@ static PyObject *accuraterip_compute(PyObject *self, PyObject *args)
     return Py_BuildValue("II", ar.v1, ar.v2);
 }
 
-static PyObject *crc32_compute(PyObject *self, PyObject *args)
+static PyObject *crc32_(PyObject *self, PyObject *args)
 {
     const char *path = NULL;
     SNDFILE *file = NULL;
@@ -207,7 +207,7 @@ static PyObject *crc32_compute(PyObject *self, PyObject *args)
     return PyLong_FromUnsignedLong(crc);
 }
 
-static PyObject *get_nframes(PyObject *self, PyObject *args)
+static PyObject *nframes(PyObject *self, PyObject *args)
 {
     const char *path = NULL;
     SNDFILE *file = NULL;
@@ -237,22 +237,22 @@ static PyObject *libsndfile_version(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef methods[] = {
-    { "compute", accuraterip_compute, METH_VARARGS, PyDoc_STR("Calculate AccurateRip checksums of an audio file.") },
-    { "crc32", crc32_compute, METH_VARARGS, PyDoc_STR("Calculate CRC32 checksum of an audio file.") },
-    { "nframes", get_nframes, METH_VARARGS, PyDoc_STR("Get the number of audio frames in a file.") },
+    { "accuraterip", accuraterip, METH_VARARGS, PyDoc_STR("Calculate AccurateRip checksums of an audio file.") },
+    { "crc32", crc32_, METH_VARARGS, PyDoc_STR("Calculate CRC32 checksum of an audio file.") },
+    { "nframes", nframes, METH_VARARGS, PyDoc_STR("Get the number of audio frames in a file.") },
     { "libsndfile_version", libsndfile_version, METH_NOARGS, PyDoc_STR("Get libsndfile version string.") },
     { NULL, NULL, 0, NULL },
 };
 
 static struct PyModuleDef module = {
     .m_base = PyModuleDef_HEAD_INIT,
-    .m_name = "accuraterip",
+    .m_name = "_audio",
     .m_doc = PyDoc_STR("Functions for reading samples and for calculating audio file checksums."),
     .m_methods = methods,
     .m_size = -1
 };
 
-PyMODINIT_FUNC PyInit_accuraterip(void)
+PyMODINIT_FUNC PyInit__audio(void)
 {
     return PyModule_Create(&module);
 }

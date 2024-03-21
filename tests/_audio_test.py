@@ -8,7 +8,7 @@ here. Returned values are verified elsewhere using Python wrapper functions.
 import os
 import unittest
 
-from arver.audio.accuraterip import compute, crc32, nframes
+from arver.audio._audio import accuraterip, crc32, nframes
 
 CWD = os.path.abspath(os.path.dirname(__file__))
 NOT_AUDIO_PATH = CWD + '/data/samples/not_audio'
@@ -21,24 +21,24 @@ class TestExceptionsAccurateRip(unittest.TestCase):
     def test_invalid_total_tracks(self):
         for total_tracks in [-1, 0, 100, 1000, 0xffffffff]:
             with self.assertRaisesRegex(ValueError, 'Invalid total_tracks'):
-                compute('file.wav', 1, total_tracks)
+                accuraterip('file.wav', 1, total_tracks)
 
     def test_invalid_track_number(self):
         for track, total in [(-1, 1), (0, 10), (99, 10), (1000, 99)]:
             with self.assertRaisesRegex(ValueError, 'Invalid track'):
-                compute('file.wav', track, total)
+                accuraterip('file.wav', track, total)
 
     def test_nonexistent_file(self):
         with self.assertRaisesRegex(OSError, 'No such file or directory'):
-            compute('no_such_file.wav', 1, 9)
+            accuraterip('no_such_file.wav', 1, 9)
 
     def test_not_audio_file(self):
         with self.assertRaisesRegex(OSError, 'File contains data in an unknown format'):
-            compute(NOT_AUDIO_PATH, 1, 9)
+            accuraterip(NOT_AUDIO_PATH, 1, 9)
 
     def test_unsupported_audio_format(self):
         with self.assertRaisesRegex(TypeError, 'check_format failed'):
-            compute(SAMPLE_VORBIS_PATH, 1, 9)
+            accuraterip(SAMPLE_VORBIS_PATH, 1, 9)
 
 
 class TestExceptionsCrc32(unittest.TestCase):
