@@ -113,11 +113,11 @@ static accuraterip_t ar_crc(const sample_t *data, size_t size, size_t track, siz
 
 static PyObject *accuraterip(PyObject *self, PyObject *args)
 {
-    const char *path;
+    const char *path = NULL;
+    SNDFILE *file = NULL;
+    SF_INFO info = {0};
     unsigned int track;
     unsigned int total_tracks;
-    SF_INFO info = {0};
-    SNDFILE *file = NULL;
 
     if (!PyArg_ParseTuple(args, "sII", &path, &track, &total_tracks)) {
         return NULL;
@@ -131,9 +131,8 @@ static PyObject *accuraterip(PyObject *self, PyObject *args)
         return PyErr_Format(PyExc_ValueError, "Invalid track: %d/%d", track, total_tracks);
     }
 
-    file = sf_open(path, SFM_READ, &info);
-    if (file == NULL) {
-        PyErr_SetString(PyExc_OSError, sf_strerror(NULL));
+    if ((file = sf_open(path, SFM_READ, &info)) == NULL) {
+        PyErr_SetString(PyExc_OSError, sf_strerror(file));
         return NULL;
     }
 
@@ -145,7 +144,7 @@ static PyObject *accuraterip(PyObject *self, PyObject *args)
 
     if (!check_format(info)) {
         sf_close(file);
-        PyErr_SetString(PyExc_TypeError, "check_format failed!");
+        PyErr_SetString(PyExc_TypeError, "Unsupported audio format.");
         return NULL;
     }
 
@@ -154,7 +153,7 @@ static PyObject *accuraterip(PyObject *self, PyObject *args)
     sf_close(file);
 
     if (data == NULL) {
-        PyErr_SetString(PyExc_OSError, "load_audio_data failed!");
+        PyErr_SetString(PyExc_OSError, "Failed to load audio samples.");
         return NULL;
     }
 
