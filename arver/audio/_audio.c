@@ -76,7 +76,7 @@ static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     return data;
 }
 
-static accuraterip_t ar_crc(const sample_t *data, size_t size, size_t track, size_t total_tracks)
+static accuraterip_t ar_crc(const sample_t *data, size_t size, unsigned track, unsigned total_tracks)
 {
     const frame_t *frames = (const frame_t*)data;
     const size_t nframes = size / 2;    // 2 samples per CDDA frame
@@ -116,19 +116,19 @@ static PyObject *accuraterip(PyObject *self, PyObject *args)
     const char *path = NULL;
     SNDFILE *file = NULL;
     SF_INFO info = {0};
-    unsigned int track;
-    unsigned int total_tracks;
+    unsigned track;
+    unsigned total_tracks;
 
     if (!PyArg_ParseTuple(args, "sII", &path, &track, &total_tracks)) {
         return NULL;
     }
 
     if (total_tracks < 1 || total_tracks > 99) {
-        return PyErr_Format(PyExc_ValueError, "Invalid total_tracks: %d", total_tracks);
+        return PyErr_Format(PyExc_ValueError, "Invalid total_tracks: %u", total_tracks);
     }
 
     if (track < 1 || track > total_tracks) {
-        return PyErr_Format(PyExc_ValueError, "Invalid track: %d/%d", track, total_tracks);
+        return PyErr_Format(PyExc_ValueError, "Invalid track: %u/%u", track, total_tracks);
     }
 
     if ((file = sf_open(path, SFM_READ, &info)) == NULL) {
