@@ -9,7 +9,7 @@ here. Returned values are verified elsewhere using Python wrapper functions.
 import os
 import unittest
 
-from arver.audio import _audio
+from arver.audio import _audio  # type: ignore
 
 CWD = os.path.abspath(os.path.dirname(__file__))
 NOT_AUDIO_PATH = CWD + '/data/samples/not_audio'
