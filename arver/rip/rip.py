@@ -6,7 +6,7 @@ from fnmatch import fnmatch
 from os.path import basename
 from typing import ClassVar, List, Optional
 
-from arver.audio.checksums import accuraterip_checksums, copy_crc
+from arver.audio.checksums import get_checksums
 from arver.audio.properties import get_nframes
 from arver.disc.info import DiscInfo, DiscType
 from arver.disc.utils import frames_to_msf
@@ -71,13 +71,9 @@ class AudioFile:
         """
         return self._audio_frames % AUDIO_FRAMES_PER_CD_SECTOR == 0
 
-    def set_copy_crc(self) -> None:
-        """Calculate and set copy CRC."""
-        self._crc32 = copy_crc(self.path)
-
-    def set_accuraterip_checksums(self, track_no: int, total_tracks: int) -> None:
-        """Calculate and set both types of AccurateRip checksums."""
-        self._arv1, self._arv2 = accuraterip_checksums(self.path, track_no, total_tracks)
+    def set_checksums(self, track_no: int, total_tracks: int) -> None:
+        """Calculate and set AccurateRip and CRC32 checksums."""
+        self._arv1, self._arv2, self._crc32 = get_checksums(self.path, track_no, total_tracks)
 
 
 class _Status(Enum):
@@ -226,8 +222,7 @@ class Rip:
             return
 
         for num, track in enumerate(self.tracks, start=1):
-            track.set_copy_crc()
-            track.set_accuraterip_checksums(num, len(self))
+            track.set_checksums(num, len(self))
 
         self._have_checksums = True
 
@@ -290,8 +285,7 @@ class Rip:
 
         for toc_idx, track in enumerate(self.tracks, start=toc_idx_start):
             rip_idx = toc_idx if not mixed_mode else toc_idx - 1
-            ar1, ar2 = accuraterip_checksums(track.path, rip_idx, len(self))
-            crc32 = copy_crc(track.path)
+            ar1, ar2, crc32 = get_checksums(track.path, rip_idx, len(self))
 
             print(f'Track {toc_idx}:')
             print(f'\tPath: {track.path}')

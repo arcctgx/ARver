@@ -16,46 +16,30 @@ NOT_AUDIO_PATH = CWD + '/data/samples/not_audio'
 SAMPLE_VORBIS_PATH = CWD + '/data/samples/sample.ogg'
 
 
-class TestExceptionsAccurateRip(unittest.TestCase):
-    """Test exceptions raised during calculation of AccurateRip checksums."""
+class TestExceptionsChecksums(unittest.TestCase):
+    """Test exceptions raised during calculation of AccurateRip and CRC32 checksums."""
 
     def test_invalid_total_tracks(self):
         for total_tracks in [-1, 0, 100, 1000, 0xffffffff]:
             with self.assertRaisesRegex(ValueError, 'Invalid total_tracks'):
-                _audio.accuraterip('file.wav', 1, total_tracks)
+                _audio.checksums('file.wav', 1, total_tracks)
 
     def test_invalid_track_number(self):
         for track, total in [(-1, 1), (0, 10), (99, 10), (1000, 99)]:
             with self.assertRaisesRegex(ValueError, 'Invalid track'):
-                _audio.accuraterip('file.wav', track, total)
+                _audio.checksums('file.wav', track, total)
 
     def test_nonexistent_file(self):
         with self.assertRaisesRegex(OSError, 'No such file or directory'):
-            _audio.accuraterip('no_such_file.wav', 1, 9)
+            _audio.checksums('no_such_file.wav', 1, 9)
 
     def test_not_audio_file(self):
         with self.assertRaisesRegex(OSError, 'File contains data in an unknown format'):
-            _audio.accuraterip(NOT_AUDIO_PATH, 1, 9)
+            _audio.checksums(NOT_AUDIO_PATH, 1, 9)
 
     def test_unsupported_audio_format(self):
         with self.assertRaisesRegex(TypeError, 'Unsupported audio format'):
-            _audio.accuraterip(SAMPLE_VORBIS_PATH, 1, 9)
-
-
-class TestExceptionsCrc32(unittest.TestCase):
-    """Test exceptions raised during calculation of CRC32 checksum."""
-
-    def test_nonexistent_file(self):
-        with self.assertRaisesRegex(OSError, 'No such file or directory'):
-            _audio.crc32('no_such_file.wav')
-
-    def test_not_audio_file(self):
-        with self.assertRaisesRegex(OSError, 'File contains data in an unknown format'):
-            _audio.crc32(NOT_AUDIO_PATH)
-
-    def test_unsupported_audio_format(self):
-        with self.assertRaisesRegex(TypeError, 'Unsupported audio format'):
-            _audio.crc32(SAMPLE_VORBIS_PATH)
+            _audio.checksums(SAMPLE_VORBIS_PATH, 1, 9)
 
 
 class TestExceptionsNframes(unittest.TestCase):

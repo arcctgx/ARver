@@ -76,7 +76,7 @@ static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     return data;
 }
 
-static accuraterip_t ar_crc(const sample_t *data, size_t size, unsigned track, unsigned total_tracks)
+static accuraterip_t accuraterip(const sample_t *data, size_t size, unsigned track, unsigned total_tracks)
 {
     const frame_t *frames = (const frame_t*)data;
     const size_t nframes = size / 2;    // 2 samples per CDDA frame
@@ -111,7 +111,7 @@ static accuraterip_t ar_crc(const sample_t *data, size_t size, unsigned track, u
     return (accuraterip_t){.v1 = v1, .v2 = v2};
 }
 
-static PyObject *accuraterip(PyObject *self, PyObject *args)
+static PyObject *checksums(PyObject *self, PyObject *args)
 {
     const char *path = NULL;
     SNDFILE *file = NULL;
@@ -157,53 +157,12 @@ static PyObject *accuraterip(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    accuraterip_t ar = ar_crc(data, size, track, total_tracks);
-    free(data);
-
-    return Py_BuildValue("II", ar.v1, ar.v2);
-}
-
-static PyObject *crc32_(PyObject *self, PyObject *args)
-{
-    const char *path = NULL;
-    SNDFILE *file = NULL;
-    SF_INFO info = {0};
-
-    if (!PyArg_ParseTuple(args, "s", &path)) {
-        return NULL;
-    }
-
-    if ((file = sf_open(path, SFM_READ, &info)) == NULL) {
-        PyErr_SetString(PyExc_OSError, sf_strerror(file));
-        return NULL;
-    }
-
-#ifdef DEBUG
-    fprintf(stderr, "path: %s\n", path);
-    int swab = sf_command(file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0);
-    fprintf(stderr, "endianness swapped: %s\n", swab ? "yes" : "no");
-#endif
-
-    if (!check_format(info)) {
-        sf_close(file);
-        PyErr_SetString(PyExc_TypeError, "Unsupported audio format.");
-        return NULL;
-    }
-
-    size_t size = 0;
-    sample_t *data = load_audio_data(file, info, &size);
-    sf_close(file);
-
-    if (data == NULL) {
-        PyErr_SetString(PyExc_OSError, "Failed to load audio samples.");
-        return NULL;
-    }
-
     uint32_t crc = crc32(0L, Z_NULL, 0);
     crc = crc32(crc, (uint8_t*)data, 2*size);   // 2 bytes per CDDA sample
+    accuraterip_t ar = accuraterip(data, size, track, total_tracks);
     free(data);
 
-    return PyLong_FromUnsignedLong(crc);
+    return Py_BuildValue("III", ar.v1, ar.v2, crc);
 }
 
 static PyObject *nframes(PyObject *self, PyObject *args)
@@ -236,8 +195,7 @@ static PyObject *libsndfile_version(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef methods[] = {
-    { "accuraterip", accuraterip, METH_VARARGS, PyDoc_STR("Calculate AccurateRip checksums of an audio file.") },
-    { "crc32", crc32_, METH_VARARGS, PyDoc_STR("Calculate CRC32 checksum of an audio file.") },
+    { "checksums", checksums, METH_VARARGS, PyDoc_STR("Calculate AccurateRip and CRC32 checksums of an audio file.") },
     { "nframes", nframes, METH_VARARGS, PyDoc_STR("Get the number of audio frames in a file.") },
     { "libsndfile_version", libsndfile_version, METH_NOARGS, PyDoc_STR("Get libsndfile version string.") },
     { NULL, NULL, 0, NULL },
