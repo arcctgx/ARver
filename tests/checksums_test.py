@@ -10,6 +10,7 @@ from arver.audio.checksums import accuraterip_checksums, copy_crc
 CWD = os.path.abspath(os.path.dirname(__file__))
 SAMPLE_WAV_PATH = CWD + '/data/samples/sample.wav'
 SAMPLE_FLAC_PATH = CWD + '/data/samples/sample.flac'
+SILENCE_WAV_PATH = CWD + '/data/samples/silence.wav'
 
 
 class TestAccurateRip(unittest.TestCase):
@@ -19,6 +20,7 @@ class TestAccurateRip(unittest.TestCase):
     first_track = (0x9d6c90ec, 0xb775893e)
     middle_track = (0x3c8dd1d2, 0x56bba272)
     last_track = (0x9360d25a, 0xaa2de02d)
+    silence = (0x0, 0x0)
 
     def test_wav_only_track(self):
         result = accuraterip_checksums(SAMPLE_WAV_PATH, 1, 1)
@@ -51,6 +53,11 @@ class TestAccurateRip(unittest.TestCase):
     def test_flac_last_track(self):
         result = accuraterip_checksums(SAMPLE_FLAC_PATH, 99, 99)
         self.assertTupleEqual(result, self.last_track)
+
+    def test_silence(self):
+        for track, total in [(1, 1), (1, 99), (10, 99), (99, 99)]:
+            result = accuraterip_checksums(SILENCE_WAV_PATH, track, total)
+            self.assertTupleEqual(result, self.silence)
 
 
 class TestCopyCRC(unittest.TestCase):
