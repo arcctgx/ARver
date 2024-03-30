@@ -63,12 +63,17 @@ class TestAccurateRip(unittest.TestCase):
 class TestCopyCRC(unittest.TestCase):
     """Test calculation of CRC32 checksum."""
 
-    crc32 = 0x8ce80129
+    sample_crc32 = 0x8ce80129
+    silence_crc32 = 0x769282bb
 
     def test_wav(self):
         result = copy_crc(SAMPLE_WAV_PATH)
-        self.assertEqual(result, self.crc32)
+        self.assertEqual(result, self.sample_crc32)
 
     def test_flac(self):
         result = copy_crc(SAMPLE_FLAC_PATH)
-        self.assertEqual(result, self.crc32)
+        self.assertEqual(result, self.sample_crc32)
+
+    def test_silence(self):
+        result = copy_crc(SILENCE_WAV_PATH)
+        self.assertEqual(result, self.silence_crc32)
