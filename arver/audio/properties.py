@@ -21,6 +21,6 @@ def get_nframes(path: str) -> int:
     return _audio.nframes(path)
 
 
-def libsndfile_version() -> str:
+def get_libsndfile_version() -> str:
     """Return libsndfile version string."""
     return _audio.libsndfile_version()
