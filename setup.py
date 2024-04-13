@@ -38,6 +38,7 @@ setup(name=APPNAME,
       ext_modules=[
           Extension('arver.audio._audio',
                     sources=['arver/audio/_audio.c'],
-                    libraries=['sndfile', 'z'])
+                    libraries=['sndfile', 'z'],
+                    extra_compile_args=['-std=c99', '-D_DEFAULT_SOURCE'])
       ],
       install_requires=['discid', 'musicbrainzngs', 'pycdio', 'requests'])
