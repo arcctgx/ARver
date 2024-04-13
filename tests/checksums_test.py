@@ -9,6 +9,7 @@ from arver.audio.checksums import get_checksums
 
 CWD = os.path.abspath(os.path.dirname(__file__))
 SAMPLE_WAV_PATH = CWD + '/data/samples/sample.wav'
+SAMPLE_BE_WAV_PATH = CWD + '/data/samples/sample_be.wav'
 SAMPLE_FLAC_PATH = CWD + '/data/samples/sample.flac'
 SILENCE_WAV_PATH = CWD + '/data/samples/silence.wav'
 
@@ -84,6 +85,11 @@ class TestCrc32(unittest.TestCase):
 
     def test_wav(self):
         result = get_checksums(SAMPLE_WAV_PATH, self.track, self.total)
+        crc = result[2]
+        self.assertEqual(crc, self.sample_crc32)
+
+    def test_wav_big_endian(self):
+        result = get_checksums(SAMPLE_BE_WAV_PATH, self.track, self.total)
         crc = result[2]
         self.assertEqual(crc, self.sample_crc32)
 
