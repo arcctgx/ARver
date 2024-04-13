@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <endian.h>
 #include <sndfile.h>
 #include <zlib.h>
 
@@ -70,6 +71,14 @@ static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     if (sf_readf_short(file, (short*)data, info.frames) != info.frames) {
         free(data);
         return NULL;
+    }
+
+    // libsndfile swaps byte order of samples to native CPU endianness.
+    // Ensure the samples are kept as little endian in memory, otherwise
+    // calculated checksums may not match AccurateRip database content.
+    // This is a no-op (LE to LE conversion) in most real-life use cases.
+    for (size_t i=0; i < nsamples; i++) {
+        data[i] = htole16(data[i]);
     }
 
     *size = nsamples;
