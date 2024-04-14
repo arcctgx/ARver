@@ -34,7 +34,7 @@ class TestExceptionsChecksums(unittest.TestCase):
             _audio.checksums('no_such_file.wav', 1, 9)
 
     def test_not_audio_file(self):
-        with self.assertRaisesRegex(OSError, 'File contains data in an unknown format'):
+        with self.assertRaisesRegex(OSError, '(unknown format|Format not recognised)'):
             _audio.checksums(NOT_AUDIO_PATH, 1, 9)
 
     def test_unsupported_audio_format(self):
@@ -50,7 +50,7 @@ class TestExceptionsNframes(unittest.TestCase):
             _audio.nframes('does_not_exist.flac')
 
     def test_not_audio(self):
-        with self.assertRaisesRegex(OSError, 'File contains data in an unknown format'):
+        with self.assertRaisesRegex(OSError, '(unknown format|Format not recognised)'):
             _audio.nframes(NOT_AUDIO_PATH)
 
     def test_unsupported_audio_format(self):
