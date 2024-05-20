@@ -1,0 +1,44 @@
+name: Unit tests
+
+on: [push, pull_request]
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install pycdio build and runtime dependencies from distribution
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcdio-dev libiso9660-dev libdiscid-dev
+
+    - name: Install ARver dependencies from PyPI
+      run: |
+        python3 --version
+        python3 -m pip install --upgrade pip
+        pip3 install -r requirements.txt
+        pip3 list
+
+    - name: Install ARver dependencies from distribution
+      run: |
+        sudo apt-get install -y libsndfile-dev
+
+    - name: Build C extension
+      run: |
+        python3 setup.py build_ext --verbose --inplace
+
+    - name: Run unit tests
+      run: |
+        make test
