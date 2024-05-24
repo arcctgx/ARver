@@ -1,9 +1,27 @@
 name: Unit tests
 
-on: [push, pull_request]
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - .github/workflows/unit-tests.yml
+            - arver/**
+            - tests/**
+            - setup.py
+            - requirements.txt
+    pull_request:
+        branches:
+            - master
+        paths:
+            - .github/workflows/unit-tests.yml
+            - arver/**
+            - tests/**
+            - setup.py
+            - requirements.txt
 
 jobs:
-  unittest:
+  unit-test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -19,10 +37,14 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install pycdio build and runtime dependencies from distribution
+    - name: Install pycdio dependencies from distribution
       run: |
         sudo apt-get update
         sudo apt-get install -y libcdio-dev libiso9660-dev libdiscid-dev
+
+    - name: Install ARver dependencies from distribution
+      run: |
+        sudo apt-get install -y libsndfile-dev
 
     - name: Install ARver dependencies from PyPI
       run: |
@@ -30,10 +52,6 @@ jobs:
         python3 -m pip install --upgrade pip
         pip3 install -r requirements.txt
         pip3 list
-
-    - name: Install ARver dependencies from distribution
-      run: |
-        sudo apt-get install -y libsndfile-dev
 
     - name: Build C extension
       run: |
