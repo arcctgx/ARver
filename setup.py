@@ -31,6 +31,7 @@ setup(name=APPNAME,
       entry_points={
           'console_scripts': [
               'arver = arver.arver_main:main', 'arver-discinfo = arver.arver_discinfo:main',
+              'arver-guess-id = arver.arver_guess_id:main',
               'arver-ripinfo = arver.arver_ripinfo:main',
               'arver-bin-parser = arver.arver_bin_parser:main'
           ]
