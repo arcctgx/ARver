@@ -208,6 +208,10 @@ class Rip:
     def __len__(self) -> int:
         return len(self.tracks)
 
+    def track_frames(self) -> List[int]:
+        """Return the lengths of all tracks in CDDA frames as a list of integers."""
+        return [track.cdda_frames for track in self.tracks]
+
     def _calculate_checksums(self) -> None:
         """
         Iterate file list and calculate copy CRCs and AccurateRip checksums.

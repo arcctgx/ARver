@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+from typing import List
 
 from arver.disc.database import AccurateRipFetcher
 from arver.disc.fingerprint import accuraterip_ids, freedb_id
@@ -46,8 +47,7 @@ def _parse_args():
     return parser.parse_args()
 
 
-def _guess_disc_id(rip, pregap_length=0, data_length=0) -> str:
-    track_frames = [track.cdda_frames for track in rip.tracks]
+def _guess_disc_id(track_frames: List[int], pregap_length: int = 0, data_length: int = 0) -> str:
     print('track_frames:', track_frames)
 
     initial_offset = LEAD_IN_FRAMES + pregap_length
@@ -91,7 +91,7 @@ def main():
         print('No audio files were loaded. Did you specify correct files?')
         sys.exit(1)
 
-    disc_id = _guess_disc_id(rip, args.pregap_length, args.data_length)
+    disc_id = _guess_disc_id(rip.track_frames(), args.pregap_length, args.data_length)
     fetcher = AccurateRipFetcher.from_id(disc_id)
     accuraterip_data = fetcher.fetch()
 
