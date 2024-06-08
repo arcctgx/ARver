@@ -290,8 +290,8 @@ class DiscInfo:
                           pregap_frames: int = 0,
                           data_frames: int = 0):
         """
-        Work out disc properties from a set of audio track lengths, track one
-        pregap length and the data track length.
+        Work out the disc properties from a set of audio track lengths, track
+        one pregap length and the data track length.
 
         This method is provided for guessing the disc ID from a set of ripped
         files. Result correctness depends on specifying the right lengths of
@@ -358,7 +358,11 @@ class DiscInfo:
         # calculation requires all track offsets regardless of track type. In
         # Enhanced CDs the first session only contains audio tracks, so by
         # using just the audio track offsets the second session is omitted.
-        if self.type == DiscType.ENHANCED:
+        #
+        # When DiscInfo object is created using from_track_frames() method it
+        # can potentially include a data track. In that case it behaves just
+        # like an Enhanced CD.
+        if self.type in (DiscType.ENHANCED, DiscType.RIP):
             offsets = self._audio_offsets()
         else:
             offsets = self._all_offsets()

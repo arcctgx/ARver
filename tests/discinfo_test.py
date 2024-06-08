@@ -39,13 +39,51 @@ class TestDiscInfo(unittest.TestCase):
 
     def test_from_track_frames(self):
         """Test creating DiscInfo object when only track lengths are known."""
-        test_data = [{
-            'track_frames': [75258, 54815, 205880],
-            'pregap_frames': 0,
-            'data_frames': 0,
-            'musicbrainz_id': 'dUmct3Sk4dAt1a98qUKYKC0ZjYU-',
-            'accuraterip_id': '003-00084264-001cc184-19117f03'
-        }]
+        test_data = [
+            {
+                'track_frames': [75258, 54815, 205880],
+                'pregap_frames': 0,
+                'data_frames': 0,
+                'musicbrainz_id': 'dUmct3Sk4dAt1a98qUKYKC0ZjYU-',
+                'accuraterip_id': '003-00084264-001cc184-19117f03'
+            },
+            {
+                'track_frames': [279037],
+                'pregap_frames': 0,
+                'data_frames': 0,
+                'musicbrainz_id': '8yz4363CdyKqNa45C30lZWon5jE-',
+                'accuraterip_id': '001-000441fd-000883fb-020e8801'
+            },
+            {
+                'track_frames': [107450, 71470, 105737, 71600],
+                'pregap_frames': 33,
+                'data_frames': 0,
+                'musicbrainz_id': 'Grk0WAJTlMgchS.Qilu8OSGvxGg-',
+                'accuraterip_id': '004-000e26d9-00380804-3e128e04'
+            },
+            {
+                'track_frames': [143963],
+                'pregap_frames': 32,
+                'data_frames': 0,
+                'musicbrainz_id': '0VQH.wupXuvBanCl73_bqdIK7zQ-',
+                'accuraterip_id': '001-0002329b-00046516-02077f01'
+            },
+            {
+                'track_frames':
+                [12617, 27720, 22738, 30185, 24705, 33750, 32475, 30920, 32195, 22880],
+                'pregap_frames': 0,
+                'data_frames': 52066,
+                'musicbrainz_id': '9AQWqQ0eCCwktwPPrIUIYkUw2Uo-',
+                'accuraterip_id': '010-00164419-00b9f6e2-9e11600b',
+            },
+            {
+                'track_frames': [90778],
+                'pregap_frames': 0,
+                'data_frames': 164721,
+                'musicbrainz_id': 'ZvhSySPNhWlmkC1x3pEYDnMyoho-',
+                'accuraterip_id': '001-00041293-00082527-100de602',
+            },
+        ]
 
         for disc in test_data:
             disc_info = DiscInfo.from_track_frames(disc['track_frames'], disc['pregap_frames'],
