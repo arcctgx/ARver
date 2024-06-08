@@ -1,7 +1,8 @@
 # ARver
 
 [![Unit tests](https://github.com/arcctgx/ARver/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/arcctgx/ARver/actions/workflows/unit-tests.yml)
-[![Downloads](https://static.pepy.tech/badge/arver)](https://pepy.tech/project/arver)
+[![PyPI version](https://img.shields.io/pypi/v/ARver?logo=python&label=PyPI)](https://pypi.org/project/ARver/)
+[![PePy downloads](https://img.shields.io/pepy/dt/ARver?logo=python&label=Downloads&color=%230C7DBE)](https://pepy.tech/project/ARver)
 
 `ARver` is a command-line program for verifying audio tracks ripped from a CD
 against checksums stored in AccurateRip database.
