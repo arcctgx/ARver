@@ -37,6 +37,22 @@ class TestDiscInfo(unittest.TestCase):
             disc_info = DiscInfo.from_disc_id(id_)
             self.assertEqual(id_, disc_info.musicbrainz_id())  # type: ignore
 
+    def test_from_track_frames(self):
+        """Test creating DiscInfo object when only track lengths are known."""
+        test_data = [{
+            'track_frames': [75258, 54815, 205880],
+            'pregap_frames': 0,
+            'data_frames': 0,
+            'musicbrainz_id': 'dUmct3Sk4dAt1a98qUKYKC0ZjYU-',
+            'accuraterip_id': '003-00084264-001cc184-19117f03'
+        }]
+
+        for disc in test_data:
+            disc_info = DiscInfo.from_track_frames(disc['track_frames'], disc['pregap_frames'],
+                                                   disc['data_frames'])
+            self.assertEqual(disc_info.musicbrainz_id(), disc['musicbrainz_id'])
+            self.assertEqual(disc_info.accuraterip_id(), disc['accuraterip_id'])
+
 
 if __name__ == '__main__':
     unittest.main()
