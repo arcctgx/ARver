@@ -60,6 +60,9 @@ class DiscType(Enum):
     Disc ID: not a physical CD, disc data is obtained by disc ID lookup from
     MusicBrainz. Only Audio CDs can be correctly verified using this method.
 
+    Rip: not a physical CD, disc data is guessed from lengths of the audio
+    files in the rip, track one pregap length and the data track length.
+
     Unsupported CD: any edge case not covered by the types listed above.
     """
     UNSUPPORTED = 0
@@ -67,6 +70,7 @@ class DiscType(Enum):
     MIXED_MODE = 2
     ENHANCED = 3
     DISC_ID = 4
+    RIP = 5
 
 
 def _have_disc() -> bool:
@@ -280,6 +284,46 @@ class DiscInfo:
         pregap = _get_pregap_track(track_list)
         return cls(pregap, track_list, lead_out, DiscType.DISC_ID)
 
+    @classmethod
+    def from_track_frames(cls,
+                          track_frames: List[int],
+                          pregap_frames: int = 0,
+                          data_frames: int = 0):
+        """
+        Work out disc properties from a set of audio track lengths, track one
+        pregap length and the data track length.
+
+        This method is provided for guessing the disc ID from a set of ripped
+        files. Result correctness depends on specifying the right lengths of
+        track one pregap and of the data track (if they exist). Audio tracks
+        must be ripped so that any track pregaps are appended to the previous
+        track. That's a reasonable assumption: this is the case with cdparanoia
+        and it's also the default setting of EAC.
+        """
+        track_list = []
+        pregap_track = None
+
+        if pregap_frames > 0:
+            pregap_track = _Track(PREGAP_TRACK_NUM, LEAD_IN_FRAMES, pregap_frames, 'audio')
+
+        initial_offset = LEAD_IN_FRAMES + pregap_frames
+        lba_offsets = [initial_offset]
+        for length in track_frames[:-1]:
+            lba_offsets.append(length + lba_offsets[-1])
+
+        lead_out = lba_offsets[-1] + track_frames[-1]
+
+        for num, track_data in enumerate(zip(lba_offsets, track_frames), start=1):
+            track_list.append(_Track(num, *track_data, 'audio'))
+
+        if data_frames > 0:
+            lead_out += ENHANCED_CD_DATA_TRACK_GAP + data_frames
+            data_track_offset = lba_offsets[-1] + track_frames[-1] + ENHANCED_CD_DATA_TRACK_GAP
+            data_track_num = track_list[-1].num + 1
+            track_list.append(_Track(data_track_num, data_track_offset, data_frames, 'data'))
+
+        return cls(pregap_track, track_list, lead_out, DiscType.RIP)
+
     def audio_tracks(self) -> List[_Track]:
         """Return a list of audio tracks on the CD."""
         return [track for track in self.track_list if track.type == 'audio']
@@ -299,7 +343,8 @@ class DiscInfo:
             DiscType.AUDIO: 'Audio CD',
             DiscType.MIXED_MODE: 'Mixed Mode CD',
             DiscType.ENHANCED: 'Enhanced CD',
-            DiscType.DISC_ID: 'None (disc ID lookup)'
+            DiscType.DISC_ID: 'None (disc ID lookup)',
+            DiscType.RIP: 'None (disc IDs guessed from track lengths)'
         }
         return types[self.type]
 
