@@ -216,7 +216,7 @@ class DiscInfo:
             return None
 
         device = cdio.Device(driver_id=pycdio.DRIVER_DEVICE)
-        first_track_num = device.get_first_track().track
+        first_track_num = device.get_first_track().track  # type: ignore
         num_tracks = device.get_num_tracks()
         lead_out = device.get_track(pycdio.CDROM_LEADOUT_TRACK).get_lba()
 

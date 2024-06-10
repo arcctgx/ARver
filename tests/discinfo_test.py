@@ -35,7 +35,7 @@ class TestDiscInfo(unittest.TestCase):
                 mock_get.return_value = mock_disc
 
             disc_info = DiscInfo.from_disc_id(id_)
-            self.assertEqual(id_, disc_info.musicbrainz_id())
+            self.assertEqual(id_, disc_info.musicbrainz_id())  # type: ignore
 
 
 if __name__ == '__main__':
