@@ -86,7 +86,15 @@ class TestDiscInfo(unittest.TestCase):
                 'musicbrainz_id': 'ZvhSySPNhWlmkC1x3pEYDnMyoho-',
                 'accuraterip_id': '001-00041293-00082527-100de602',
             },
-        ]
+            {
+                'tracks': [14765, 14932, 12508, 525, 20937, 6025, 19753, 35570, 17777, 15258,
+                           23515, 18512, 26168, 13440],
+                'pregap': 12375,
+                'data': 0,
+                'musicbrainz_id': 'DXMhnAITXIb0ieYp7OECBgjr1gs-',
+                'accuraterip_id': '014-001ba337-01281b14-cf0c7b0e',
+            }
+        ] # yapf: disable
 
         for disc in test_data:
             disc_info = DiscInfo.from_track_lengths(disc['tracks'], disc['pregap'], disc['data'])
