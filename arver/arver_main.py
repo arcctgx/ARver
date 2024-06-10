@@ -26,7 +26,6 @@ def _parse_args():
     parser.add_argument('-i',
                         '--disc-id',
                         metavar='disc_id',
-                        nargs='?',
                         help='get disc TOC from MusicBrainz by disc ID')
 
     parser.add_argument('-p',

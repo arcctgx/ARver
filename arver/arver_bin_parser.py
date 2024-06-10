@@ -14,7 +14,7 @@ def _parse_args():
     parser = argparse.ArgumentParser(
         description="""Display AccurateRip disc data cached in a dBAR file.""")
 
-    parser.add_argument('dbar_file', nargs=1, help='cached AccurateRip response file')
+    parser.add_argument('dbar_file', help='cached AccurateRip response file')
     parser.add_argument('-v', '--version', action='version', version=version_string())
 
     return parser.parse_args()
@@ -23,7 +23,7 @@ def _parse_args():
 def main():
     args = _parse_args()
 
-    dbar_parser = AccurateRipParser(*args.dbar_file)
+    dbar_parser = AccurateRipParser(args.dbar_file)
     disc = dbar_parser.parse()
     if disc is None:
         print('Failed to parse AccurateRip data file, exiting.')
