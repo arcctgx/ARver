@@ -51,7 +51,7 @@ def main():
         print('No audio files were loaded. Did you specify correct files?')
         sys.exit(1)
 
-    disc = DiscInfo.from_track_frames(rip.track_frames(), args.pregap_length, args.data_length)
+    disc = DiscInfo.from_track_lengths(rip.track_frames(), args.pregap_length, args.data_length)
 
     print(disc)
     print()

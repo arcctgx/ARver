@@ -285,10 +285,7 @@ class DiscInfo:
         return cls(pregap, track_list, lead_out, DiscType.DISC_ID)
 
     @classmethod
-    def from_track_frames(cls,
-                          track_frames: List[int],
-                          pregap_frames: int = 0,
-                          data_frames: int = 0):
+    def from_track_lengths(cls, tracks: List[int], pregap: int = 0, data: int = 0):
         """
         Work out the disc properties from a set of audio track lengths, track
         one pregap length and the data track length.
@@ -299,28 +296,31 @@ class DiscInfo:
         must be ripped so that any track pregaps are appended to the previous
         track. That's a reasonable assumption: this is the case with cdparanoia
         and it's also the default setting of EAC.
+
+        If data track is present the method assumes the disc is an Enhanced CD.
+        Mixed Mode CD track layout is not supported.
         """
         track_list = []
         pregap_track = None
 
-        if pregap_frames > 0:
-            pregap_track = _Track(PREGAP_TRACK_NUM, LEAD_IN_FRAMES, pregap_frames, 'audio')
+        if pregap > 0:
+            pregap_track = _Track(PREGAP_TRACK_NUM, LEAD_IN_FRAMES, pregap, 'audio')
 
-        initial_offset = LEAD_IN_FRAMES + pregap_frames
+        initial_offset = LEAD_IN_FRAMES + pregap
         lba_offsets = [initial_offset]
-        for length in track_frames[:-1]:
+        for length in tracks[:-1]:
             lba_offsets.append(length + lba_offsets[-1])
 
-        lead_out = lba_offsets[-1] + track_frames[-1]
+        lead_out = lba_offsets[-1] + tracks[-1]
 
-        for num, track_data in enumerate(zip(lba_offsets, track_frames), start=1):
+        for num, track_data in enumerate(zip(lba_offsets, tracks), start=1):
             track_list.append(_Track(num, *track_data, 'audio'))
 
-        if data_frames > 0:
-            lead_out += ENHANCED_CD_DATA_TRACK_GAP + data_frames
-            data_track_offset = lba_offsets[-1] + track_frames[-1] + ENHANCED_CD_DATA_TRACK_GAP
+        if data > 0:
+            lead_out += ENHANCED_CD_DATA_TRACK_GAP + data
+            data_track_offset = lba_offsets[-1] + tracks[-1] + ENHANCED_CD_DATA_TRACK_GAP
             data_track_num = track_list[-1].num + 1
-            track_list.append(_Track(data_track_num, data_track_offset, data_frames, 'data'))
+            track_list.append(_Track(data_track_num, data_track_offset, data, 'data'))
 
         return cls(pregap_track, track_list, lead_out, DiscType.RIP)
 
