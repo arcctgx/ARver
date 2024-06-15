@@ -353,19 +353,14 @@ class DiscInfo:
         last_audio_track = self.audio_tracks()[-1]
         sectors = last_audio_track.lba + last_audio_track.frames
 
-        # Calculation of MusicBrainz disc IDs requires track offsets from the
-        # first CD session. Audio and Mixed Mode CDs are single-session, so
-        # calculation requires all track offsets regardless of track type. In
-        # Enhanced CDs the first session only contains audio tracks, so by
-        # using just the audio track offsets the second session is omitted.
-        #
-        # When DiscInfo object is created using from_track_frames() method it
-        # can potentially include a data track. In that case it behaves just
-        # like an Enhanced CD.
-        if self.type in (DiscType.ENHANCED, DiscType.RIP):
-            offsets = self._audio_offsets()
-        else:
+        # The calculation of MusicBrainz disc ID requires track offsets from
+        # the first CD session. In Mixed Mode CDs, the first session contains
+        # both data and audio tracks. In Audio and Enhanced CDs, the first
+        # session contains only audio tracks.
+        if self.type == DiscType.MIXED_MODE:
             offsets = self._all_offsets()
+        else:
+            offsets = self._audio_offsets()
 
         return musicbrainz_id(offsets, sectors)
 
