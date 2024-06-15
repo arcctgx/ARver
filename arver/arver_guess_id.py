@@ -18,25 +18,25 @@ def _parse_args():
                         metavar='file',
                         help='audio files for disc ID calculation')
 
-    parser.add_argument('-d',
-                        '--data-length',
-                        metavar='frames',
-                        type=int,
-                        default=0,
-                        help='length of Enhanced CD data track in CDDA frames')
-
-    parser.add_argument('-p',
-                        '--pregap-length',
-                        metavar='frames',
-                        type=int,
-                        default=0,
-                        help='length of track 1 pregap in CDDA frames')
-
     parser.add_argument('-x',
                         '--exclude',
                         action='append',
                         metavar='pattern',
                         help='file name pattern to exclude')
+
+    parser.add_argument('-P',
+                        '--pregap-length',
+                        metavar='frames',
+                        type=int,
+                        default=0,
+                        help='length of track one pregap in CDDA frames')
+
+    parser.add_argument('-D',
+                        '--data-length',
+                        metavar='frames',
+                        type=int,
+                        default=0,
+                        help='length of Enhanced CD data track in CDDA frames')
 
     parser.add_argument('-v', '--version', action='version', version=version_string())
 
