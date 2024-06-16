@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import textwrap
 
 from arver.disc.info import DiscInfo, get_disc_info
 from arver.rip.rip import Rip
@@ -9,16 +10,24 @@ from arver.version import version_string
 
 
 def _parse_args():
-    parser = argparse.ArgumentParser(
-        description="""Verify a set of audio files against checksums from
-        AccurateRip database. Disc TOC necessary for AccurateRip lookup is
-        obtained either from a physical CD in drive (the default behavior,
-        recommended if disc has data tracks), from MusicBrainz disc ID, or
-        estimated from the lengths of ripped audio files. Calculation of
-        AccurateRip checksums requires correct track sequence, so files must
-        be specified in the correct order. Pregap track (HTOA) must not be
-        included. Options for specifying pregap and data track lengths have
-        no effect when the disc TOC is read from disc or queried from MusicBrainz.""")
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description=textwrap.dedent("""\
+        Verify a set of audio tracks against checksums from AccurateRip database.
+
+        Disc TOC necessary for AccurateRip lookup is obtained either from reading a
+        physical CD in drive (the default behavior, recommended if the disc contains
+        data tracks), from MusicBrainz disc ID query, or is estimated from the lengths
+        of provided audio tracks.
+
+        Calculation of AccurateRip checksums requires correct track sequence, so the
+        files must be specified in the correct order. Pregap track (HTOA) must not be
+        included.
+
+        Disc ID calculation requires information about the length of track one pregap,
+        and of the data track, if they exist. This information cannot be derived from
+        a set of ripped files, so options for specifying lengths of these tracks are
+        available. They have no effect when the disc TOC is obtained from a physical
+        CD or from MusicBrainz disc ID query."""))
 
     parser.add_argument('rip_files',
                         nargs='+',
@@ -35,7 +44,7 @@ def _parse_args():
     toc_source.add_argument('-i',
                             '--disc-id',
                             metavar='disc_id',
-                            help='get disc TOC from MusicBrainz by disc ID')
+                            help='get disc TOC from MusicBrainz by disc ID query')
 
     toc_source.add_argument('-t',
                             '--track-lengths',
