@@ -1,0 +1,5 @@
+[BASIC]
+
+# Do not require docstrings for functions whose names begin with
+# underscores, or for main().
+no-docstring-rgx=^(_|main$)
