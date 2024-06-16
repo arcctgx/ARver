@@ -57,8 +57,11 @@ class DiscType(Enum):
     contains music videos or other bonus materials. "Copy Control" CDs fall
     into this category as well.
 
-    Disc ID: not a physical CD, disc data is obtained by disc ID lookup from
+    Disc ID: not a physical CD, disc TOC is obtained by disc ID lookup from
     MusicBrainz. Only Audio CDs can be correctly verified using this method.
+
+    Tracks: not a physical CD, disc TOC is derived from lengths of the audio
+    tracks in the rip, track one pregap length and the data track length.
 
     Unsupported CD: any edge case not covered by the types listed above.
     """
@@ -67,6 +70,7 @@ class DiscType(Enum):
     MIXED_MODE = 2
     ENHANCED = 3
     DISC_ID = 4
+    TRACKS = 5
 
 
 def _have_disc() -> bool:
@@ -280,6 +284,46 @@ class DiscInfo:
         pregap = _get_pregap_track(track_list)
         return cls(pregap, track_list, lead_out, DiscType.DISC_ID)
 
+    @classmethod
+    def from_track_lengths(cls, tracks: List[int], pregap: int = 0, data: int = 0) -> 'DiscInfo':
+        """
+        Work out the disc properties from a set of audio track lengths, track
+        one pregap length and the data track length.
+
+        This method is provided for guessing the disc ID from a set of ripped
+        files. Result correctness depends on specifying the right lengths of
+        track one pregap and of the data track (if they exist). Audio tracks
+        must be ripped so that any track pregaps are appended to the previous
+        track. That's a reasonable assumption: this is the case with cdparanoia
+        and it's also the default setting of EAC.
+
+        If data track is present the method assumes the disc is an Enhanced CD.
+        Mixed Mode CD track layout is not supported.
+        """
+        track_list = []
+        pregap_track = None
+
+        if pregap > 0:
+            pregap_track = _Track(PREGAP_TRACK_NUM, LEAD_IN_FRAMES, pregap, 'audio')
+
+        initial_offset = LEAD_IN_FRAMES + pregap
+        lba_offsets = [initial_offset]
+        for length in tracks[:-1]:
+            lba_offsets.append(length + lba_offsets[-1])
+
+        lead_out = lba_offsets[-1] + tracks[-1]
+
+        for num, track_data in enumerate(zip(lba_offsets, tracks), start=1):
+            track_list.append(_Track(num, *track_data, 'audio'))
+
+        if data > 0:
+            lead_out += ENHANCED_CD_DATA_TRACK_GAP + data
+            data_track_offset = lba_offsets[-1] + tracks[-1] + ENHANCED_CD_DATA_TRACK_GAP
+            data_track_num = track_list[-1].num + 1
+            track_list.append(_Track(data_track_num, data_track_offset, data, 'data'))
+
+        return cls(pregap_track, track_list, lead_out, DiscType.TRACKS)
+
     def audio_tracks(self) -> List[_Track]:
         """Return a list of audio tracks on the CD."""
         return [track for track in self.track_list if track.type == 'audio']
@@ -299,7 +343,8 @@ class DiscInfo:
             DiscType.AUDIO: 'Audio CD',
             DiscType.MIXED_MODE: 'Mixed Mode CD',
             DiscType.ENHANCED: 'Enhanced CD',
-            DiscType.DISC_ID: 'None (disc ID lookup)'
+            DiscType.DISC_ID: 'None (disc ID lookup)',
+            DiscType.TRACKS: 'None (TOC derived from track lengths)'
         }
         return types[self.type]
 
@@ -308,15 +353,14 @@ class DiscInfo:
         last_audio_track = self.audio_tracks()[-1]
         sectors = last_audio_track.lba + last_audio_track.frames
 
-        # Calculation of MusicBrainz disc IDs requires track offsets from the
-        # first CD session. Audio and Mixed Mode CDs are single-session, so
-        # calculation requires all track offsets regardless of track type. In
-        # Enhanced CDs the first session only contains audio tracks, so by
-        # using just the audio track offsets the second session is omitted.
-        if self.type == DiscType.ENHANCED:
-            offsets = self._audio_offsets()
-        else:
+        # The calculation of MusicBrainz disc ID requires track offsets from
+        # the first CD session. In Mixed Mode CDs, the first session contains
+        # both data and audio tracks. In Audio and Enhanced CDs, the first
+        # session contains only audio tracks.
+        if self.type == DiscType.MIXED_MODE:
             offsets = self._all_offsets()
+        else:
+            offsets = self._audio_offsets()
 
         return musicbrainz_id(offsets, sectors)
 
