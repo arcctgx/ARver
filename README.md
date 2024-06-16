@@ -143,7 +143,7 @@ These CDs appear to `arver` and `arver-discinfo` as ordinary Enhanced CDs
 them from normal Enhanced CDs based on the table of contents alone. If your
 disc bears "Copy Controlled CD" logo, verification problems are expected.
 
-### Using MusicBrainz disc IDs instead of physical discs
+### Verification without a physical disc
 
 The regular use case of `ARver` is to verify a set of audio files right after
 they have been ripped, while the CD they have been ripped from is still in the
@@ -156,6 +156,17 @@ tracks is not encoded in MusicBrainz disc ID, but it is necessary to calculate
 AccurateRip disc ID. Attempts to verify discs with data tracks (Enhanced or
 Mixed Mode CDs) using disc ID lookup may not work at all, result in false
 negatives or low confidence values.
+
+`arver` can try to guess the disc TOC based on the lengths of provided audio
+files with `-t/--track-lengths` option. This is considered expert usage: there
+is no way to know that files were ripped from a CD containing a pregap track
+or a data track, but it affects disc ID calculation. Options `-D/--data-length`
+and `-P/--pregap-length` can be used to provide this information if it is known
+from another source. Note that the lengths must be specified exactly: even an
+off-by-one mistake will result in a different (and probably wrong) disc ID.
+
+If the data track length is provided, `arver` will calculate the disc ID as if
+it was an Enhanced CD. Verifying Mixed Mode CDs this way is not supported.
 
 ## Acknowledgements
 
