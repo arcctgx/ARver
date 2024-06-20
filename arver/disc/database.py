@@ -290,7 +290,7 @@ class AccurateRipFetcher:
             response.raise_for_status()
             self._raw_bytes = response.content
             return self._parse_raw_bytes()
-        except requests.ConnectTimeout:
+        except (requests.ConnectionError, requests.Timeout):
             print('Failed to connect to AccurateRip database. Try again later.')
         except requests.HTTPError as error:
             if error.response.status_code == 404:
