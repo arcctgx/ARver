@@ -55,7 +55,7 @@ jobs:
 
     - name: Build C extension
       run: |
-        python3 setup.py build_ext --verbose --inplace
+        make ext
 
     - name: Run unit tests
       run: |

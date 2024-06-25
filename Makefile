@@ -1,4 +1,4 @@
-.PHONY: release image wheels test sdist clean gitclean
+.PHONY: release image wheels ext test sdist clean gitclean
 
 CWD = $(shell pwd -P)
 USER = $(shell id -u)
@@ -11,6 +11,9 @@ image:
 
 wheels:
 	docker run --rm -u "$(USER):$(GROUP)" -v "$(CWD):/package" arcctgx/arver-builder
+
+ext:
+	python3 setup.py build_ext --verbose --inplace
 
 test:
 	python3 -m unittest discover -v -s tests/ -p "*_test.py"
