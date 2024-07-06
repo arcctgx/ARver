@@ -14,11 +14,10 @@ the same way on different machines. Essentially, all read errors are expected
 to be unique, but in absence of errors only a single correct result exists.
 
 AccurateRip database stores track checksums submitted by multiple users. When
-many users rip the same disc without errors, same checksums are submitted to
+many users rip the same disc without errors, correct checksums are submitted to
 the database repeatably, boosting their "confidence" statistic. If a checksum
-of a ripped track is not found in the database, it indicates that the track has
-not been ripped correctly. Since the result is unique, disc read errors likely
-occurred while ripping.
+of a ripped track is not found in the database, it indicates that the result is
+unique, meaning that disc read errors likely occurred while ripping.
 
 `ARver` calculates the AccurateRip checksums of local files, fetches checksums
 for a given CD from the database, and displays a report which compares them.
