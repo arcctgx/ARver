@@ -52,9 +52,10 @@ AccurateRip disc ID is calculated based on the TOC of the CD which still is
 in the drive. `arver` fetches the checksums from the database, and compares
 checksums of local files with database entries.
 
-In this case `arver` found that the last track was not ripped correctly, and
-reports an error. The CD is affected by [disc rot], and `cdparanoia` reported
-multiple issues toward the end of the third track.
+In this case `arver` found that the third track was not ripped correctly, and
+reports a verification failure. The disc used for this example is affected by
+[CD bronzing], and `cdparanoia` reported multiple issues toward the end of the
+last track.
 
 ## Installation
 
@@ -179,7 +180,7 @@ Thanks to the following people and projects for source code and inspiration:
 * [whipper-team/whipper]
 * [cyanreg/cyanrip]
 
-[disc rot]: https://en.wikipedia.org/wiki/Disc_rot
+[CD bronzing]: https://en.wikipedia.org/wiki/Compact_disc_bronzing
 [CD drive read offset]: http://www.accuraterip.com/driveoffsets.htm
 [leo-bogert/accuraterip-checksum]: https://github.com/leo-bogert/accuraterip-checksum
 [whipper-team/whipper]: https://github.com/whipper-team/whipper
