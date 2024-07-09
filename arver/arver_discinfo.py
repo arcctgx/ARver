@@ -16,10 +16,17 @@ def _parse_args():
         derived from MusicBrainz disc ID. Fetch and display AccurateRip data
         of the disc.""")
 
-    parser.add_argument('-i',
-                        '--disc-id',
-                        metavar='disc_id',
-                        help='get disc TOC from MusicBrainz by disc ID')
+    toc_source = parser.add_mutually_exclusive_group()
+
+    toc_source.add_argument('-d',
+                            '--drive',
+                            metavar='device_path',
+                            help='read disc TOC from a CD in specified drive (e.g. /dev/sr0)')
+
+    toc_source.add_argument('-i',
+                            '--disc-id',
+                            metavar='disc_id',
+                            help='get disc TOC from MusicBrainz by disc ID query')
 
     parser.add_argument('-v', '--version', action='version', version=version_string())
 
@@ -28,7 +35,7 @@ def _parse_args():
 
 def main():
     args = _parse_args()
-    disc = get_disc_info(args.disc_id)
+    disc = get_disc_info(args.drive, args.disc_id)
 
     if disc is None:
         print('Failed to get disc info, exiting.')

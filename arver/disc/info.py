@@ -384,21 +384,26 @@ class DiscInfo:
         self.accuraterip_data = fetcher.fetch()
 
 
-def get_disc_info(disc_id: Optional[str]) -> Optional[DiscInfo]:
+def get_disc_info(drive: Optional[str], disc_id: Optional[str]) -> Optional[DiscInfo]:
     """
-    Helper function for obtaining disc information.
-    If disc_id is None read CD TOC from the CD in drive.
-    Otherwise get TOC from specified MusicBrainz disc ID.
-    """
-    if disc_id is None:
-        disc_info = DiscInfo.from_cd()
-    else:
-        disc_info = DiscInfo.from_disc_id(disc_id)
+    Helper function for obtaining DiscInfo object.
 
-    if disc_info is None:
-        if disc_id is None:
+    drive   | disc ID | TOC source
+    --------|---------|------------------
+    None    | None    | default device
+    defined | None    | specified device
+    None    | defined | disc ID query
+    """
+    if (drive is None and disc_id is None) or drive is not None:
+        disc_info = DiscInfo.from_cd(drive)
+        if disc_info is None:
             print('Could not read disc. Is there a CD in the drive?')
-        else:
-            print(f'Could not look up disc ID "{disc_id}", is it correct?')
+        return disc_info
 
-    return disc_info
+    if disc_id is not None:
+        disc_info = DiscInfo.from_disc_id(disc_id)
+        if disc_info is None:
+            print(f'Could not look up disc ID "{disc_id}", is it correct?')
+        return disc_info
+
+    return None

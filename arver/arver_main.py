@@ -36,6 +36,11 @@ def _parse_args():
 
     toc_source = parser.add_mutually_exclusive_group()
 
+    toc_source.add_argument('-d',
+                            '--drive',
+                            metavar='device_path',
+                            help='read disc TOC from a CD in specified drive (e.g. /dev/sr0)')
+
     toc_source.add_argument('-i',
                             '--disc-id',
                             metavar='disc_id',
@@ -87,7 +92,7 @@ def main():
     if args.track_lengths:
         disc = DiscInfo.from_track_lengths(rip.track_frames(), args.pregap_length, args.data_length)
     else:
-        disc = get_disc_info(args.disc_id)
+        disc = get_disc_info(args.drive, args.disc_id)
 
     if disc is None:
         print('Failed to get disc info, exiting.')
