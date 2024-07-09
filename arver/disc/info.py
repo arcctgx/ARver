@@ -73,19 +73,20 @@ class DiscType(Enum):
     TRACKS = 5
 
 
-def _have_disc() -> bool:
+def _have_disc(drive: Optional[str] = None) -> bool:
     """
-    Detect if there is a readable disc in drive.
+    Detect if there is a readable disc in the drive. If drive argument is not
+    specified, the default drive will be used. The drive is specified using a
+    device path (e.g. /dev/sr0 or similar).
 
-    Use discid instead of pycdio because it's much simpler. Furthermore,
-    on error pycdio prints its own message which can't be silenced. discid
-    is a dependency anyway, so it's not a problem.
-
-    discid seems to raise error on CDs with no audio tracks. That's good:
-    one edge case less to care about.
+    Using discid here is a good first line of defense: it raises an exception
+    when attempting to read CDs with no audio tracks. This means it will fail
+    to read discs that pycdio would support (e.g. DVDs or data CDs). Moreover,
+    discid API is easier to use, and on errors pycdio prints its own messages
+    that can't be silenced.
     """
     try:
-        discid.read()
+        discid.read(drive)
     except discid.DiscError:
         return False
 
@@ -210,16 +211,19 @@ class DiscInfo:
         return str_
 
     @classmethod
-    def from_cd(cls) -> 'Optional[DiscInfo]':
+    def from_cd(cls, drive: Optional[str] = None) -> 'Optional[DiscInfo]':
         """
-        Read disc properties from a physical CD in the default device.
+        Read disc properties from a physical CD in the specified drive. The
+        drive is specified using a device path (e.g. /dev/sr0 or similar).
+        If drive argument is not specified, the default drive will be used.
+
         This is the only way to obtain all necessary information to verify
         each supported CD type (i.e. Audio, Mixed Mode and Enhanced).
         """
-        if not _have_disc():
+        if not _have_disc(drive):
             return None
 
-        device = cdio.Device(driver_id=pycdio.DRIVER_DEVICE)
+        device = cdio.Device(source=drive, driver_id=pycdio.DRIVER_DEVICE)
         first_track_num = device.get_first_track().track  # type: ignore
         num_tracks = device.get_num_tracks()
         lead_out = device.get_track(pycdio.CDROM_LEADOUT_TRACK).get_lba()
