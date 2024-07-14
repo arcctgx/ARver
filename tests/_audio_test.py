@@ -14,6 +14,7 @@ from arver.audio import _audio  # type: ignore
 CWD = os.path.abspath(os.path.dirname(__file__))
 NOT_AUDIO_PATH = CWD + '/data/samples/not_audio'
 SAMPLE_VORBIS_PATH = CWD + '/data/samples/sample.ogg'
+CORRUPTED_AUDIO_PATH = CWD + '/data/samples/corrupted.flac'
 
 
 class TestExceptionsChecksums(unittest.TestCase):
@@ -40,6 +41,10 @@ class TestExceptionsChecksums(unittest.TestCase):
     def test_unsupported_audio_format(self):
         with self.assertRaisesRegex(TypeError, 'Unsupported audio format'):
             _audio.checksums(SAMPLE_VORBIS_PATH, 1, 9)
+
+    def test_corrupted_audio(self):
+        with self.assertRaisesRegex(OSError, 'Failed to load audio samples'):
+            _audio.checksums(CORRUPTED_AUDIO_PATH, 1, 9)
 
 
 class TestExceptionsNframes(unittest.TestCase):
