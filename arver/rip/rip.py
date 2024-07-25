@@ -210,7 +210,7 @@ class Rip:
 
         header = f'{"file name":^{NAME_WIDTH}s}    ' + \
             f'{"CDDA":^4s}    {"length":^8s}    {"frames":^6s}    ' + \
-            f'{"CRC32":^8s}    {"CRC32SS":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
+            f'{"CRC32":^8s}    {"CRCSS":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
 
         underline = f'{NAME_WIDTH*"-"}    {4*"-"}    {8*"-"}    {6*"-"}    ' + \
                     f'{8*"-"}    {8*"-"}    {8*"-"}    {8*"-"}'
