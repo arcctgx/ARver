@@ -12,13 +12,14 @@ from arver.disc.info import DiscInfo, DiscType
 from arver.disc.utils import frames_to_msf
 
 AUDIO_FRAMES_PER_CD_SECTOR = 588
+NAME_WIDTH = 30
 
 
 class AudioFormatError(Exception):
     """Raised when unsupported audio file (or non-audio file) is read."""
 
 
-def _shorten_path(path: str, max_length: int = 30) -> str:
+def _shorten_path(path: str, max_length: int = NAME_WIDTH) -> str:
     """Shorten long path to an abbreviated file name of specified maximum length."""
     name = basename(path)
     if len(name) <= max_length:
@@ -60,7 +61,7 @@ class AudioFile:
         arv2 = f'{self._arv2:08x}' if self._arv2 is not None else 'unknown'
         crc32 = f'{self._crc32:08x}' if self._crc32 is not None else 'unknown'
 
-        return f'{short_name:<30s}    {is_cdda:>4s}    ' + \
+        return f'{short_name:<{NAME_WIDTH}s}    {is_cdda:>4s}    ' + \
                f'{length_msf:>8s}    {self.cdda_frames:>6d}    ' + \
                f'{crc32:>8s}    {arv1:>8s}    {arv2:>8s}'
 
@@ -104,7 +105,7 @@ class TrackVerificationResult:
         confidence = str(self.confidence) if self.confidence != -1 else '--'
         response = str(self.response) if self.response != -1 else '--'
 
-        return f'{short_name:<30s}    {status:>6s}    {self.checksum:08x}    ' \
+        return f'{short_name:<{NAME_WIDTH}s}    {status:>6s}    {self.checksum:08x}    ' \
                f'{self.version:>4s}    {confidence:>4s}    {response:>4s}'
 
 
@@ -125,10 +126,10 @@ class DiscVerificationResult:
 
     def as_table(self) -> str:
         """Format verification results as a table."""
-        header = f'{"file name":^30s}    {"result":>6s}    ' \
+        header = f'{"file name":^{NAME_WIDTH}s}    {"result":>6s}    ' \
             f'{"checksum":8s}    {"type":4s}    ' \
             f'{"conf":4s}    {"resp":4s}'.rstrip()
-        underline = f'{30*"-"}    {6*"-"}    {8*"-"}    {4*"-"}    {4*"-"}    {4*"-"}'
+        underline = f'{NAME_WIDTH*"-"}    {6*"-"}    {8*"-"}    {4*"-"}    {4*"-"}    {4*"-"}'
         table = [header, underline] + [track.as_table_row() for track in self.tracks]
         return '\n'.join(table)
 
@@ -195,11 +196,11 @@ class Rip:
         """
         self._calculate_checksums()
 
-        header = f'{"file name":^30s}    ' + \
+        header = f'{"file name":^{NAME_WIDTH}s}    ' + \
             f'{"CDDA":^4s}    {"length":^8s}    {"frames":^6s}    ' + \
             f'{"CRC32":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
 
-        underline = f'{30*"-"}    {4*"-"}    {8*"-"}    {6*"-"}    ' + \
+        underline = f'{NAME_WIDTH*"-"}    {4*"-"}    {8*"-"}    {6*"-"}    ' + \
                     f'{8*"-"}    {8*"-"}    {8*"-"}'
 
         table = [header, underline] + [track.as_table_row() for track in self.tracks]
