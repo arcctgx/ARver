@@ -66,7 +66,7 @@ python3 -m pip install arver
 ```
 
 Wheels are provided for `x86_64` architecture `CPython` versions from 3.7 to
-3.11. For other platforms and Python versions only installation from the source
+3.12. For other platforms and Python versions only installation from the source
 distribution is supported (see "Dependencies" section below).
 
 For development:

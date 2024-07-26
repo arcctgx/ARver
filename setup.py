@@ -22,7 +22,7 @@ setup(name=APPNAME,
           'Programming Language :: C', 'Programming Language :: Python :: 3 :: Only',
           'Programming Language :: Python :: 3.7', 'Programming Language :: Python :: 3.8',
           'Programming Language :: Python :: 3.9', 'Programming Language :: Python :: 3.10',
-          'Programming Language :: Python :: 3.11',
+          'Programming Language :: Python :: 3.11', 'Programming Language :: Python :: 3.12',
           'Topic :: Multimedia :: Sound/Audio :: Analysis',
           'Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Ripping'
       ],
