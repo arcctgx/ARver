@@ -20,14 +20,17 @@ fi
 # start with clean state:
 rm -rf "${package_dir}/build" "${wheel_dir}"
 
-# build CPython wheels:
-for pybin in /opt/python/cp*/bin
+# build wheels for all Python interpreters installed in the container:
+find /opt/python/ -type l | sort -V |
+while read -r pyint
 do
+    pybin="${pyint}/bin"
     "${pybin}/pip" wheel "${package_dir}" --wheel-dir "${wheel_dir}"
 done
 
 # vendor required shared libraries in wheels:
-for wheel in "${wheel_dir}"/*.whl
+find "${wheel_dir}" -type f -name "*.whl" | sort -V |
+while read -r wheel
 do
     if ! auditwheel show "${wheel}"; then
         echo "Skipping non-platform wheel ${wheel}"

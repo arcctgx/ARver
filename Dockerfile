@@ -1,6 +1,6 @@
 # hadolint global ignore=DL3003
 
-FROM quay.io/pypa/manylinux2014_x86_64:2024-04-23-ef7507e
+FROM quay.io/pypa/manylinux2014_x86_64:2024-08-03-32dfa47
 
 ADD https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz \
     https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.xz \
@@ -41,8 +41,8 @@ RUN tar xf libsndfile-1.2.2.tar.xz && cd libsndfile-1.2.2 && \
 
 WORKDIR /
 
-# Remove unsupported Python version:
-RUN rm -v /opt/python/cp36-cp36m
+# Remove unsupported Python versions:
+RUN rm -v /opt/python/cp36-cp36m /opt/python/cp313-cp313* /opt/python/pp*
 
 COPY ./utils/pip.conf /etc/
 
