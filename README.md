@@ -103,6 +103,16 @@ building from source requires a `C` compiler (`gcc`) and `libsndfile` headers.
 This makes `libsndfile` both compile-time and runtime dependency when `ARver`
 is installed from the source distribution.
 
+#### Note about `pycdio` dependency
+
+`pycdio` does not provide wheels, so if it's not already installed on your
+system, `pip install arver` will attempt to build it from source. Building
+from source may fail due to missing build-time dependencies. To work around
+this, you can try installing `pycdio` using your Linux distribution's package
+manager before installing `ARver`. If that doesn't work, you'll need to install
+the build-time dependencies listed on the [pycdio GitHub page] and then retry
+the installation with `pip`.
+
 ## Restrictions
 
 ### CD read offset corrections
@@ -181,6 +191,7 @@ Thanks to the following people and projects for source code and inspiration:
 * [cyanreg/cyanrip]
 
 [CD bronzing]: https://en.wikipedia.org/wiki/Compact_disc_bronzing
+[pycdio GitHub page]: https://github.com/rocky/pycdio#requirements
 [CD drive read offset]: http://www.accuraterip.com/driveoffsets.htm
 [leo-bogert/accuraterip-checksum]: https://github.com/leo-bogert/accuraterip-checksum
 [whipper-team/whipper]: https://github.com/whipper-team/whipper
