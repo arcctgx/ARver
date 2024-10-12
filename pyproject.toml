@@ -1,0 +1,20 @@
+[tool.mypy]
+exclude = "build"
+
+[[tool.mypy.overrides]]
+module = [
+    "discid",
+    "musicbrainzngs",
+    "cdio",
+    "pycdio"
+]
+ignore_missing_imports = true
+
+[tool.pylint.basic]
+# Do not require docstrings for functions whose names begin with
+# underscores, or for main().
+no-docstring-rgx = "^(_|main$)"
+
+[tool.yapf]
+based_on_style = "pep8"
+column_limit = 100
