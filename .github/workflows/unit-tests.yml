@@ -40,23 +40,19 @@ jobs:
     - name: Install pycdio dependencies from distribution
       run: |
         sudo apt-get update
-        sudo apt-get install -y libcdio-dev libiso9660-dev libdiscid-dev
+        sudo apt-get install -y libcdio-dev libdiscid-dev libiso9660-dev swig
 
     - name: Install ARver dependencies from distribution
       run: |
         sudo apt-get install -y libsndfile-dev
 
-    - name: Install ARver dependencies from PyPI
+    - name: Build and install ARver
       run: |
         python3 --version
-        python3 -m pip install --upgrade pip
+        pip3 install --upgrade pip
         pip3 install setuptools
-        pip3 install -r requirements.txt
+        pip3 install --editable .
         pip3 list
-
-    - name: Build C extension
-      run: |
-        make ext
 
     - name: Run unit tests
       run: |
