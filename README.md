@@ -65,9 +65,14 @@ For typical use:
 python3 -m pip install arver
 ```
 
-Wheels are provided for `x86_64` architecture `CPython` versions from 3.7 to
-3.12. For other platforms and Python versions only installation from the source
-distribution is supported (see "Dependencies" section below).
+`ARver` requires Python 3.7 or newer. A pre-built wheel package is available on
+PyPI for `CPython` versions 3.7 and newer, targeting the `x86_64` architecture
+for Linux. For other platforms installation is only supported from the source
+distribution (see the "Dependencies" section below).
+
+While the wheel is forward-compatible with future 3.x Python versions, the latest
+Python releases may not have been tested. The latest tested Python version is
+listed in the PyPI trove classifiers.
 
 For development:
 
