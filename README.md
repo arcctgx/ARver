@@ -45,7 +45,7 @@ all AccurateRip track checksums.
 This example demonstrates the typical use case of `arver`: verification of
 files just ripped from a CD.
 
-![Animated ARver usage example](https://raw.githubusercontent.com/arcctgx/arver/v1.3.0/doc/arver_usage.gif)
+![Animated ARver usage example](https://raw.githubusercontent.com/arcctgx/arver/v1.4.0/doc/arver_usage.gif)
 
 The tracks have been ripped using `cdparanoia` prior to running `arver`.
 AccurateRip disc ID is calculated based on the TOC of the CD which still is
