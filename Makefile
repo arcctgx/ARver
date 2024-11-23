@@ -3,14 +3,15 @@
 CWD = $(shell pwd -P)
 USER = $(shell id -u)
 GROUP = $(shell id -g)
+VERSION = $(shell cat utils/IMAGE_VERSION)
 
 release: sdist wheels
 
 image:
-	docker build --tag arcctgx/arver-builder .
+	docker build --tag arcctgx/arver-builder:$(VERSION) .
 
 wheels:
-	docker run --rm -u "$(USER):$(GROUP)" -v "$(CWD):/package" arcctgx/arver-builder
+	docker run --rm -u "$(USER):$(GROUP)" -v "$(CWD):/package" arcctgx/arver-builder:$(VERSION)
 
 ext:
 	python3 setup.py build_ext --verbose --inplace
