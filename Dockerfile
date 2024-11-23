@@ -41,9 +41,6 @@ RUN tar xf libsndfile-1.2.2.tar.xz && cd libsndfile-1.2.2 && \
 
 WORKDIR /
 
-# Remove unsupported Python versions:
-RUN rm -v /opt/python/cp36-cp36m /opt/python/cp313-cp313* /opt/python/pp*
-
 COPY ./utils/pip.conf /etc/
 
 COPY ./utils/build-wheels.sh /

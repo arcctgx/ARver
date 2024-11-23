@@ -10,7 +10,7 @@
 
 platform="manylinux2014_x86_64"
 package_dir="/package"
-wheel_dir="${package_dir}/wheelhouse"
+wheel_dir="${package_dir}/dist"
 
 if [[ ! -d "${package_dir}" ]]; then
     echo "The directory ${package_dir} is not available inside container."
@@ -18,19 +18,14 @@ if [[ ! -d "${package_dir}" ]]; then
 fi
 
 # start with clean state:
-rm -rf "${package_dir}/build" "${wheel_dir}"
+rm -rf "${package_dir}/build" "${wheel_dir}/*.whl"
 
-# build wheels for all Python interpreters installed in the container:
-find /opt/python/ -type l | sort -V |
-while read -r pyint
-do
-    pybin="${pyint}/bin"
-    "${pybin}/pip" wheel "${package_dir}" --wheel-dir "${wheel_dir}"
-done
+# Py_LIMITED_API 0x03070000 is defined, so it's sufficient to build
+# just one wheel with Python 3.7:
+python3.7 -m pip wheel "${package_dir}" --wheel-dir "${wheel_dir}"
 
 # vendor required shared libraries in wheels:
-find "${wheel_dir}" -type f -name "*.whl" | sort -V |
-while read -r wheel
+for wheel in "${wheel_dir}"/*.whl
 do
     if ! auditwheel show "${wheel}"; then
         echo "Skipping non-platform wheel ${wheel}"
@@ -38,4 +33,5 @@ do
     fi
 
     auditwheel repair "${wheel}" --plat "${platform}" --strip --wheel-dir "${wheel_dir}"
+    rm -v "${wheel}"
 done
