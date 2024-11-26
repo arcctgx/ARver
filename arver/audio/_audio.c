@@ -85,6 +85,27 @@ static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     return data;
 }
 
+static void frame450(const sample_t *data, size_t size)
+{
+    const frame_t *frames = (const frame_t*)data;
+    const size_t nframes = size / 2;    // 2 samples per CDDA frame
+
+    uint32_t v1, v2;
+    uint32_t csum_hi = 0;
+    uint32_t csum_lo = 0;
+    uint32_t multiplier = 1;
+    for (size_t i = 264600; i < 265188; i++) {
+        uint64_t product = (uint64_t)frames[i] * (uint64_t)multiplier;
+        csum_hi += (uint32_t)(product >> 32);
+        csum_lo += (uint32_t)(product);
+        multiplier++;
+    }
+
+    v1 = csum_lo;
+    v2 = csum_lo + csum_hi;
+    printf("%s: v1 = %08x; v2 = %08x; nframes = %zu\n", __FUNCTION__, v1, v2, nframes);
+}
+
 static accuraterip_t accuraterip(const sample_t *data, size_t size, unsigned track, unsigned total_tracks)
 {
     const frame_t *frames = (const frame_t*)data;
@@ -169,6 +190,7 @@ static PyObject *checksums(PyObject *self, PyObject *args)
     uint32_t crc = crc32(0L, Z_NULL, 0);
     crc = crc32(crc, (uint8_t*)data, 2*size);   // 2 bytes per CDDA sample
     accuraterip_t ar = accuraterip(data, size, track, total_tracks);
+    frame450(data, size);
     free(data);
 
     return Py_BuildValue("III", ar.v1, ar.v2, crc);
