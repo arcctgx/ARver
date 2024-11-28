@@ -35,6 +35,7 @@ typedef uint32_t Frame;     // CDDA stereo frame (a pair of 16-bit samples)
 typedef struct AccurateRip {
     uint32_t v1;
     uint32_t v2;
+    uint32_t f450;
 } AccurateRip;
 
 static int check_format(SF_INFO info)
@@ -85,25 +86,24 @@ static Sample *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     return data;
 }
 
-static void frame450(const Sample *data, size_t size)
+static uint32_t ar450(const Sample *data, size_t size)
 {
     const Frame *frames = (const Frame*)data;
     const size_t nframes = size / 2;    // 2 samples per CDDA frame
 
-    uint32_t v1, v2;
-    uint32_t csum_hi = 0;
+    if (nframes < 451*588) {
+        return 0;
+    }
+
     uint32_t csum_lo = 0;
     uint32_t multiplier = 1;
-    for (size_t i = 264600; i < 265188; i++) {
+    for (size_t i = 450*588; i < 451*588; i++) {
         uint64_t product = (uint64_t)frames[i] * (uint64_t)multiplier;
-        csum_hi += (uint32_t)(product >> 32);
         csum_lo += (uint32_t)(product);
         multiplier++;
     }
 
-    v1 = csum_lo;
-    v2 = csum_lo + csum_hi;
-    printf("%s: v1 = %08x; v2 = %08x; nframes = %zu\n", __FUNCTION__, v1, v2, nframes);
+    return csum_lo;
 }
 
 static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, unsigned total_tracks)
@@ -122,7 +122,7 @@ static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, 
         sum_to -= skip_frames;
     }
 
-    uint32_t v1, v2;
+    uint32_t v1, v2, f450;
     uint32_t csum_hi = 0;
     uint32_t csum_lo = 0;
     uint32_t multiplier = 1;
@@ -137,8 +137,9 @@ static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, 
 
     v1 = csum_lo;
     v2 = csum_lo + csum_hi;
+    f450 = ar450(data, size);
 
-    return (AccurateRip){.v1 = v1, .v2 = v2};
+    return (AccurateRip){.v1 = v1, .v2 = v2, .f450 = f450};
 }
 
 static PyObject *checksums(PyObject *self, PyObject *args)
@@ -190,10 +191,9 @@ static PyObject *checksums(PyObject *self, PyObject *args)
     uint32_t crc = crc32(0L, Z_NULL, 0);
     crc = crc32(crc, (uint8_t*)data, 2*size);   // 2 bytes per CDDA sample
     AccurateRip ar = accuraterip(data, size, track, total_tracks);
-    frame450(data, size);
     free(data);
 
-    return Py_BuildValue("III", ar.v1, ar.v2, crc);
+    return Py_BuildValue("IIII", ar.v1, ar.v2, crc, ar.f450);
 }
 
 static PyObject *frame_count(PyObject *self, PyObject *args)
