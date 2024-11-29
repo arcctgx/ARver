@@ -1,6 +1,6 @@
 """Functions for calculating checksums of audio files."""
 
-from typing import Tuple
+from typing import List, Tuple
 
 from arver.audio import _audio  # type: ignore
 
@@ -24,3 +24,13 @@ def get_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[int, int
     arguments don't matter for CRC32 calculation.
     """
     return _audio.checksums(path, track_no, total_tracks)
+
+
+def get_frame450_checksums(path: str) -> List[Tuple[int, int]]:
+    """
+    Return a list of frame 450 checksums for all possible sample
+    offsets. The output is a list of (offset, checksum) pairs, or
+    an empty list when specified file is too short to determine
+    frame 450 checksums.
+    """
+    return _audio.f450_checksums(path)
