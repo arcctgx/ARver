@@ -86,24 +86,26 @@ static Sample *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     return data;
 }
 
-static uint32_t ar450(const Sample *data, size_t size)
+static uint32_t ar450(const Sample *data, size_t size, int offset)
 {
     const Frame *frames = (const Frame*)data;
     const size_t nframes = size / 2;    // 2 samples per CDDA frame
+    const ssize_t f450_start = 450*588 + offset;
+    const ssize_t f450_end = 451*588 + offset;
 
-    if (nframes < 451*588) {
+    if (f450_start < 0 || f450_end > nframes) {
         return 0;
     }
 
-    uint32_t csum_lo = 0;
+    uint32_t arv1 = 0;
     uint32_t multiplier = 1;
-    for (size_t i = 450*588; i < 451*588; i++) {
+    for (ssize_t i = f450_start; i < f450_end; i++) {
         uint64_t product = (uint64_t)frames[i] * (uint64_t)multiplier;
-        csum_lo += (uint32_t)(product);
+        arv1 += (uint32_t)(product);
         multiplier++;
     }
 
-    return csum_lo;
+    return arv1;
 }
 
 static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, unsigned total_tracks)
@@ -137,9 +139,77 @@ static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, 
 
     v1 = csum_lo;
     v2 = csum_lo + csum_hi;
-    f450 = ar450(data, size);
+    f450 = ar450(data, size, 0);
 
     return (AccurateRip){.v1 = v1, .v2 = v2, .f450 = f450};
+}
+
+static PyObject *f450_checksums(PyObject *self, PyObject *args)
+{
+    const char *path = NULL;
+    SNDFILE *file = NULL;
+    SF_INFO info = {0};
+
+    if (!PyArg_ParseTuple(args, "s", &path)) {
+        return NULL;
+    }
+
+    if ((file = sf_open(path, SFM_READ, &info)) == NULL) {
+        PyErr_SetString(PyExc_OSError, sf_strerror(file));
+        return NULL;
+    }
+
+    if (!check_format(info)) {
+        sf_close(file);
+        PyErr_SetString(PyExc_TypeError, "Unsupported audio format.");
+        return NULL;
+    }
+
+    size_t size = 0;
+    Sample *data = load_audio_data(file, info, &size);
+    sf_close(file);
+
+    if (data == NULL) {
+        PyErr_SetString(PyExc_OSError, "Failed to load audio samples.");
+        return NULL;
+    }
+
+    PyObject *list = PyList_New(0);
+    if (list == NULL) {
+        free(data);
+        PyErr_SetString(PyExc_OSError, "Failed to create list.");
+        return NULL;
+    }
+
+    // if the track is too short for offset detection return an empty list
+    if (size/2/588 < 455) {
+        free(data);
+        return list;
+    }
+
+    PyObject *tuple = NULL;
+    uint32_t checksum = 0;
+    for (int offset = -5*588; offset <= 5*588; offset++) {
+        checksum = ar450(data, size, offset);
+
+        if ((tuple = Py_BuildValue("iI", offset, checksum)) == NULL) {
+            free(data);
+            Py_DecRef(list);
+            PyErr_Format(PyExc_OSError, "Failed to create tuple %d", offset);
+            return NULL;
+        }
+
+        if (PyList_Append(list, tuple) == -1) {
+            free(data);
+            Py_DecRef(tuple);
+            Py_DecRef(list);
+            PyErr_Format(PyExc_OSError, "Failed to append tuple %d", offset);
+            return NULL;
+        }
+    }
+
+    free(data);
+    return list;
 }
 
 static PyObject *checksums(PyObject *self, PyObject *args)
@@ -227,6 +297,7 @@ static PyObject *libsndfile_version(PyObject *self, PyObject *args)
 
 static PyMethodDef methods[] = {
     { "checksums", checksums, METH_VARARGS, PyDoc_STR("Calculate AccurateRip and CRC32 checksums of an audio file.") },
+    { "f450_checksums", f450_checksums, METH_VARARGS, PyDoc_STR("Calculate frame 450 checksums for all possible offsets.") },
     { "frame_count", frame_count, METH_VARARGS, PyDoc_STR("Get the number of audio frames in a file.") },
     { "libsndfile_version", libsndfile_version, METH_NOARGS, PyDoc_STR("Get libsndfile version string.") },
     { NULL, NULL, 0, NULL },
