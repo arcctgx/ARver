@@ -93,6 +93,8 @@ static uint32_t ar450(const Sample *data, size_t size, int offset)
     const ssize_t f450_start = 450*588 + offset;
     const ssize_t f450_end = 451*588 + offset;
 
+    //printf("<0,%d) offset %d: from %d to %d\n", nframes, offset, f450_start, f450_end);
+
     if (f450_start < 0 || f450_end > nframes) {
         return 0;
     }
@@ -181,16 +183,11 @@ static PyObject *f450_checksums(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    // if the track is too short for offset detection return an empty list
-    if (size/2/588 < 455) {
-        free(data);
-        return list;
-    }
-
     PyObject *tuple = NULL;
     uint32_t checksum = 0;
     for (int offset = -5*588; offset <= 5*588; offset++) {
         checksum = ar450(data, size, offset);
+        //printf("offset=%d checksum=%08x\n", offset, checksum);
 
         if ((tuple = Py_BuildValue("iI", offset, checksum)) == NULL) {
             free(data);

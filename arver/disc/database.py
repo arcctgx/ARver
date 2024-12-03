@@ -115,7 +115,7 @@ class AccurateRipDisc:
         word = 'response' if num == 1 else 'responses'
         return f'Got {num} AccurateRip {word} (max confidence: {self._max_confidence()})'
 
-    def make_dict(self):
+    def make_dict(self, frame450=False):
         """
         Convert AccurateRipDisc object to a dictionary for easy lookup of checksums
         during file verification. The conversion is "lossy": AccurateRip checksums
@@ -153,6 +153,7 @@ class AccurateRipDisc:
         when handling other disc types. See doc/data_track.md for a detailed
         description.
         """
+        attr = 'checksum' if frame450 is False else 'checksum_450'
         data = {}
 
         num_responses = len(self.responses)
@@ -166,7 +167,7 @@ class AccurateRipDisc:
                 track = self.responses[rsp].tracks[trk]
 
                 if track.confidence != 0:
-                    data[index][track.checksum] = {
+                    data[index][getattr(track, attr)] = {
                         'confidence': track.confidence,
                         'response': rsp + 1,
                     }
