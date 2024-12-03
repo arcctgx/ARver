@@ -28,14 +28,14 @@
 #include <sndfile.h>
 #include <zlib.h>
 
-typedef uint16_t sample_t;  // CDDA 16-bit sample (single channel)
-typedef uint32_t frame_t;   // CDDA stereo frame (a pair of 16-bit samples)
+typedef uint16_t Sample;    // CDDA 16-bit sample (single channel)
+typedef uint32_t Frame;     // CDDA stereo frame (a pair of 16-bit samples)
 
 // A pair of AccurateRip checksums
-typedef struct accuraterip_t {
+typedef struct AccurateRip {
     uint32_t v1;
     uint32_t v2;
-} accuraterip_t;
+} AccurateRip;
 
 static int check_format(SF_INFO info)
 {
@@ -59,10 +59,10 @@ static int check_format(SF_INFO info)
     return 0;
 }
 
-static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
+static Sample *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
 {
     size_t nsamples = info.frames * info.channels;
-    sample_t *data = calloc(nsamples, sizeof(sample_t));
+    Sample *data = calloc(nsamples, sizeof(Sample));
 
     if (data == NULL) {
         return NULL;
@@ -85,9 +85,9 @@ static sample_t *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     return data;
 }
 
-static accuraterip_t accuraterip(const sample_t *data, size_t size, unsigned track, unsigned total_tracks)
+static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, unsigned total_tracks)
 {
-    const frame_t *frames = (const frame_t*)data;
+    const Frame *frames = (const Frame*)data;
     const size_t nframes = size / 2;    // 2 samples per CDDA frame
     const size_t skip_frames = 5 * 588; // 5 CDDA sectors * 588 audio frames per sector
 
@@ -117,7 +117,7 @@ static accuraterip_t accuraterip(const sample_t *data, size_t size, unsigned tra
     v1 = csum_lo;
     v2 = csum_lo + csum_hi;
 
-    return (accuraterip_t){.v1 = v1, .v2 = v2};
+    return (AccurateRip){.v1 = v1, .v2 = v2};
 }
 
 static PyObject *checksums(PyObject *self, PyObject *args)
@@ -158,7 +158,7 @@ static PyObject *checksums(PyObject *self, PyObject *args)
     }
 
     size_t size = 0;
-    sample_t *data = load_audio_data(file, info, &size);
+    Sample *data = load_audio_data(file, info, &size);
     sf_close(file);
 
     if (data == NULL) {
@@ -168,7 +168,7 @@ static PyObject *checksums(PyObject *self, PyObject *args)
 
     uint32_t crc = crc32(0L, Z_NULL, 0);
     crc = crc32(crc, (uint8_t*)data, 2*size);   // 2 bytes per CDDA sample
-    accuraterip_t ar = accuraterip(data, size, track, total_tracks);
+    AccurateRip ar = accuraterip(data, size, track, total_tracks);
     free(data);
 
     return Py_BuildValue("III", ar.v1, ar.v2, crc);
