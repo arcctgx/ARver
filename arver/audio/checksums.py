@@ -1,17 +1,29 @@
 """Functions for calculating checksums of audio files."""
 
-from typing import Tuple
+from dataclasses import dataclass
 
 from arver.audio import _audio  # type: ignore
 
 # pylint: disable=c-extension-no-member
 
 
-def get_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[int, int, int, int]:
+@dataclass
+class Checksums:
+    """
+    A set of audio file checksums stored as unsigned integers: two
+    types of an AccurateRip checksum, a CRC32 checksum, and the "skip
+    silence" CRC32 variant.
+    """
+    arv1: int
+    arv2: int
+    crc: int
+    crcss: int
+
+
+def get_checksums(path: str, track_no: int, total_tracks: int) -> Checksums:
     """
     Calculate AccurateRip and CRC32 checksums of specified file.
-    Return a tuple of checksums (ARv1, ARv2, CRC32, skip silence
-    CRC32) as unsigned integers.
+    Return the results as a Checksums object.
 
     This function supports WAV and FLAC files compliant with CDDA
     standard (16-bit stereo LPCM, 44100 Hz). Underlying C extension
@@ -24,4 +36,4 @@ def get_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[int, int
     ValueError is raised if the track numbers are not valid. These
     arguments don't matter for CRC32 calculation.
     """
-    return _audio.checksums(path, track_no, total_tracks)
+    return Checksums(*_audio.checksums(path, track_no, total_tracks))
