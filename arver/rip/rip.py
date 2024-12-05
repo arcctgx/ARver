@@ -85,8 +85,11 @@ class AudioFile:
 
     def set_checksums(self, track_no: int, total_tracks: int) -> None:
         """Calculate and set AccurateRip and CRC32 checksums."""
-        self._arv1, self._arv2, self._crc32, self._crc32ss = get_checksums(
-            self.path, track_no, total_tracks)
+        csum = get_checksums(self.path, track_no, total_tracks)
+        self._arv1 = csum['ar1']
+        self._arv2 = csum['ar2']
+        self._crc32 = csum['crc']
+        self._crc32ss = csum['crcss']
 
 
 class _Status(Enum):
@@ -210,7 +213,7 @@ class Rip:
 
         header = f'{"file name":^{NAME_WIDTH}s}    ' + \
             f'{"CDDA":^4s}    {"length":^8s}    {"frames":^6s}    ' + \
-            f'{"CRC32":^8s}    {"CRCSS":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
+            f'{"CRC":^8s}    {"CRCSS":^8s}    {"ARv1":^8s}    {"ARv2":^8s}'.rstrip()
 
         underline = f'{NAME_WIDTH*"-"}    {4*"-"}    {8*"-"}    {6*"-"}    ' + \
                     f'{8*"-"}    {8*"-"}    {8*"-"}    {8*"-"}'
@@ -303,41 +306,48 @@ class Rip:
 
         for toc_idx, track in enumerate(self.tracks, start=toc_idx_start):
             rip_idx = toc_idx if not mixed_mode else toc_idx - 1
-            ar1, ar2, crc32, crc32ss = get_checksums(track.path, rip_idx, len(self))
+            csum = get_checksums(track.path, rip_idx, len(self))
 
             print(f'Track {toc_idx}:')
             print(f'\tPath: {track.path}')
-            print(f'\tCopy CRC: {crc32:08x}, skip silence CRC: {crc32ss:08x}')
+            print(f'\tCopy CRC: {csum["crc"]:08x}, skip silence CRC: {csum["crcss"]:08x}')
 
             if len(checksums[toc_idx]) == 0:
                 results.append(
-                    TrackVerificationResult(track.path, ar2, 'ARv2', -1, -1, _Status.NODATA))
+                    TrackVerificationResult(track.path, csum['ar2'], 'ARv2', -1, -1,
+                                            _Status.NODATA))
                 print('\tAccurateRip: no checksums available for this track')
                 continue
 
-            if ar2 in checksums[toc_idx] and not use_arv1:
-                conf = checksums[toc_idx][ar2]['confidence']
-                resp = checksums[toc_idx][ar2]['response']
-                print(f'\tAccurateRip: {ar2:08x} (ARv2), confidence {conf}, response {resp}')
+            if csum['ar2'] in checksums[toc_idx] and not use_arv1:
+                conf = checksums[toc_idx][csum['ar2']]['confidence']
+                resp = checksums[toc_idx][csum['ar2']]['response']
+                print(
+                    f'\tAccurateRip: {csum["ar2"]:08x} (ARv2), confidence {conf}, response {resp}')
                 results.append(
-                    TrackVerificationResult(track.path, ar2, 'ARv2', conf, resp, _Status.SUCCESS))
+                    TrackVerificationResult(track.path, csum['ar2'], 'ARv2', conf, resp,
+                                            _Status.SUCCESS))
                 continue
 
-            if ar1 in checksums[toc_idx]:
-                conf = checksums[toc_idx][ar1]['confidence']
-                resp = checksums[toc_idx][ar1]['response']
-                print(f'\tAccurateRip: {ar1:08x} (ARv1), confidence {conf}, response {resp}')
+            if csum['ar1'] in checksums[toc_idx]:
+                conf = checksums[toc_idx][csum['ar1']]['confidence']
+                resp = checksums[toc_idx][csum['ar1']]['response']
+                print(
+                    f'\tAccurateRip: {csum["ar1"]:08x} (ARv1), confidence {conf}, response {resp}')
                 results.append(
-                    TrackVerificationResult(track.path, ar1, 'ARv1', conf, resp, _Status.SUCCESS))
+                    TrackVerificationResult(track.path, csum['ar1'], 'ARv1', conf, resp,
+                                            _Status.SUCCESS))
                 continue
 
             if use_arv1:
-                print(f'\tAccurateRip: {ar1:08x} (ARv1) - no match!')
+                print(f'\tAccurateRip: {csum["ar1"]:08x} (ARv1) - no match!')
                 results.append(
-                    TrackVerificationResult(track.path, ar1, 'ARv1', -1, -1, _Status.FAILED))
+                    TrackVerificationResult(track.path, csum["ar1"], 'ARv1', -1, -1,
+                                            _Status.FAILED))
             else:
-                print(f'\tAccurateRip: {ar2:08x} (ARv2) - no match!')
+                print(f'\tAccurateRip: {csum["ar2"]:08x} (ARv2) - no match!')
                 results.append(
-                    TrackVerificationResult(track.path, ar2, 'ARv2', -1, -1, _Status.FAILED))
+                    TrackVerificationResult(track.path, csum["ar2"], 'ARv2', -1, -1,
+                                            _Status.FAILED))
 
         return DiscVerificationResult(results)
