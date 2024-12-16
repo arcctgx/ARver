@@ -43,6 +43,20 @@ def _parse_args():
                         metavar='pattern',
                         help='file name pattern to exclude')
 
+    parser.add_argument('-P',
+                        '--pregap-length',
+                        metavar='frames',
+                        type=int,
+                        default=0,
+                        help='length of track one pregap in CDDA frames')
+
+    parser.add_argument('-D',
+                        '--data-length',
+                        metavar='frames',
+                        type=int,
+                        default=0,
+                        help='length of Enhanced CD data track in CDDA frames')
+
     parser.add_argument('-v', '--version', action='version', version=version_string())
 
     return parser.parse_args()
