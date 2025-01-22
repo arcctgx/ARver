@@ -1,10 +1,8 @@
-"""
-Detect possible sample offsets in a set of audio files.
-"""
+"""Detect possible sample offsets in a set of audio files."""
 
 import argparse
 import sys
-from pprint import pprint
+from collections import OrderedDict
 
 from arver.audio.checksums import get_frame450_checksums
 from arver.disc.info import DiscInfo, get_disc_info
@@ -89,28 +87,25 @@ def main():
 
     print(disc.accuraterip_data.summary())
     print()
-    #print(disc.accuraterip_data)
 
     ####################################
     ### offset detection starts here ###
     ####################################
 
     disc_frame450_checksums = disc.accuraterip_data.make_dict(frame450=True)
-    #pprint(raw_db)
+
+    results = OrderedDict()
 
     for num, track in enumerate(rip.tracks, start=1):
-        print(num, track.path)
+        print(f'Looking for offsets in {track.path}')
 
         # raw is a list of (offset, checksum) pairs. Convert it to a dict
         # {checksum: offset} so it's more convenient to work with. Omit all
         # zero checksums (either real silent samples or calculation errors).
         raw = get_frame450_checksums(track.path)
         offsets = {checksum: offset for (offset, checksum) in raw if checksum != 0}
-        #print(len(offsets))
-        #pprint(offsets)
 
         track_checksums = disc_frame450_checksums[num]
-        #pprint(track)
 
         for checksum, meta in track_checksums.items():
             # Many responses contain frame 450 checksums equal to zero.
@@ -118,14 +113,26 @@ def main():
             if checksum == 0:
                 continue
 
-            #print(f'Checking {k:08x}')
             try:
-                offset = offsets[checksum]
-                print(f'Possible pressing offset: {offset:+5d} (confidence: {meta["confidence"]})')
+                off = offsets[checksum]
+                conf = meta['confidence']
+                #print(f'Possible pressing offset: {off:+5d} (confidence: {conf})')
+
+                results.setdefault(off, {'max_conf': 0, 'tracks': 0})
+                results[off]['tracks'] += 1
+                results[off]['max_conf'] = max(results[off]['max_conf'], conf)
+
             except KeyError:
                 pass
 
-        print()
+    # TODO: remove outliers
+    print()
+    print('Possible pressing offsets:')
+    print()
+    print('offset    tracks    conf')
+    print('------    ------    ----')
+    for offset, info in results.items():
+        print(f'{offset:+6d}    {info["tracks"]:6d}    {info["max_conf"]:4d}')
 
 
 if __name__ == '__main__':
