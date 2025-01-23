@@ -268,7 +268,8 @@ class Rip:
             print('Track length mismatch. Retry in permissive mode to verify anyway.')
             raise ValueError
 
-    def verify(self, disc_info: DiscInfo, permissive: bool) -> DiscVerificationResult:
+    def verify(self, disc_info: DiscInfo, permissive: bool,
+               use_arv1: bool) -> DiscVerificationResult:
         """
         Verify a set of ripped files against a CD with specified TOC.
 
@@ -302,7 +303,7 @@ class Rip:
                 print('\tAccurateRip: no checksums available for this track')
                 continue
 
-            if ar2 in checksums[toc_idx]:
+            if ar2 in checksums[toc_idx] and not use_arv1:
                 conf = checksums[toc_idx][ar2]['confidence']
                 resp = checksums[toc_idx][ar2]['response']
                 print(f'\tAccurateRip: {ar2:08x} (ARv2), confidence {conf}, response {resp}')
@@ -318,7 +319,13 @@ class Rip:
                     TrackVerificationResult(track.path, ar1, 'ARv1', conf, resp, _Status.SUCCESS))
                 continue
 
-            print(f'\tAccurateRip: {ar2:08x} (ARv2) - no match!')
-            results.append(TrackVerificationResult(track.path, ar2, 'ARv2', -1, -1, _Status.FAILED))
+            if use_arv1:
+                print(f'\tAccurateRip: {ar1:08x} (ARv1) - no match!')
+                results.append(
+                    TrackVerificationResult(track.path, ar1, 'ARv1', -1, -1, _Status.FAILED))
+            else:
+                print(f'\tAccurateRip: {ar2:08x} (ARv2) - no match!')
+                results.append(
+                    TrackVerificationResult(track.path, ar2, 'ARv2', -1, -1, _Status.FAILED))
 
         return DiscVerificationResult(results)

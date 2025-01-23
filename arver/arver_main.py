@@ -62,6 +62,11 @@ def _parse_args():
                         metavar='pattern',
                         help='file name pattern to exclude')
 
+    parser.add_argument('-1',
+                        '--use-arv1',
+                        action='store_true',
+                        help='use only ARv1 checksums for verification')
+
     parser.add_argument('-P',
                         '--pregap-length',
                         metavar='frames',
@@ -112,7 +117,7 @@ def main():
     print()
 
     try:
-        verdict = rip.verify(disc, args.permissive)
+        verdict = rip.verify(disc, args.permissive, args.use_arv1)
     except ValueError:
         print("Audio files don't match CD TOC, exiting.")
         sys.exit(4)
