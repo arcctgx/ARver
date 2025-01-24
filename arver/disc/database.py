@@ -152,8 +152,13 @@ class AccurateRipDisc:
         dictionary lookup when verifying mixed mode CDs. It is never reached
         when handling other disc types. See doc/data_track.md for a detailed
         description.
+
+        The optional argument frame450 selects the checksums stored in the
+        resulting dictionary. If it's False (default) the result will contain
+        full track checksums used for rip verification. If set to True, the
+        result will contain frame 450 checksums used for offset detection.
         """
-        attr = 'checksum' if frame450 is False else 'checksum_450'
+        checksum_type = 'checksum' if frame450 is False else 'checksum_450'
         data = {}
 
         num_responses = len(self.responses)
@@ -167,7 +172,7 @@ class AccurateRipDisc:
                 track = self.responses[rsp].tracks[trk]
 
                 if track.confidence != 0:
-                    data[index][getattr(track, attr)] = {
+                    data[index][getattr(track, checksum_type)] = {
                         'confidence': track.confidence,
                         'response': rsp + 1,
                     }
