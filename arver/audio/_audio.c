@@ -35,7 +35,6 @@ typedef uint32_t Frame;     // CDDA stereo frame (a pair of 16-bit samples)
 typedef struct AccurateRip {
     uint32_t v1;
     uint32_t v2;
-    uint32_t f450;
 } AccurateRip;
 
 static int check_format(SF_INFO info)
@@ -126,7 +125,7 @@ static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, 
         sum_to -= skip_frames;
     }
 
-    uint32_t v1, v2, f450;
+    uint32_t v1, v2;
     uint32_t csum_hi = 0;
     uint32_t csum_lo = 0;
     uint32_t multiplier = 1;
@@ -141,9 +140,8 @@ static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, 
 
     v1 = csum_lo;
     v2 = csum_lo + csum_hi;
-    f450 = ar450(data, size, 0);
 
-    return (AccurateRip){.v1 = v1, .v2 = v2, .f450 = f450};
+    return (AccurateRip){.v1 = v1, .v2 = v2};
 }
 
 static PyObject *f450_checksums(PyObject *self, PyObject *args)
@@ -260,7 +258,7 @@ static PyObject *checksums(PyObject *self, PyObject *args)
     AccurateRip ar = accuraterip(data, size, track, total_tracks);
     free(data);
 
-    return Py_BuildValue("IIII", ar.v1, ar.v2, crc, ar.f450);
+    return Py_BuildValue("III", ar.v1, ar.v2, crc);
 }
 
 static PyObject *frame_count(PyObject *self, PyObject *args)

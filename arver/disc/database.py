@@ -65,7 +65,7 @@ class Track:
         return cls(*unpacked)
 
     def __str__(self):
-        return f'{self.checksum:08x}   {self.checksum_450:08x}   (confidence: {self.confidence})'
+        return f'{self.checksum:08x}   (confidence: {self.confidence})'
 
 
 @dataclass
