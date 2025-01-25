@@ -28,9 +28,16 @@ def get_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[int, int
 
 def get_frame450_checksums(path: str) -> List[Tuple[int, int]]:
     """
-    Return a list of frame 450 checksums for all possible sample
-    offsets. The output is a list of (offset, checksum) pairs, or
-    an empty list when specified file is too short to determine
-    frame 450 checksums.
+    Calculate AccurateRip v1 checksums of a single CD frame (588 samples)
+    across all possible sample offsets in a 5-frame window centered on
+    frame 450.
+
+    The result is a list of 5881 (offset, checksum) pairs. If the track
+    is too short for calculating a checksum for a specific offset, the
+    checksum for that offset is zero.
+
+    Raises TypeError and OSError in the same conditions as get_checksums().
+    OSError is additionally raised on an internal failure to create a list
+    or a tuple.
     """
     return _audio.f450_checksums(path)
