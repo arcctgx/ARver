@@ -191,12 +191,7 @@ static PyObject *checksums(PyObject *self, PyObject *args)
 
     free(data);
 
-    return Py_BuildValue(
-        "{s:I, s:I, s:I, s:I}",
-        "ar1", ar.v1,
-        "ar2", ar.v2,
-        "crc", crc,
-        "crcss", crcss);
+    return Py_BuildValue("IIII", ar.v1, ar.v2, crc, crcss);
 }
 
 static PyObject *frame_count(PyObject *self, PyObject *args)
