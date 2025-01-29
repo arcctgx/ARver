@@ -17,11 +17,7 @@ def find_pressing_offset(disc: DiscInfo, rip: Rip) -> None:
     for num, track in enumerate(rip.tracks, start=1):
         print(f'Looking for offsets in {track.path}')
 
-        # raw is a list of (offset, checksum) pairs. Convert it to a dict
-        # {checksum: offset} so it's more convenient to work with. Omit all
-        # zero checksums (either real silent samples or calculation errors).
-        raw = get_frame450_checksums(track.path)
-        offsets = {checksum: offset for (offset, checksum) in raw if checksum != 0}
+        offsets = get_frame450_checksums(track.path)
 
         track_checksums = disc_frame450_checksums[num]
 
