@@ -10,9 +10,11 @@ from arver.rip.rip import Rip
 def find_pressing_offset(disc: DiscInfo, rip: Rip) -> None:
     """Offset detection starts here."""
 
-    disc_frame450_checksums = disc.accuraterip_data.make_dict(frame450=True)
+    if disc.accuraterip_data is None:
+        raise ValueError('Cannot continue: missing AccurateRip data!')
 
-    results = OrderedDict()
+    disc_frame450_checksums = disc.accuraterip_data.make_dict(frame450=True)
+    results: OrderedDict = OrderedDict()
 
     for num, track in enumerate(rip.tracks, start=1):
         print(f'Looking for offsets in {track.path}')
