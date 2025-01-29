@@ -1,6 +1,6 @@
 """Functions for calculating checksums of audio files."""
 
-from typing import List, Tuple
+from typing import Dict, Tuple
 
 from arver.audio import _audio  # type: ignore
 
@@ -26,18 +26,24 @@ def get_checksums(path: str, track_no: int, total_tracks: int) -> Tuple[int, int
     return _audio.checksums(path, track_no, total_tracks)
 
 
-def get_frame450_checksums(path: str) -> List[Tuple[int, int]]:
+def get_frame450_checksums(path: str) -> Dict[int, int]:
     """
     Calculate AccurateRip v1 checksums of a single CD frame (588 samples)
     across all possible sample offsets in a 5-frame window centered on
     frame 450.
 
-    The result is a list of 5881 (offset, checksum) pairs. If the track
-    is too short for calculating a checksum for a specific offset, the
-    checksum for that offset is zero.
+    The underlying C extension returns the result as a list of all 5881
+    possible (offset, checksum) pairs. These results are converted to a
+    dictionary where the key is the sample offset and the value is the
+    frame 450 checksum corresponding to that offset. If the checksum in
+    a pair has zero value, that pair is not included in the resulting
+    dictionary.
 
     Raises TypeError and OSError in the same conditions as get_checksums().
     OSError is additionally raised on an internal failure to create a list
     or a tuple.
     """
-    return _audio.f450_checksums(path)
+    return {
+        checksum: offset
+        for (offset, checksum) in _audio.f450_checksums(path) if checksum != 0
+    } # yapf: disable
