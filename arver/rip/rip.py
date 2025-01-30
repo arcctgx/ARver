@@ -6,7 +6,7 @@ from fnmatch import fnmatch
 from os.path import basename
 from typing import ClassVar, List, Optional
 
-from arver.audio.checksums import get_checksums
+from arver.audio.checksums import Checksums, get_checksums
 from arver.audio.properties import get_frame_count
 from arver.disc.info import DiscInfo, DiscType
 from arver.disc.utils import frames_to_msf
@@ -51,10 +51,7 @@ class AudioFile:
         except (OSError, TypeError) as exc:
             raise AudioFormatError from exc
 
-        self._arv1: Optional[int] = None
-        self._arv2: Optional[int] = None
-        self._crc32: Optional[int] = None
-        self._crc32ss: Optional[int] = None
+        self._csum: Optional[Checksums] = None
 
     def as_table_row(self) -> str:
         """
@@ -67,10 +64,10 @@ class AudioFile:
         is_cdda = 'yes' if self._is_cd_rip() else 'no'
         length_msf = frames_to_msf(self.cdda_frames)
 
-        arv1 = f'{self._arv1:08x}' if self._arv1 is not None else 'unknown'
-        arv2 = f'{self._arv2:08x}' if self._arv2 is not None else 'unknown'
-        crc32 = f'{self._crc32:08x}' if self._crc32 is not None else 'unknown'
-        crc32ss = f'{self._crc32ss:08x}' if self._crc32ss is not None else 'unknown'
+        arv1 = f'{self._csum.arv1:08x}' if self._csum is not None else 'unknown'
+        arv2 = f'{self._csum.arv2:08x}' if self._csum is not None else 'unknown'
+        crc32 = f'{self._csum.crc:08x}' if self._csum is not None else 'unknown'
+        crc32ss = f'{self._csum.crcss:08x}' if self._csum is not None else 'unknown'
 
         return f'{short_name:<{NAME_WIDTH}s}    {is_cdda:>4s}    ' + \
                f'{length_msf:>8s}    {self.cdda_frames:>6d}    ' + \
@@ -85,11 +82,7 @@ class AudioFile:
 
     def set_checksums(self, track_no: int, total_tracks: int) -> None:
         """Calculate and set AccurateRip and CRC32 checksums."""
-        csum = get_checksums(self.path, track_no, total_tracks)
-        self._arv1 = csum.arv1
-        self._arv2 = csum.arv2
-        self._crc32 = csum.crc
-        self._crc32ss = csum.crcss
+        self._csum = get_checksums(self.path, track_no, total_tracks)
 
 
 class _Status(Enum):
