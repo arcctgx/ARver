@@ -94,7 +94,7 @@ static uint32_t ar450(const Sample *data, size_t size, ssize_t offset)
 
     //printf("<0,%d) offset %d: from %d to %d\n", nframes, offset, f450_start, f450_end);
 
-    if (f450_start < 0 || f450_end > nframes) {
+    if (f450_start < 0 || f450_end < 0 || (size_t)f450_end > nframes) {
         return 0;
     }
 
