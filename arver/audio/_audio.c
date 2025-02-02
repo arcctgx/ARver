@@ -85,12 +85,12 @@ static Sample *load_audio_data(SNDFILE *file, SF_INFO info, size_t *size)
     return data;
 }
 
-static uint32_t ar450(const Sample *data, size_t size, int offset)
+static uint32_t ar450(const Sample *data, size_t size, ssize_t offset)
 {
     const Frame *frames = (const Frame*)data;
     const size_t nframes = size / 2;    // 2 samples per CDDA frame
     const ssize_t f450_start = 450*588 + offset;
-    const ssize_t f450_end = 451*588 + offset;
+    const ssize_t f450_end = f450_start + 588;
 
     //printf("<0,%d) offset %d: from %d to %d\n", nframes, offset, f450_start, f450_end);
 
@@ -183,7 +183,7 @@ static PyObject *f450_checksums(PyObject *self, PyObject *args)
 
     PyObject *tuple = NULL;
     uint32_t checksum = 0;
-    for (int offset = -5*588; offset <= 5*588; offset++) {
+    for (ssize_t offset = -5*588; offset <= 5*588; offset++) {
         checksum = ar450(data, size, offset);
         //printf("offset=%d checksum=%08x\n", offset, checksum);
 
