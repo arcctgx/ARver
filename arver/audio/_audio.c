@@ -30,11 +30,12 @@
 
 typedef uint16_t Sample;    // CDDA 16-bit sample (single channel)
 typedef uint32_t Frame;     // CDDA stereo frame (a pair of 16-bit samples)
+typedef uint32_t Checksum;  // A checksum value.
 
 // A pair of AccurateRip checksums
 typedef struct AccurateRip {
-    uint32_t v1;
-    uint32_t v2;
+    Checksum v1;
+    Checksum v2;
 } AccurateRip;
 
 static int check_format(SF_INFO info)
@@ -101,7 +102,7 @@ static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, 
         sum_to -= skip_frames;
     }
 
-    uint32_t v1, v2;
+    Checksum v1, v2;
     uint32_t csum_hi = 0;
     uint32_t csum_lo = 0;
     uint32_t multiplier = 1;
@@ -166,7 +167,7 @@ static PyObject *checksums(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    uint32_t crc = crc32(0L, Z_NULL, 0);
+    Checksum crc = crc32(0L, Z_NULL, 0);
     crc = crc32(crc, (uint8_t*)data, 2*size);   // 2 bytes per CDDA sample
     AccurateRip ar = accuraterip(data, size, track, total_tracks);
     free(data);
