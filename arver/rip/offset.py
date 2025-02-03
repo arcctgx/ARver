@@ -1,10 +1,24 @@
 """ARver offset detection module."""
 
 from collections import OrderedDict
+from typing import Dict
 
 from arver.audio.checksums import get_frame450_checksums
 from arver.disc.info import DiscInfo
 from arver.rip.rip import Rip
+
+
+def _print_offsets(offsets: Dict[int, Dict[str, int]]) -> None:
+    if len(offsets) == 0:
+        print('No pressing offsets found!')
+        return
+
+    print('Possible pressing offsets:')
+    print()
+    print('offset    tracks    conf')
+    print('------    ------    ----')
+    for offset, info in offsets.items():
+        print(f'{offset:+6d}    {info["tracks"]:6d}    {info["max_conf"]:4d}')
 
 
 def find_pressing_offset(disc: DiscInfo, rip: Rip) -> None:
@@ -42,10 +56,6 @@ def find_pressing_offset(disc: DiscInfo, rip: Rip) -> None:
                 pass
 
     # TODO: remove outliers
+
     print()
-    print('Possible pressing offsets:')
-    print()
-    print('offset    tracks    conf')
-    print('------    ------    ----')
-    for offset, info in results.items():
-        print(f'{offset:+6d}    {info["tracks"]:6d}    {info["max_conf"]:4d}')
+    _print_offsets(results)
