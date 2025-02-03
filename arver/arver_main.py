@@ -5,6 +5,7 @@ import sys
 import textwrap
 
 from arver.disc.info import DiscInfo, get_disc_info
+from arver.rip.offset import find_pressing_offset
 from arver.rip.rip import Rip
 from arver.version import version_string
 
@@ -67,6 +68,11 @@ def _parse_args():
                         action='store_true',
                         help='use only ARv1 checksums for verification')
 
+    parser.add_argument('-f',
+                        '--find-offset',
+                        action='store_true',
+                        help='perform offset detection, do not verify')
+
     parser.add_argument('-P',
                         '--pregap-length',
                         metavar='frames',
@@ -115,6 +121,10 @@ def main():
 
     print(disc.accuraterip_data.summary())
     print()
+
+    if args.find_offset:
+        find_pressing_offset(disc, rip)
+        sys.exit(0)
 
     try:
         verdict = rip.verify(disc, args.permissive, args.use_arv1)

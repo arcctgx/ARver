@@ -32,8 +32,7 @@ setup(name=APPNAME,
           'console_scripts': [
               'arver = arver.arver_main:main', 'arver-discinfo = arver.arver_discinfo:main',
               'arver-ripinfo = arver.arver_ripinfo:main',
-              'arver-bin-parser = arver.arver_bin_parser:main',
-              'arver-offset = arver.arver_offset:main'
+              'arver-bin-parser = arver.arver_bin_parser:main'
           ]
       },
       ext_modules=[
