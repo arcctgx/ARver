@@ -47,17 +47,17 @@ class TestExceptionsChecksums(unittest.TestCase):
             _audio.checksums(CORRUPTED_AUDIO_PATH, 1, 9)
 
 
-class TestExceptionsNframes(unittest.TestCase):
+class TestExceptionsFrameCount(unittest.TestCase):
     """Test exceptions raised when getting the number of audio frames in a file."""
 
     def test_nonexistent_file(self):
         with self.assertRaisesRegex(OSError, 'No such file or directory'):
-            _audio.nframes('does_not_exist.flac')
+            _audio.frame_count('does_not_exist.flac')
 
     def test_not_audio(self):
         with self.assertRaisesRegex(OSError, '(unknown format|Format not recognised)'):
-            _audio.nframes(NOT_AUDIO_PATH)
+            _audio.frame_count(NOT_AUDIO_PATH)
 
     def test_unsupported_audio_format(self):
         with self.assertRaisesRegex(TypeError, 'Unsupported audio format'):
-            _audio.nframes(SAMPLE_VORBIS_PATH)
+            _audio.frame_count(SAMPLE_VORBIS_PATH)

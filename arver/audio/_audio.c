@@ -174,7 +174,7 @@ static PyObject *checksums(PyObject *self, PyObject *args)
     return Py_BuildValue("III", ar.v1, ar.v2, crc);
 }
 
-static PyObject *nframes(PyObject *self, PyObject *args)
+static PyObject *frame_count(PyObject *self, PyObject *args)
 {
     const char *path = NULL;
     SNDFILE *file = NULL;
@@ -205,7 +205,7 @@ static PyObject *libsndfile_version(PyObject *self, PyObject *args)
 
 static PyMethodDef methods[] = {
     { "checksums", checksums, METH_VARARGS, PyDoc_STR("Calculate AccurateRip and CRC32 checksums of an audio file.") },
-    { "nframes", nframes, METH_VARARGS, PyDoc_STR("Get the number of audio frames in a file.") },
+    { "frame_count", frame_count, METH_VARARGS, PyDoc_STR("Get the number of audio frames in a file.") },
     { "libsndfile_version", libsndfile_version, METH_NOARGS, PyDoc_STR("Get libsndfile version string.") },
     { NULL, NULL, 0, NULL },
 };

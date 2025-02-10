@@ -8,7 +8,7 @@ or of libsndfile library itself.
 from arver.audio import _audio  # type: ignore
 
 
-def get_nframes(path: str) -> int:
+def get_frame_count(path: str) -> int:
     """
     Return the number of frames in a supported audio file. A frame
     is a set of samples, one sample per channel.
@@ -18,7 +18,7 @@ def get_nframes(path: str) -> int:
     will raise TypeError for any other audio format, or OSError when
     libsndfile can't load audio samples from the file for any reason.
     """
-    return _audio.nframes(path)
+    return _audio.frame_count(path)
 
 
 def get_libsndfile_version() -> str:

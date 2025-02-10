@@ -7,7 +7,7 @@ from os.path import basename
 from typing import ClassVar, List, Optional
 
 from arver.audio.checksums import get_checksums
-from arver.audio.properties import get_nframes
+from arver.audio.properties import get_frame_count
 from arver.disc.info import DiscInfo, DiscType
 from arver.disc.utils import frames_to_msf
 
@@ -37,7 +37,7 @@ class AudioFile:
         self.path: str = path
 
         try:
-            self._audio_frames = get_nframes(path)
+            self._audio_frames = get_frame_count(path)
             self.cdda_frames = self._audio_frames // AUDIO_FRAMES_PER_CD_SECTOR
         except (OSError, TypeError) as exc:
             raise AudioFormatError from exc

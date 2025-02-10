@@ -5,7 +5,7 @@
 import os
 import unittest
 
-from arver.audio.properties import get_nframes
+from arver.audio.properties import get_frame_count
 
 CWD = os.path.abspath(os.path.dirname(__file__))
 SAMPLE_WAV_PATH = CWD + '/data/samples/sample.wav'
@@ -18,9 +18,9 @@ class TestGetNFrames(unittest.TestCase):
     expected_frames = 44100  # one second of CDDA audio: number of frames same as sampling rate
 
     def test_wav(self):
-        frames = get_nframes(SAMPLE_WAV_PATH)
+        frames = get_frame_count(SAMPLE_WAV_PATH)
         self.assertEqual(frames, self.expected_frames)
 
     def test_flac(self):
-        frames = get_nframes(SAMPLE_FLAC_PATH)
+        frames = get_frame_count(SAMPLE_FLAC_PATH)
         self.assertEqual(frames, self.expected_frames)
