@@ -9,7 +9,7 @@ number of bytes into the requested sector.
 
 CD drive read offsets are specified in _audio frames_. One stereo audio frame
 consists of two 16-bit samples (left and right channel). 588 frames (2352
-bytes) make one CDDA sector (exactly 1/75 second of audio). [1]
+bytes) make one CDDA sector (exactly 1/75 second of audio).[^1]
 
 The offset can be positive or negative (rarely zero). A positive offset means
 that the drive starts reading from the final frames of the preceding sector
@@ -48,18 +48,17 @@ indication of the offset value itself.
 The process of finding the pressing offset is essentially a brute force search.
 Checksums corresponding to all possible frame offsets within the search radius
 are calculated for each ripped audio file. The pressing offset is only known
-once a checksum corresponding to a specific offset matches a database entry.
+once a checksum corresponding to a specific offset matches a database entry.[^2]
 
 This would be very expensive if the checksum calculation was based on an entire
 CD track. To optimize the process, AccurateRip database stores two types of
-checksums for each track: the full file checksum for verification, and an
+checksums for each track: the full file checksum for verification, and an ARv1
 offset finding checksum calculated only from audio frames in the CD sector 450.
 Limiting the calculation to a single CD sector is much faster. There are some
 edge cases related to handling very short CD tracks, but in practice these
-cases can be avoided by not calculating the checksum if a given offset is
-"impossible" for a given track. Such short tracks are rare anyway, and the
-offset finding checksums can be calculated based on other tracks from the
-same disc.
+cases can be avoided by not calculating the checksum if an offset is impossible
+for a given track. Such short tracks are rare anyway, and the offset finding
+checksums can be calculated based on other tracks from the same disc.
 
 The key point is: when a CD track is ripped with no offset corrections applied,
 the effective offset of a resulting audio file is a sum of the CD drive read
@@ -189,7 +188,9 @@ offset    tracks    conf
   +864         1      14
 ```
 
----
-
-[1] A CDDA sector can also be called a "frame", but I'll avoid using that name
+[^1]: A CDDA sector can also be called a "frame", but I'll avoid using that name
 here because of ambiguity.
+
+[^2]: This is similar to handling the type of AccurateRip checksums (ARv1 or v2).
+The checksum type is not indicated in the database, and is only known when a
+checksum of a specific type is matched to a database entry.
