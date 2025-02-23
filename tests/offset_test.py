@@ -9,6 +9,7 @@ from arver.audio.checksums import get_frame450_checksums
 SAMPLE_NEGATIVE = 'tests/data/samples/offset_negative.flac'
 SAMPLE_POSITIVE = 'tests/data/samples/offset_positive.flac'
 SAMPLE_ZERO = 'tests/data/samples/offset_zero.flac'
+SAMPLE_ONE_SECOND = 'tests/data/samples/sample.flac'
 
 
 class TestOffsetDetectionSector450(unittest.TestCase):
@@ -35,3 +36,14 @@ class TestOffsetDetectionSector450(unittest.TestCase):
     def test_zero_offset(self):
         checksums = get_frame450_checksums(SAMPLE_ZERO)
         self.assertEqual(checksums[0x07d5ca6b], 0)
+
+    def test_too_short_file(self):
+        """
+        Make sure get_frame450_checksums() correctly rejects
+        checksums corresponding to impossible offsets. For a
+        one second sample checksum calculation range will be
+        outside the audio stream for all tested offsets, so
+        the resulting dictionary must be empty.
+        """
+        checksums = get_frame450_checksums(SAMPLE_ONE_SECOND)
+        self.assertEqual(len(checksums), 0)
