@@ -194,11 +194,11 @@ As usual, the reality is more complicated than the description above.
 
 I did some further testing with disc `014-0022f25c-017b5273-d210350e`
 (MusicBrainz disc ID `08o.iqXhLnAhNHLQ8RerLctLaBs-`), and the pressing
-offsets predicted based on frame 450 checksums don't fully align with the
-actual ripping results.
+offsets predicted based on CD sector 450 checksums don't fully align with
+the actual ripping results.
 
 In the following table, "expected" is the predicted confidence value based on
-frame 450 checksums, and "actual" is the confidence value obtained when the CD
+sector 450 checksums, and "actual" is the confidence value obtained when the CD
 was ripped to match the detected offset, as described in the preceding section:
 
 offset | tracks | expected | actual | remarks
@@ -214,19 +214,19 @@ offset | tracks | expected | actual | remarks
 +8     |     13 |        4 |      2 | 12 tracks matched
 
 It is interesting how the track checksums are distributed among AccurateRip
-database records. It appears that the full track checksum and the frame 450
+database records. It appears that the full track checksum and the sector 450
 checksum found in the same database response may not always correspond to the
 same disc pressing. Furthermore, the confidence value is only relevant to the
-full track checksum, not to the frame 450 checksum.
+full track checksum, not to the sector 450 checksum.
 
 For example, when the indicated disc is ripped only with drive read offset
 correction (which corresponds to the zero offset value in the table above), the
 ARv2 checksum of track 1, `0x8b7bda10`, is in the database response 4 with the
-confidence of 42. But the frame 450 checksum of track 1 in the same response,
-`0xb662ba2b`, corresponds to the `+1180` frame offset! Frame 450 checksum that
+confidence of 42. But the sector 450 checksum of track 1 in the same response,
+`0xb662ba2b`, corresponds to the `+1180` frame offset! Sector 450 checksum that
 matches ripped track 1, `0x3daf9413`, is in response 3.
 
-It probably means that the frame 450 checksum is only supposed to be used as
+It probably means that the sector 450 checksum is only supposed to be used as
 a hint for drive offset detection. In that case the only correct way to detect
 pressing offset in a set of ripped audio tracks would be to calculate full track
 AccurateRip checksums of both types for all possible offset values in each file.
