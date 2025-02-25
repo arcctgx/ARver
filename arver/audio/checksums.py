@@ -40,8 +40,8 @@ def get_frame450_checksums(path: str) -> Dict[int, int]:
     dictionary.
 
     Raises TypeError and OSError in the same conditions as get_checksums().
-    OSError is additionally raised on an internal failure to create a list
-    or a tuple.
+    MemoryError is additionally raised on an internal failure to create a
+    list or a tuple.
     """
     return {
         checksum: offset
