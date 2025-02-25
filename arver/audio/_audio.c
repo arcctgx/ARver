@@ -177,8 +177,7 @@ static PyObject *f450_checksums(PyObject *self, PyObject *args)
     PyObject *list = PyList_New(0);
     if (list == NULL) {
         free(data);
-        PyErr_SetString(PyExc_OSError, "Failed to create list.");
-        return NULL;
+        return PyErr_NoMemory();
     }
 
     PyObject *tuple = NULL;
@@ -190,16 +189,14 @@ static PyObject *f450_checksums(PyObject *self, PyObject *args)
         if ((tuple = Py_BuildValue("iI", offset, checksum)) == NULL) {
             free(data);
             Py_DecRef(list);
-            PyErr_Format(PyExc_OSError, "Failed to create tuple %d", offset);
-            return NULL;
+            return PyErr_NoMemory();
         }
 
         if (PyList_Append(list, tuple) == -1) {
             free(data);
             Py_DecRef(tuple);
             Py_DecRef(list);
-            PyErr_Format(PyExc_OSError, "Failed to append tuple %d", offset);
-            return NULL;
+            return PyErr_NoMemory();
         }
     }
 
