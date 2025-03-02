@@ -59,3 +59,27 @@ def find_pressing_offset(disc: DiscInfo, rip: Rip) -> None:
 
     print()
     _print_offsets(results)
+
+
+def _load_triple(previous, current, next_) -> None:
+    for a in args:
+        print(a)
+
+
+def find_offsets_harder(disc: DiscInfo, rip: Rip) -> None:
+    """Offset detection by brute force search."""
+    ext = [None] + rip.tracks + [None]
+
+    for number, _ in enumerate(rip.tracks, start=1):
+        triple = (ext[number - 1], ext[number], ext[number + 1])
+        _load_triple(*triple)
+
+        for track in triple:
+            if track is not None:
+                print(track.path)
+            else:
+                print(track)
+
+        print()
+
+    print(ext)
