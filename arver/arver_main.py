@@ -5,7 +5,7 @@ import sys
 import textwrap
 
 from arver.disc.info import DiscInfo, get_disc_info
-from arver.rip.offset import find_pressing_offset
+from arver.rip.offset import find_offsets_harder, find_pressing_offset
 from arver.rip.rip import Rip
 from arver.version import version_string
 
@@ -73,6 +73,11 @@ def _parse_args():
                         action='store_true',
                         help='perform offset detection, do not verify')
 
+    parser.add_argument('-F',
+                        '--find-offsets-harder',
+                        action='store_true',
+                        help='perform offset detection by brute force search, do not verify')
+
     parser.add_argument('-P',
                         '--pregap-length',
                         metavar='frames',
@@ -124,6 +129,9 @@ def main():
 
     if args.find_offset:
         find_pressing_offset(disc, rip)
+        sys.exit(0)
+    elif args.find_offsets_harder:
+        find_offsets_harder(disc, rip)
         sys.exit(0)
 
     try:
