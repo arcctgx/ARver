@@ -24,4 +24,10 @@
 %constant long int INVALID_LBA = CDIO_INVALID_LBA;
 %constant long int INVALID_LSN = CDIO_INVALID_LSN;
 
+
+typedef unsigned int track_t;
+
+
 void cdio_destroy(CdIo_t *p_cdio);
+
+track_t cdio_get_first_track_num(const CdIo_t *p_cdio);

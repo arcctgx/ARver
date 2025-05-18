@@ -3157,8 +3157,9 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 #define SWIGTYPE_p_CdIo_t swig_types[0]
 #define SWIGTYPE_p_char swig_types[1]
-static swig_type_info *swig_types[3];
-static swig_module_info swig_module = {swig_types, 2, 0, 0, 0, 0};
+#define SWIGTYPE_p_unsigned_int swig_types[2]
+static swig_type_info *swig_types[4];
+static swig_module_info swig_module = {swig_types, 3, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3190,6 +3191,13 @@ static swig_module_info swig_module = {swig_types, 2, 0, 0, 0, 0};
 
   #define SWIG_From_long   PyInt_FromLong 
 
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_unsigned_SS_int  (unsigned int value)
+{
+  return PyInt_FromSize_t((size_t) value);
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -3216,8 +3224,33 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_cdio_get_first_track_num(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  CdIo_t *arg1 = (CdIo_t *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  track_t result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_CdIo_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "cdio_get_first_track_num" "', argument " "1"" of type '" "CdIo_t const *""'"); 
+  }
+  arg1 = (CdIo_t *)(argp1);
+  result = (track_t)cdio_get_first_track_num((CdIo_t const *)arg1);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 static PyMethodDef SwigMethods[] = {
 	 { "cdio_destroy", _wrap_cdio_destroy, METH_O, NULL},
+	 { "cdio_get_first_track_num", _wrap_cdio_get_first_track_num, METH_O, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -3226,18 +3259,22 @@ static PyMethodDef SwigMethods[] = {
 
 static swig_type_info _swigt__p_CdIo_t = {"_p_CdIo_t", "CdIo_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "track_t *|unsigned int *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_CdIo_t,
   &_swigt__p_char,
+  &_swigt__p_unsigned_int,
 };
 
 static swig_cast_info _swigc__p_CdIo_t[] = {  {&_swigt__p_CdIo_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_CdIo_t,
   _swigc__p_char,
+  _swigc__p_unsigned_int,
 };
 
 
