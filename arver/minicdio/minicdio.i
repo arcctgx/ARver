@@ -23,3 +23,5 @@
 // types.h
 %constant long int INVALID_LBA = CDIO_INVALID_LBA;
 %constant long int INVALID_LSN = CDIO_INVALID_LSN;
+
+void cdio_destroy(CdIo_t *p_cdio);
