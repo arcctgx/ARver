@@ -1,13 +1,59 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ARver"
+dynamic = ["version"]
+dependencies = ["discid", "musicbrainzngs", "pycdio", "requests"]
+requires-python = ">=3.7"
+
+authors = [{ name = "arcctgx", email = "arcctgx@o2.pl" }]
+
+description = "Application for verifying ripped audio files using AccurateRip database."
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { text = "GPLv3" }
+
+classifiers = [
+	"Development Status :: 5 - Production/Stable",
+	"Environment :: Console",
+	"Intended Audience :: End Users/Desktop",
+	"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+	"Natural Language :: English",
+	"Operating System :: POSIX :: Linux",
+	"Programming Language :: C",
+	"Programming Language :: Python :: 3 :: Only",
+	"Programming Language :: Python :: 3.7",
+	"Programming Language :: Python :: 3.8",
+	"Programming Language :: Python :: 3.9",
+	"Programming Language :: Python :: 3.10",
+	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
+	"Topic :: Multimedia :: Sound/Audio :: Analysis",
+	"Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Ripping",
+]
+
+[project.scripts]
+arver = "arver.arver_main:main"
+arver-discinfo = "arver.arver_discinfo:main"
+arver-ripinfo = "arver.arver_ripinfo:main"
+arver-bin-parser = "arver.arver_bin_parser:main"
+
+[project.urls]
+Homepage = "https://github.com/arcctgx/ARver"
+Issues = "https://github.com/arcctgx/ARver/issues"
+
+[tool.setuptools.dynamic]
+version = { attr = "arver.VERSION" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+
 [tool.mypy]
 exclude = "build"
 
 [[tool.mypy.overrides]]
-module = [
-    "discid",
-    "musicbrainzngs",
-    "cdio",
-    "pycdio"
-]
+module = ["discid", "musicbrainzngs", "cdio", "pycdio"]
 ignore_missing_imports = true
 
 [tool.pylint.basic]
