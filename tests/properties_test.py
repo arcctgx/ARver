@@ -12,7 +12,7 @@ SAMPLE_WAV_PATH = CWD + '/data/samples/sample.wav'
 SAMPLE_FLAC_PATH = CWD + '/data/samples/sample.flac'
 
 
-class TestGetNFrames(unittest.TestCase):
+class TestGetFrameCount(unittest.TestCase):
     """Test getting the number of audio frames."""
 
     expected_frames = 44100  # one second of CDDA audio: number of frames same as sampling rate
