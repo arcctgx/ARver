@@ -74,21 +74,12 @@ While the wheel is forward-compatible with future 3.x Python versions, the lates
 Python releases may not have been tested. The latest tested Python version is
 listed in the PyPI trove classifiers.
 
-For development:
+Use an editable installation for development and testing:
 
 ```sh
 git clone https://github.com/arcctgx/ARver
 cd ARver
 python3 -m pip install --editable .
-```
-
-For packaging:
-
-```sh
-git clone https://github.com/arcctgx/ARver
-cd ARver
-python3 setup.py install --root=/tmp/pkg-arver
-# use contents of /tmp/pkg-arver to create a package.
 ```
 
 ### Dependencies
