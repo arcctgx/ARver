@@ -13,9 +13,6 @@ image:
 wheels:
 	docker run --rm -u "$(USER):$(GROUP)" -v "$(CWD):/package" arcctgx/arver-builder:$(VERSION)
 
-ext:
-	python3 setup.py build_ext --verbose --inplace
-
 test:
 	python3 -m unittest discover -v -s tests/ -p "*_test.py"
 
