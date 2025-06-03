@@ -1,4 +1,4 @@
-.PHONY: release image wheels ext test sdist clean gitclean
+.PHONY: release image wheels test sdist clean gitclean
 
 CWD = $(shell pwd -P)
 USER = $(shell id -u)
@@ -17,7 +17,7 @@ test:
 	python3 -m unittest discover -v -s tests/ -p "*_test.py"
 
 sdist:
-	python3 setup.py sdist
+	python3 -m build --sdist
 
 clean:
 	$(RM) -vrf build dist wheelhouse
