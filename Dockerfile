@@ -1,6 +1,6 @@
 # hadolint global ignore=DL3003
 
-FROM quay.io/pypa/manylinux2014_x86_64:2024-08-03-32dfa47
+FROM quay.io/pypa/manylinux2014_x86_64:2025-05-03-cdd80a2
 
 ADD https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz \
     https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.xz \
