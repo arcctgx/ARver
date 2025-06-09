@@ -30,6 +30,15 @@ def _shorten_path(path: str, max_length: int = NAME_WIDTH) -> str:
     return name[:midpoint + adj] + '~' + name[-midpoint:]
 
 
+def _ceil_div(dividend: int, divisor: int) -> int:
+    """
+    Ceiling division: round the quotient up to the next integer, e.g.:
+    2940 divided by 588 is 5,
+    1000 divided by 588 is 2.
+    """
+    return (dividend + divisor - 1) // divisor
+
+
 class AudioFile:
     """Audio file to be verified against AccurateRip checksum."""
 
@@ -38,7 +47,7 @@ class AudioFile:
 
         try:
             self._audio_frames = get_frame_count(path)
-            self.cdda_frames = self._audio_frames // AUDIO_FRAMES_PER_CD_SECTOR
+            self.cdda_frames = _ceil_div(self._audio_frames, AUDIO_FRAMES_PER_CD_SECTOR)
         except (OSError, TypeError) as exc:
             raise AudioFormatError from exc
 
