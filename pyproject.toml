@@ -48,6 +48,7 @@ version = { attr = "arver.VERSION" }
 
 [tool.setuptools.packages.find]
 where = ["."]
+exclude = ["tests"]
 
 [tool.mypy]
 exclude = "build"
