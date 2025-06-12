@@ -10,6 +10,7 @@ on:
       - tests/**
       - setup.py
       - requirements.txt
+      - pyproject.toml
   pull_request:
     branches:
       - master
@@ -19,6 +20,7 @@ on:
       - tests/**
       - setup.py
       - requirements.txt
+      - pyproject.toml
 
 jobs:
   unit-tests:
