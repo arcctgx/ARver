@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <endian.h>
+#include <pthread.h>
 #include <sndfile.h>
 #include <zlib.h>
 
@@ -121,6 +122,22 @@ static AccurateRip accuraterip(const Sample *data, size_t size, unsigned track, 
     return (AccurateRip){.v1 = v1, .v2 = v2};
 }
 
+typedef struct CRC32Param {
+    const Sample *data;
+    size_t size;
+    Checksum *crc32;
+} CRC32Param;
+
+static void *crc32_thread(void *ptr)
+{
+    CRC32Param *p = (CRC32Param*)ptr;
+    Checksum crc = crc32(0L, Z_NULL, 0);
+    crc = crc32(crc, (uint8_t*)(p->data), 2*(p->size)); // 2 bytes per CDDA sample
+    *(p->crc32) = crc;
+
+    return NULL;
+}
+
 static PyObject *checksums(PyObject *self, PyObject *args)
 {
     const char *path = NULL;
@@ -167,12 +184,28 @@ static PyObject *checksums(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    Checksum crc = crc32(0L, Z_NULL, 0);
-    crc = crc32(crc, (uint8_t*)data, 2*size);   // 2 bytes per CDDA sample
-    AccurateRip ar = accuraterip(data, size, track, total_tracks);
+    // Py_BEGIN_ALLOW_THREADS implicitly creates a new scope. The variables holding the
+    // results must be accessible in both outer and inner scopes, so define them here.
+    Checksum crc32;
+    AccurateRip ar;
+
+    Py_BEGIN_ALLOW_THREADS
+        pthread_t worker;
+        CRC32Param par = {.data = data, .size = size, .crc32 = &crc32};
+        int status = pthread_create(&worker, NULL, crc32_thread, &par);
+        if (status != 0) {
+            Py_BLOCK_THREADS
+            PyErr_Format(PyExc_RuntimeError, "Failed to spawn thread: %s", strerror(status));
+            return NULL;
+        }
+
+        ar = accuraterip(data, size, track, total_tracks);
+        pthread_join(worker, NULL);
+    Py_END_ALLOW_THREADS
+
     free(data);
 
-    return Py_BuildValue("III", ar.v1, ar.v2, crc);
+    return Py_BuildValue("III", ar.v1, ar.v2, crc32);
 }
 
 static PyObject *frame_count(PyObject *self, PyObject *args)
