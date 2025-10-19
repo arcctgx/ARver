@@ -31,30 +31,30 @@ jobs:
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install pycdio dependencies from distribution
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libcdio-dev libdiscid-dev libiso9660-dev swig
+      - name: Install pycdio dependencies from distribution
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcdio-dev libdiscid-dev libiso9660-dev swig
 
-    - name: Install ARver dependencies from distribution
-      run: |
-        sudo apt-get install -y libsndfile-dev
+      - name: Install ARver dependencies from distribution
+        run: |
+          sudo apt-get install -y libsndfile-dev
 
-    - name: Build and install ARver
-      run: |
-        python3 --version
-        pip3 install --upgrade pip
-        pip3 install --editable .
-        pip3 list
+      - name: Build and install ARver
+        run: |
+          python3 --version
+          pip3 install --upgrade pip
+          pip3 install --editable .
+          pip3 list
 
-    - name: Run unit tests
-      run: |
-        make test
+      - name: Run unit tests
+        run: |
+          make test
