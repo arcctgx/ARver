@@ -9,7 +9,7 @@ from typing import ClassVar, List, Optional
 from arver.audio.checksums import Checksums, get_checksums
 from arver.audio.properties import get_frame_count
 from arver.disc.info import DiscInfo, DiscType
-from arver.disc.utils import frames_to_msf
+from arver.utils import frames_to_msf
 
 AUDIO_FRAMES_PER_CD_SECTOR = 588
 NAME_WIDTH = 30

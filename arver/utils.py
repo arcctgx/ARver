@@ -1,6 +1,5 @@
 """Disc-related definitions and helpers also useful elsewhere in ARver."""
 
-LEAD_IN_FRAMES = 150
 FRAMES_PER_SECOND = 75
 
 

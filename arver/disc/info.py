@@ -10,9 +10,10 @@ import musicbrainzngs
 import pycdio
 
 from arver import APPNAME, URL, VERSION
+from arver.disc import LEAD_IN_FRAMES
 from arver.disc.database import AccurateRipDisc, AccurateRipFetcher
 from arver.disc.fingerprint import accuraterip_ids, freedb_id, musicbrainz_id
-from arver.disc.utils import LEAD_IN_FRAMES, frames_to_msf
+from arver.utils import frames_to_msf
 
 PREGAP_TRACK_NUM = -1
 ENHANCED_CD_DATA_TRACK_GAP = 11400

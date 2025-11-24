@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 from discid import put
 
-from arver.disc.utils import LEAD_IN_FRAMES
+from arver.disc import LEAD_IN_FRAMES
 
 
 def freedb_id(offsets: List[int], leadout: int) -> str:
