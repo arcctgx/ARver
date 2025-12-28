@@ -1,5 +1,8 @@
 name: Sync mirrors
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
