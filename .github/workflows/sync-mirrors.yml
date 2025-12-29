@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
 
       - name: Sync GitLab mirror
-        uses: yesolutions/mirror-action@v0.7.0
+        uses: yesolutions/mirror-action@1708f16cdb28634fd3ba10c5c79abc91f5578a14  # v0.7.0
         with:
           REMOTE: 'ssh://git@gitlab.com/arcctgx/ARver.git'
           GIT_SSH_PRIVATE_KEY: ${{ secrets.ARVER_SYNC_PRIVATE_SSH_KEY }}
@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0
 
       - name: Sync Codeberg mirror
-        uses: yesolutions/mirror-action@v0.7.0
+        uses: yesolutions/mirror-action@1708f16cdb28634fd3ba10c5c79abc91f5578a14  # v0.7.0
         with:
           REMOTE: 'ssh://git@codeberg.org/arcctgx/ARver.git'
           GIT_SSH_PRIVATE_KEY: ${{ secrets.ARVER_SYNC_PRIVATE_SSH_KEY }}
