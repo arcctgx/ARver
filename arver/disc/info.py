@@ -353,6 +353,10 @@ class DiscInfo:
         }
         return types[self.type]
 
+    def is_mixed_mode(self) -> bool:
+        """Check if the disc is a Mixed Mode CD."""
+        return self.type == DiscType.MIXED_MODE
+
     def musicbrainz_id(self) -> str:
         """Return MusicBrainz disc ID as string."""
         last_audio_track = self.audio_tracks()[-1]

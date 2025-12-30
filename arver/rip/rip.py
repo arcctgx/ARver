@@ -4,12 +4,14 @@ from dataclasses import dataclass
 from enum import Enum
 from fnmatch import fnmatch
 from os.path import basename
-from typing import ClassVar, List, Optional
+from typing import TYPE_CHECKING, ClassVar, List, Optional
 
 from arver.audio.checksums import Checksums, get_checksums
 from arver.audio.properties import get_frame_count
-from arver.disc.info import DiscInfo, DiscType
 from arver.utils import frames_to_msf
+
+if TYPE_CHECKING:
+    from arver.disc.info import DiscInfo
 
 AUDIO_FRAMES_PER_CD_SECTOR = 588
 NAME_WIDTH = 30
@@ -239,7 +241,7 @@ class Rip:
 
         self._have_checksums = True
 
-    def _sanity_check(self, disc: DiscInfo, permissive: bool) -> None:
+    def _sanity_check(self, disc: 'DiscInfo', permissive: bool) -> None:
         """
         Make sure that the disc and rip are matching: the rip must have the
         same number of files as the number of audio tracks on CD, and their
@@ -276,7 +278,7 @@ class Rip:
             print('Track length mismatch. Retry in permissive mode to verify anyway.')
             raise ValueError
 
-    def verify(self, disc_info: DiscInfo, permissive: bool,
+    def verify(self, disc_info: 'DiscInfo', permissive: bool,
                use_arv1: bool) -> DiscVerificationResult:
         """
         Verify a set of ripped files against a CD with specified TOC.
@@ -294,11 +296,10 @@ class Rip:
         checksums = disc_info.accuraterip_data.make_dict()
         results: List[TrackVerificationResult] = []
 
-        mixed_mode = disc_info.type == DiscType.MIXED_MODE
-        toc_idx_start = 1 if not mixed_mode else 2
+        toc_idx_start = 1 if not disc_info.is_mixed_mode() else 2
 
         for toc_idx, track in enumerate(self.tracks, start=toc_idx_start):
-            rip_idx = toc_idx if not mixed_mode else toc_idx - 1
+            rip_idx = toc_idx if not disc_info.is_mixed_mode() else toc_idx - 1
             csum = get_checksums(track.path, rip_idx, len(self))
 
             print(f'Track {toc_idx}:')
