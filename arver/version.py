@@ -1,7 +1,7 @@
 """ARver version string module."""
 
 from arver import APPNAME, VERSION
-from arver.audio.properties import get_libsndfile_version
+from arver.audio.version import get_libsndfile_version
 
 
 def version_string() -> str:

@@ -1,7 +1,4 @@
-"""
-Functions for getting properties of supported audio files,
-or of libsndfile library itself.
-"""
+"""Functions for getting properties of supported audio files."""
 
 # pylint: disable=c-extension-no-member
 
@@ -19,8 +16,3 @@ def get_frame_count(path: str) -> int:
     libsndfile can't load audio samples from the file for any reason.
     """
     return _audio.frame_count(path)
-
-
-def get_libsndfile_version() -> str:
-    """Return libsndfile version string."""
-    return _audio.libsndfile_version()
