@@ -3,6 +3,7 @@
 import argparse
 import sys
 import textwrap
+from typing import Optional
 
 from arver.disc.info import DiscInfo, get_disc_info
 from arver.rip.rip import Rip
@@ -86,7 +87,7 @@ def _parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     args = _parse_args()
 
     rip = Rip(args.rip_files, args.exclude)
@@ -94,6 +95,7 @@ def main():
         print('No audio files were loaded. Did you specify correct files?')
         sys.exit(1)
 
+    disc: Optional[DiscInfo]
     if args.track_lengths:
         disc = DiscInfo.from_track_lengths(rip.track_frames(), args.pregap_length, args.data_length)
     else:

@@ -34,7 +34,7 @@ def _parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     args = _parse_args()
 
     rip = Rip(args.rip_files, args.exclude)

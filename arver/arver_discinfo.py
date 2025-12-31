@@ -33,7 +33,7 @@ def _parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     args = _parse_args()
     disc = get_disc_info(args.drive, args.disc_id)
 

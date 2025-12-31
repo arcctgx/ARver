@@ -20,7 +20,7 @@ def _parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     args = _parse_args()
 
     dbar_parser = AccurateRipParser(args.dbar_file)
