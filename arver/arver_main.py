@@ -7,6 +7,7 @@ from typing import Optional
 
 from arver.disc.info import DiscInfo, get_disc_info
 from arver.rip.rip import Rip
+from arver.rip.verify import Verifier
 from arver.version import version_string
 
 
@@ -118,8 +119,16 @@ def main() -> None:
     print(disc.accuraterip_data.summary())
     print()
 
+    verifier = Verifier(rip, disc)
+
+    if args.permissive:
+        verifier.enable_permissive_mode()
+
+    if args.use_arv1:
+        verifier.enable_arv1_only_mode()
+
     try:
-        verdict = rip.verify(disc, args.permissive, args.use_arv1)
+        verdict = verifier.verify()
     except ValueError:
         print("Audio files don't match CD TOC, exiting.")
         sys.exit(4)
