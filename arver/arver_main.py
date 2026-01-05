@@ -6,7 +6,7 @@ import textwrap
 from typing import Optional
 
 from arver.disc.info import DiscInfo, get_disc_info
-from arver.rip.rip import Rip
+from arver.rip.audiofile import Rip
 from arver.rip.verify import Verifier
 from arver.version import version_string
 

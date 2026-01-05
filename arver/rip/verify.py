@@ -10,7 +10,7 @@ from arver.rip import NAME_WIDTH, _shorten_path
 
 if TYPE_CHECKING:
     from arver.disc.info import DiscInfo
-    from arver.rip.rip import Rip
+    from arver.rip.audiofile import Rip
 
 
 class _Status(Enum):

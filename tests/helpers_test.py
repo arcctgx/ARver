@@ -4,7 +4,7 @@
 
 import unittest
 
-from arver.rip.rip import _ceil_div
+from arver.rip.audiofile import _ceil_div
 from arver.utils import frames_to_msf
 
 

@@ -6,7 +6,7 @@ two types of AccurateRip checksums.
 import argparse
 import sys
 
-from arver.rip.rip import Rip
+from arver.rip.audiofile import Rip
 from arver.version import version_string
 
 
