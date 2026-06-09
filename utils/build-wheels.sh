@@ -9,7 +9,7 @@
 # docker run --rm -e PLAT=manylinux2014_x86_64 -v $(pwd -P):/pkg quay.io/pypa/manylinux2014_x86_64 /pkg/utils/build-wheels.sh
 # docker run --rm -e PLAT=manylinux2014_i686 -v $(pwd -P):/pkg quay.io/pypa/manylinux2014_i686 linux32 /pkg/utils/build-wheels.sh
 # docker run --rm -e PLAT=musllinux_1_2_x86_64 -v $(pwd -P):/pkg quay.io/pypa/musllinux_1_2_x86_64 /pkg/utils/build-wheels.sh
-# docker run --rm -e PLAT=musllinux_1_2_i686 -v $(pwd -P):/pkg quay.io/pypa/musllinux_1_2_i686 /pkg/utils/build-wheels-new.sh
+# docker run --rm -e PLAT=musllinux_1_2_i686 -v $(pwd -P):/pkg quay.io/pypa/musllinux_1_2_i686 /pkg/utils/build-wheels.sh
 
 package_dir="/pkg"
 dist_dir="${package_dir}/dist"
@@ -77,7 +77,7 @@ popd
 
 # Py_LIMITED_API 0x03070000 is defined, so it's sufficient to build
 # just one wheel with any Python version:
-python3.8 -m build "${package_dir}"
+python3.10 -m build "${package_dir}"
 
 # vendor required shared libraries in wheels:
 for wheel in "${dist_dir}"/*.whl
