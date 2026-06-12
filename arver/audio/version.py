@@ -1,7 +1,5 @@
 """Functions for getting version strings."""
 
-# pylint: disable=c-extension-no-member
-
 from arver.audio import _audio  # type: ignore
 
 

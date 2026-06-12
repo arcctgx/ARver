@@ -1,7 +1,5 @@
 """Functions for getting properties of supported audio files."""
 
-# pylint: disable=c-extension-no-member
-
 from arver.audio import _audio  # type: ignore
 
 

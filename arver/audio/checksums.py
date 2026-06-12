@@ -4,8 +4,6 @@ from dataclasses import dataclass
 
 from arver.audio import _audio  # type: ignore
 
-# pylint: disable=c-extension-no-member
-
 
 @dataclass
 class Checksums:

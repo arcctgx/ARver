@@ -61,6 +61,7 @@ ignore_missing_imports = true
 # Do not require docstrings for functions whose names begin with
 # underscores, or for main().
 no-docstring-rgx = "^(_|main$)"
+extension-pkg-whitelist = "arver"
 
 [tool.yapf]
 based_on_style = "pep8"
