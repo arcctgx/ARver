@@ -31,7 +31,16 @@ curl -O -L https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.xz
 curl -O -L https://downloads.xiph.org/releases/flac/flac-1.4.3.tar.xz
 curl -O -L https://downloads.xiph.org/releases/opus/opus-1.4.tar.gz
 curl -O -L https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2.tar.xz
+curl -O -L https://github.com/libcdio/libcdio/releases/download/2.3.0/libcdio-2.3.0.tar.bz2
 sha256sum -c "${package_dir}/utils/SHA256SUMS.txt"
+
+tar xf libcdio-2.3.0.tar.bz2
+pushd libcdio-2.3.0
+./configure --disable-{cxx,{cpp,example}-progs} --without-{cd-{drive,info,read},iso-{info,read},cdda-player}
+make -j "$(nproc --all)"
+make install
+ldd --version |& grep -q "musl libc" || ldconfig
+popd
 
 tar xf libogg-1.3.5.tar.xz
 pushd libogg-1.3.5
