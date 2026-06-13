@@ -1,6 +1,6 @@
 """Functions for getting version strings."""
 
-from arver.audio import _audio  # type: ignore
+from arver.audio import _audio
 
 
 def get_libsndfile_version() -> str:

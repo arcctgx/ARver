@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from arver.audio import _audio  # type: ignore
+from arver.audio import _audio
 
 
 @dataclass

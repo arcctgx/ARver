@@ -1,6 +1,6 @@
 """Functions for getting properties of supported audio files."""
 
-from arver.audio import _audio  # type: ignore
+from arver.audio import _audio
 
 
 def get_frame_count(path: str) -> int:

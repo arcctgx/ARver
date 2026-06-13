@@ -62,7 +62,11 @@ ignore_missing_imports = true
 # underscores, or for main().
 no-docstring-rgx = "^(_|main$)"
 extension-pkg-whitelist = "arver"
+ignore-patterns = [".*\\.pyi$"]
 
 [tool.yapf]
 based_on_style = "pep8"
 column_limit = 100
+
+[tool.yapfignore]
+ignore_patterns = ["**/*.pyi"]
