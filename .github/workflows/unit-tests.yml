@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - master
+      - cdio
     paths:
       - .github/workflows/unit-tests.yml
       - arver/**
@@ -44,14 +45,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install pycdio dependencies from distribution
+      - name: Install ARver dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcdio-dev libdiscid-dev libiso9660-dev swig
-
-      - name: Install ARver dependencies from distribution
-        run: |
-          sudo apt-get install -y libsndfile-dev
+          sudo apt-get install -y libcdio-dev libdiscid0 libsndfile-dev
 
       - name: Build and install ARver
         run: |
@@ -59,6 +56,7 @@ jobs:
           pip3 install --upgrade pip
           pip3 install --editable .
           pip3 list
+          arver --version
 
       - name: Run unit tests
         run: |

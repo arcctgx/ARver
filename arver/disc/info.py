@@ -4,13 +4,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional
 
-import cdio
 import discid
 import musicbrainzngs
-import pycdio
 
 from arver import APPNAME, URL, VERSION
-from arver.disc import LEAD_IN_FRAMES
+from arver.disc import LEAD_IN_FRAMES, _cdio
 from arver.disc.database import AccurateRipDisc, AccurateRipFetcher
 from arver.disc.fingerprint import accuraterip_ids, freedb_id, musicbrainz_id
 from arver.utils import frames_to_msf
@@ -82,9 +80,7 @@ def _have_disc(drive: Optional[str] = None) -> bool:
 
     Using discid here is a good first line of defense: it raises an exception
     when attempting to read CDs with no audio tracks. This means it will fail
-    to read discs that pycdio would support (e.g. DVDs or data CDs). Moreover,
-    discid API is easier to use, and on errors pycdio prints its own messages
-    that can't be silenced.
+    to read discs that libcdio would support (e.g. DVDs or data CDs).
     """
     try:
         discid.read(drive)
@@ -94,9 +90,9 @@ def _have_disc(drive: Optional[str] = None) -> bool:
     return True
 
 
-def _is_multisession(device: cdio.Device) -> bool:
+def _is_multisession(device: _cdio.Device) -> bool:
     """Check if disc has more than one session."""
-    return device.get_last_session() > 0
+    return device.last_session_lsn() > 0
 
 
 def _is_audio_only(track_list: List[_Track]) -> bool:
@@ -105,7 +101,7 @@ def _is_audio_only(track_list: List[_Track]) -> bool:
     return len(types) == 1 and 'audio' in types
 
 
-def _get_disc_type(device: cdio.Device, track_list: List[_Track]) -> DiscType:
+def _get_disc_type(device: _cdio.Device, track_list: List[_Track]) -> DiscType:
     """
     Determine disc type based on the following rules:
 
@@ -164,7 +160,7 @@ def _fix_last_audio_track(track_list: List[_Track]) -> None:
     """
     Fix length of the last audio track by subtracting the length of gap
     between last audio track and the data track in an enhanced CD. This
-    is needed because pycdio includes this gap in sectors count of the
+    is needed because libcdio includes this gap in sectors count of the
     last audio track.
 
     Obviously this only makes sense when there is a data track following
@@ -224,30 +220,9 @@ class DiscInfo:
         if not _have_disc(drive):
             return None
 
-        device = cdio.Device(source=drive, driver_id=pycdio.DRIVER_DEVICE)
-        first_track_num = device.get_first_track().track  # type: ignore
-        num_tracks = device.get_num_tracks()
-        lead_out = device.get_track(pycdio.CDROM_LEADOUT_TRACK).get_lba()
-
-        track_list = []
-
-        for num in range(first_track_num, num_tracks + 1):
-            track = device.get_track(num)
-            lba = track.get_lba()
-
-            if num < 99:
-                frames = track.get_last_lsn() - track.get_lsn() + 1
-            else:
-                # track.get_last_lsn() throws an exception for track 99. This looks
-                # like a bug in libcdio. Track 99 must be the last track on the CD,
-                # so we can use the lead out LBA that we already know to calculate
-                # the last LSN of track 99.
-                track_last_lsn = lead_out - LEAD_IN_FRAMES - 1
-                frames = track_last_lsn - track.get_lsn() + 1
-
-            fmt = track.get_format()
-            track_list.append(_Track(num, lba, frames, fmt))
-
+        device = _cdio.Device(drive)
+        track_list = [_Track(*trk) for trk in device.track_listing()]
+        lead_out = device.lead_out_lba()
         pregap = _get_pregap_track(track_list)
 
         disc_type = _get_disc_type(device, track_list)

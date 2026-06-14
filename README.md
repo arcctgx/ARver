@@ -84,30 +84,33 @@ python3 -m pip install --editable .
 
 ### Dependencies
 
-`ARver` depends on following Python packages at runtime:
+`ARver` depends on the following Python packages at runtime:
 
 * `discid`
 * `musicbrainzngs`
-* `pycdio`
 * `requests`
 
 They will be installed automatically by `pip install` if needed. Alternatively,
-one can install them using provided `requirements.txt` file.
+they can be installed using the provided `requirements.txt` file.
 
-The source code includes a `C` extension which depends on `libsndfile`, so
-building from source requires a `C` compiler (`gcc`) and `libsndfile` headers.
-This makes `libsndfile` both compile-time and runtime dependency when `ARver`
-is installed from the source distribution.
+`ARver` also depends on the following shared libraries at runtime:
 
-#### Note about `pycdio` dependency
+* `libcdio`
+* `libdiscid`
+* `libsndfile`
 
-`pycdio` does not provide wheels, so if it's not already installed on your
-system, `pip install arver` will attempt to build it from source. Building
-from source may fail due to missing build-time dependencies. To work around
-this, you can try installing `pycdio` using your Linux distribution's package
-manager before installing `ARver`. If that doesn't work, you'll need to install
-the build-time dependencies listed on the [pycdio GitHub page] and then retry
-the installation with `pip`.
+The required system packages depend on how `ARver` is installed.
+
+When installing from a wheel (for example, using `pip install arver`), `libcdio`
+and `libsndfile` are bundled with the wheel and only `libdiscid` must be present
+in the system. If `libdiscid` is not installed, `ARver` will fail at startup
+due to a missing runtime dependency.
+
+When installing from source (either from a source distribution or as an editable
+install), a C compiler (`gcc`) and the development packages for `libcdio` and
+`libsndfile` are required to build the extension modules. At runtime, all three
+shared libraries (`libcdio`, `libdiscid`, and `libsndfile`) must be installed
+in the system.
 
 ## Restrictions
 
@@ -187,7 +190,6 @@ Thanks to the following people and projects for source code and inspiration:
 * [cyanreg/cyanrip]
 
 [CD bronzing]: https://en.wikipedia.org/wiki/Compact_disc_bronzing
-[pycdio GitHub page]: https://github.com/rocky/pycdio#requirements
 [CD drive read offset]: http://www.accuraterip.com/driveoffsets.htm
 [leo-bogert/accuraterip-checksum]: https://github.com/leo-bogert/accuraterip-checksum
 [whipper-team/whipper]: https://github.com/whipper-team/whipper

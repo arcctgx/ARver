@@ -1,4 +1,3 @@
 discid>=1.1.0
 musicbrainzngs==0.7.1
-pycdio>=0.21
 requests==2.31.0

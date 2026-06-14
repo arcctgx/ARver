@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ARver"
 dynamic = ["version"]
-dependencies = ["discid", "musicbrainzngs", "pycdio", "requests"]
+dependencies = ["discid", "musicbrainzngs", "requests"]
 requires-python = ">=3.7"
 
 authors = [{ name = "arcctgx", email = "arcctgx@o2.pl" }]
@@ -54,7 +54,7 @@ exclude = ["tests"]
 exclude = "build"
 
 [[tool.mypy.overrides]]
-module = ["discid", "musicbrainzngs", "cdio", "pycdio"]
+module = ["discid", "musicbrainzngs"]
 ignore_missing_imports = true
 
 [tool.pylint.basic]
