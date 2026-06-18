@@ -15,9 +15,7 @@ setup(
         Extension('arver.disc._cdio',
                   sources=['arver/disc/_cdio.c'],
                   libraries=['cdio'],
-                  extra_compile_args=['-std=c99', '-O3', '-Wall', '-Werror'],
-                  define_macros=[('Py_LIMITED_API', PYTHON_API_VERSION)],
-                  py_limited_api=True),
+                  extra_compile_args=['-std=c99', '-O3', '-Wall', '-Werror']),
     ],
     options={
         'bdist_wheel': {

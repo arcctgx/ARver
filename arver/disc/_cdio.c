@@ -4,95 +4,68 @@
 #include <cdio/cdio_config.h>
 #include <cdio/logging.h>
 
-static int have_disc(CdIo_t *device)
-{
-    if (cdio_get_last_track_num(device) == CDIO_INVALID_TRACK) {
-        return 0;
-    }
+typedef struct {
+    PyObject_HEAD
+    CdIo_t *device;
+} DeviceObject;
 
-    return 1;
-}
-
-static PyObject *last_session_lsn(PyObject *self, PyObject *args)
+static int Device_init(DeviceObject *self, PyObject *args, PyObject *Py_UNUSED(kwds))
 {
+    cdio_loglevel_default = CDIO_LOG_ASSERT;
     const char *device_path = NULL;
-    CdIo_t *device = NULL;
-    lsn_t last_session_lsn = -1;
+    self->device = NULL;
 
     if (!PyArg_ParseTuple(args, "|z", &device_path)) {
-        return NULL;
+        return -1;
     }
 
-    if ((device = cdio_open(device_path, DRIVER_DEVICE)) == NULL) {
+    if ((self->device = cdio_open(device_path, DRIVER_DEVICE)) == NULL) {
         PyErr_Format(PyExc_RuntimeError, "Failed to open %s",
             device_path == NULL ? "the default device" : device_path);
-        return NULL;
+        return -1;
     }
 
-    if (!have_disc(device)) {
+    if (cdio_get_last_track_num(self->device) == CDIO_INVALID_TRACK) {
         PyErr_Format(PyExc_RuntimeError, "Failed to read the CD in %s",
             device_path == NULL ? "the default device" : device_path);
-        cdio_destroy(device);
-        return NULL;
+        return -1;
     }
 
-    cdio_get_last_session(device, &last_session_lsn);
-    cdio_destroy(device);
+    return 0;
+}
 
+static void Device_dealloc(DeviceObject *self)
+{
+    if (self->device != NULL) {
+        cdio_destroy(self->device);
+        self->device = NULL;
+    }
+
+    Py_TYPE(self)->tp_free((PyObject *) self);
+}
+
+static PyObject *Device_last_session_lsn(DeviceObject *self, PyObject *Py_UNUSED(args))
+{
+    lsn_t last_session_lsn = -1;
+    cdio_get_last_session(self->device, &last_session_lsn);
     return PyLong_FromLong(last_session_lsn);
 }
 
-static PyObject *lead_out_lba(PyObject *self, PyObject *args)
+static PyObject *Device_lead_out_lba(DeviceObject *self, PyObject *Py_UNUSED(args))
 {
-    const char *device_path = NULL;
-    CdIo_t *device = NULL;
-
-    if (!PyArg_ParseTuple(args, "|z", &device_path)) {
-        return NULL;
-    }
-
-    if ((device = cdio_open(device_path, DRIVER_DEVICE)) == NULL) {
-        PyErr_Format(PyExc_RuntimeError, "Failed to open %s",
-            device_path == NULL ? "the default device" : device_path);
-        return NULL;
-    }
-
-    if (!have_disc(device)) {
-        PyErr_Format(PyExc_RuntimeError, "Failed to read the CD in %s",
-            device_path == NULL ? "the default device" : device_path);
-        cdio_destroy(device);
-        return NULL;
-    }
-
-    lba_t lead_out_lba = cdio_get_track_lba(device, CDIO_CDROM_LEADOUT_TRACK);
-    cdio_destroy(device);
-
+    lba_t lead_out_lba = cdio_get_track_lba(self->device, CDIO_CDROM_LEADOUT_TRACK);
     return PyLong_FromLong(lead_out_lba);
 }
 
-static PyObject *track_listing(PyObject *self, PyObject *args)
+static PyObject *Device_track_listing(DeviceObject *self, PyObject *Py_UNUSED(args))
 {
-    const char *device_path = NULL;
-    CdIo_t *device = NULL;
     PyObject *list = NULL;
     PyObject *tuple = NULL;
-
-    if (!PyArg_ParseTuple(args, "|z", &device_path)) {
-        return NULL;
-    }
-
-    if ((device = cdio_open(device_path, DRIVER_DEVICE)) == NULL) {
-        PyErr_Format(PyExc_RuntimeError, "Failed to open %s",
-            device_path == NULL ? "the default device" : device_path);
-        return NULL;
-    }
-
-    track_t first_track_num = cdio_get_first_track_num(device);
-    track_t last_track_num = cdio_get_last_track_num(device);
+    track_t first_track_num = cdio_get_first_track_num(self->device);
+    track_t last_track_num = cdio_get_last_track_num(self->device);
 
     if (first_track_num == CDIO_INVALID_TRACK || last_track_num == CDIO_INVALID_TRACK) {
-        PyErr_Format(PyExc_RuntimeError, "Failed to read the CD in %s",
-            device_path == NULL ? "the default device" : device_path);
+        PyErr_Format(PyExc_RuntimeError, "Failed to read the CD TOC");
         goto error;
     }
 
@@ -107,14 +80,14 @@ static PyObject *track_listing(PyObject *self, PyObject *args)
         // looks like a bug in libcdio. Track 99 must be the last track on the CD,
         // so we can use the lead out LSN to calculate the last LSN of track 99.
         if (num < 99) {
-            track_last_lsn = cdio_get_track_last_lsn(device, num);
+            track_last_lsn = cdio_get_track_last_lsn(self->device, num);
         } else {
-            track_last_lsn = cdio_get_track_lsn(device, CDIO_CDROM_LEADOUT_TRACK) - 1;
+            track_last_lsn = cdio_get_track_lsn(self->device, CDIO_CDROM_LEADOUT_TRACK) - 1;
         }
 
-        lsn_t frames = track_last_lsn - cdio_get_track_lsn(device, num) + 1;
-        lba_t lba = cdio_get_track_lba(device, num);
-        track_format_t format = cdio_get_track_format(device, num);
+        lsn_t frames = track_last_lsn - cdio_get_track_lsn(self->device, num) + 1;
+        lba_t lba = cdio_get_track_lba(self->device, num);
+        track_format_t format = cdio_get_track_format(self->device, num);
 
         if ((tuple = Py_BuildValue("Biis", num, lba, frames, track_format2str[format])) == NULL) {
             goto error;
@@ -127,15 +100,33 @@ static PyObject *track_listing(PyObject *self, PyObject *args)
         Py_DECREF(tuple);
     }
 
-    cdio_destroy(device);
     return list;
 
 error:
-    cdio_destroy(device);
     Py_XDECREF(tuple);
     Py_XDECREF(list);
     return NULL;
 }
+
+static PyMethodDef Device_methods[] = {
+    { "last_session_lsn", (PyCFunction)Device_last_session_lsn, METH_NOARGS, PyDoc_STR("Return the LSN of the first track in the last CD session.") },
+    { "lead_out_lba", (PyCFunction)Device_lead_out_lba, METH_NOARGS, PyDoc_STR("Return the LBA of the lead out track.") },
+    { "track_listing", (PyCFunction)Device_track_listing, METH_NOARGS, PyDoc_STR("Return CD track listing as a list of (num, lba, frames, type) tuples.") },
+    { NULL, NULL, 0, NULL },
+};
+
+static PyTypeObject DeviceType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "_cdio.Device",
+    .tp_doc = PyDoc_STR("Representation of an optical drive with readable, non-blank medium."),
+    .tp_basicsize = sizeof(DeviceObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew,
+    .tp_init = (initproc)Device_init,
+    .tp_dealloc = (destructor)Device_dealloc,
+    .tp_methods = Device_methods,
+};
 
 static PyObject *libcdio_version(PyObject *self, PyObject *Py_UNUSED(args))
 {
@@ -143,9 +134,6 @@ static PyObject *libcdio_version(PyObject *self, PyObject *Py_UNUSED(args))
 }
 
 static PyMethodDef _cdio_methods[] = {
-    { "last_session_lsn", last_session_lsn, METH_VARARGS, PyDoc_STR("Return the LSN of the first track in the last CD session.") },
-    { "lead_out_lba", lead_out_lba, METH_VARARGS, PyDoc_STR("Return the LBA of the lead out track.") },
-    { "track_listing", track_listing, METH_VARARGS, PyDoc_STR("Return CD track listing as a list of (num, lba, frames, type) tuples.") },
     { "libcdio_version", libcdio_version, METH_NOARGS, PyDoc_STR("Return libcdio version string.") },
     { NULL, NULL, 0, NULL },
 };
@@ -160,6 +148,22 @@ static struct PyModuleDef _cdio_module = {
 
 PyMODINIT_FUNC PyInit__cdio(void)
 {
-    cdio_loglevel_default = CDIO_LOG_ASSERT;
-    return PyModule_Create(&_cdio_module);
+    PyObject *m;
+    if (PyType_Ready(&DeviceType) < 0) {
+        return NULL;
+    }
+
+    m = PyModule_Create(&_cdio_module);
+    if (m == NULL) {
+        return NULL;
+    }
+
+    Py_INCREF(&DeviceType);
+    if (PyModule_AddObject(m, "Device", (PyObject*) &DeviceType) < 0) {
+        Py_DECREF(&DeviceType);
+        Py_DECREF(m);
+        return NULL;
+    }
+
+    return m;
 }
