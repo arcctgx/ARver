@@ -41,7 +41,10 @@ static void Device_dealloc(DeviceObject *self)
         self->device = NULL;
     }
 
-    Py_TYPE(self)->tp_free((PyObject *) self);
+    PyTypeObject *tp = Py_TYPE(self);
+    freefunc tp_free = PyType_GetSlot(tp, Py_tp_free);
+    tp_free(self);
+    Py_DECREF(tp);
 }
 
 static PyObject *Device_last_session_lsn(DeviceObject *self, PyObject *Py_UNUSED(args))
@@ -115,17 +118,21 @@ static PyMethodDef Device_methods[] = {
     { NULL, NULL, 0, NULL },
 };
 
-static PyTypeObject DeviceType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "_cdio.Device",
-    .tp_doc = PyDoc_STR("Representation of an optical drive with readable, non-blank medium."),
-    .tp_basicsize = sizeof(DeviceObject),
-    .tp_itemsize = 0,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_new = PyType_GenericNew,
-    .tp_init = (initproc)Device_init,
-    .tp_dealloc = (destructor)Device_dealloc,
-    .tp_methods = Device_methods,
+static PyType_Slot Device_slots[] = {
+    {Py_tp_doc, PyDoc_STR("Representation of an optical drive with readable, non-blank medium.")},
+    {Py_tp_new, PyType_GenericNew},
+    {Py_tp_init, Device_init},
+    {Py_tp_dealloc, Device_dealloc},
+    {Py_tp_methods, Device_methods},
+    {0, NULL}
+};
+
+static PyType_Spec Device_spec = {
+    .name = "_cdio.Device",
+    .basicsize = sizeof(DeviceObject),
+    .itemsize = 0,
+    .flags = Py_TPFLAGS_DEFAULT,
+    .slots = Device_slots,
 };
 
 static PyObject *libcdio_version(PyObject *self, PyObject *Py_UNUSED(args))
@@ -138,32 +145,36 @@ static PyMethodDef _cdio_methods[] = {
     { NULL, NULL, 0, NULL },
 };
 
+static int _cdio_modexec(PyObject *m)
+{
+    PyObject *Device_Type = PyType_FromSpec(&Device_spec);
+    if (Device_Type == NULL) {
+        return -1;
+    }
+
+    if (PyModule_AddObject(m, "Device", Device_Type) < 0) {
+        Py_DECREF(Device_Type);
+        return -1;
+    }
+
+    return 0;
+}
+
+static PyModuleDef_Slot _cdio_slots[] = {
+    {Py_mod_exec, _cdio_modexec},
+    {0, NULL}
+};
+
 static struct PyModuleDef _cdio_module = {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "_cdio",
     .m_doc = PyDoc_STR("Minimal libcdio bindings for getting CD TOC information."),
     .m_methods = _cdio_methods,
-    .m_size = 0
+    .m_size = 0,
+    .m_slots = _cdio_slots
 };
 
 PyMODINIT_FUNC PyInit__cdio(void)
 {
-    PyObject *m;
-    if (PyType_Ready(&DeviceType) < 0) {
-        return NULL;
-    }
-
-    m = PyModule_Create(&_cdio_module);
-    if (m == NULL) {
-        return NULL;
-    }
-
-    Py_INCREF(&DeviceType);
-    if (PyModule_AddObject(m, "Device", (PyObject*) &DeviceType) < 0) {
-        Py_DECREF(&DeviceType);
-        Py_DECREF(m);
-        return NULL;
-    }
-
-    return m;
+    return PyModuleDef_Init(&_cdio_module);
 }
